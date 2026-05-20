@@ -1,4 +1,4 @@
-import { ALBUM_METADATA, GROUPS, SELECTIONS, STICKERS } from "./data.js";
+import { ALBUM_METADATA, GROUPS, SELECTIONS, STICKERS, TEAM_COLORS } from "./data.js";
 
 const STORAGE_KEYS = {
   config: "panini-supabase-config",
@@ -11,6 +11,7 @@ const DEFAULT_SUPABASE_CONFIG = {
 };
 
 const SECTION_LABELS = {
+  inicio: "Inicio",
   all: "Todos los cromos",
   repetidos: "Mis repetidos",
   faltantes: "Me faltan",
@@ -20,6 +21,7 @@ const SECTION_LABELS = {
 };
 
 const SECTION_ICONS = {
+  inicio: "home",
   all: "menu_book",
   repetidos: "swap_horiz",
   faltantes: "star_outline",
@@ -29,6 +31,7 @@ const SECTION_ICONS = {
 };
 
 const SECTION_SHORT = {
+  inicio: "Inicio",
   all: "Álbum",
   repetidos: "Repetidos",
   faltantes: "Faltan",
@@ -56,7 +59,7 @@ const state = {
   session: null,
   supabase: null,
   authMode: "login",
-  section: "all",
+  section: "inicio",
   filter: "todos",
   query: "",
   viewMode: "group",
@@ -810,6 +813,188 @@ function renderStickerCard(sticker) {
   `;
 }
 
+const WC2026_VENUES = [
+  { city: "Los Ángeles", country: "USA", capacity: "93 000" },
+  { city: "Nueva York / NJ", country: "USA", capacity: "82 500" },
+  { city: "Dallas", country: "USA", capacity: "80 000" },
+  { city: "San Francisco", country: "USA", capacity: "75 000" },
+  { city: "Seattle", country: "USA", capacity: "69 000" },
+  { city: "Miami", country: "USA", capacity: "65 326" },
+  { city: "Atlanta", country: "USA", capacity: "71 000" },
+  { city: "Kansas City", country: "USA", capacity: "76 416" },
+  { city: "Houston", country: "USA", capacity: "72 220" },
+  { city: "Boston", country: "USA", capacity: "65 624" },
+  { city: "Philadelphia", country: "USA", capacity: "69 176" },
+  { city: "Ciudad de México", country: "MEX", capacity: "87 523" },
+  { city: "Guadalajara", country: "MEX", capacity: "48 071" },
+  { city: "Monterrey", country: "MEX", capacity: "51 350" },
+  { city: "Toronto", country: "CAN", capacity: "45 000" },
+  { city: "Vancouver", country: "CAN", capacity: "54 500" },
+];
+
+function renderHomeView(stats) {
+  const content = document.querySelector("#collection-content");
+  const pct = stats.porcentaje.toFixed(1);
+
+  const topGroups = [...stats.byGroup].sort((a, b) => b.progress - a.progress).slice(0, 3);
+
+  const groupsGrid = GROUPS.map((group) => {
+    const groupStats = stats.byGroup.find((g) => g.key === group.letter);
+    const groupPct = groupStats ? groupStats.progress.toFixed(0) : 0;
+    const teamPills = group.teams
+      .map(
+        (t) =>
+          `<span class="home-team-pill" style="--team-accent:${TEAM_COLORS[t.code] || group.color}">
+            <span class="home-team-pill__dot"></span>
+            ${escapeHtml(t.code)}
+          </span>`,
+      )
+      .join("");
+    return `
+      <div class="home-group-card" style="--group-accent:${group.color}">
+        <div class="home-group-card__header">
+          <span class="home-group-card__letter">Grupo ${escapeHtml(group.letter)}</span>
+          <span class="home-group-card__pct">${groupPct}%</span>
+        </div>
+        <div class="home-group-card__teams">${teamPills}</div>
+        <div class="home-group-card__bar">
+          <span style="width:${groupPct}%;background:${group.color}"></span>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  const venueRows = WC2026_VENUES.map(
+    (v) => `
+      <div class="home-venue-row">
+        <span class="home-venue-row__city">${escapeHtml(v.city)}</span>
+        <span class="home-venue-row__country">${escapeHtml(v.country)}</span>
+        <span class="home-venue-row__cap">${escapeHtml(v.capacity)}</span>
+      </div>
+    `,
+  ).join("");
+
+  content.innerHTML = `
+    <!-- HERO -->
+    <section class="home-hero">
+      <div class="home-hero__inner">
+        <p class="home-hero__eyebrow">Panini Official · Edición Alemania</p>
+        <h1 class="home-hero__title">FIFA World Cup 2026™</h1>
+        <p class="home-hero__dates">11 Jun – 19 Jul 2026</p>
+        <div class="home-hero__hosts">
+          <span class="home-host-badge home-host-badge--usa">Estados Unidos</span>
+          <span class="home-host-badge home-host-badge--can">Canadá</span>
+          <span class="home-host-badge home-host-badge--mex">México</span>
+        </div>
+      </div>
+      <div class="home-hero__kpis">
+        <div class="home-kpi"><strong>48</strong><small>selecciones</small></div>
+        <div class="home-kpi"><strong>12</strong><small>grupos</small></div>
+        <div class="home-kpi"><strong>104</strong><small>partidos</small></div>
+        <div class="home-kpi"><strong>16</strong><small>sedes</small></div>
+      </div>
+    </section>
+
+    <!-- ALBUM PROGRESS -->
+    <section class="home-card">
+      <h2 class="home-card__title">Mi álbum</h2>
+      <div class="home-album-bar">
+        <div class="home-album-bar__track">
+          <div class="home-album-bar__fill" style="width:${pct}%"></div>
+        </div>
+        <span class="home-album-bar__pct">${pct}%</span>
+      </div>
+      <div class="home-album-metrics">
+        <div class="home-album-metric home-album-metric--owned">
+          <strong>${escapeHtml(stats.obtenidos)}</strong><span>obtenidos</span>
+        </div>
+        <div class="home-album-metric home-album-metric--missing">
+          <strong>${escapeHtml(stats.faltantes)}</strong><span>faltantes</span>
+        </div>
+        <div class="home-album-metric">
+          <strong>${escapeHtml(stats.repetidos)}</strong><span>repetidos</span>
+        </div>
+        <div class="home-album-metric home-album-metric--coke">
+          <strong>${escapeHtml(stats.cocaCola.obtenidos)}/${escapeHtml(stats.cocaCola.total)}</strong><span>Coca-Cola</span>
+        </div>
+        <div class="home-album-metric">
+          <strong>${escapeHtml(stats.especiales.obtenidos)}/${escapeHtml(stats.especiales.total)}</strong><span>especiales</span>
+        </div>
+        <div class="home-album-metric">
+          <strong>${escapeHtml(stats.total)}</strong><span>stickers totales</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- GROUPS GRID -->
+    <section class="home-card">
+      <h2 class="home-card__title">Los 12 grupos</h2>
+      <div class="home-groups-grid">${groupsGrid}</div>
+    </section>
+
+    <!-- TOURNAMENT FORMAT + VENUES -->
+    <div class="home-two-col">
+      <section class="home-card">
+        <h2 class="home-card__title">Formato del torneo</h2>
+        <ol class="home-format-list">
+          <li>
+            <span class="home-format-list__label">Fase de grupos</span>
+            <span class="home-format-list__desc">12 grupos de 4 equipos · 48 partidos · Los 2 primeros de cada grupo + 8 mejores terceros clasifican</span>
+          </li>
+          <li>
+            <span class="home-format-list__label">Ronda de 32</span>
+            <span class="home-format-list__desc">32 equipos · primera eliminatoria directa de la historia del mundial</span>
+          </li>
+          <li>
+            <span class="home-format-list__label">Octavos de final</span>
+            <span class="home-format-list__desc">16 equipos</span>
+          </li>
+          <li>
+            <span class="home-format-list__label">Cuartos de final</span>
+            <span class="home-format-list__desc">8 equipos</span>
+          </li>
+          <li>
+            <span class="home-format-list__label">Semifinales</span>
+            <span class="home-format-list__desc">4 equipos</span>
+          </li>
+          <li>
+            <span class="home-format-list__label">Final</span>
+            <span class="home-format-list__desc">MetLife Stadium · East Rutherford, NJ · 19 Jul 2026</span>
+          </li>
+        </ol>
+      </section>
+
+      <section class="home-card">
+        <h2 class="home-card__title">Sedes (${WC2026_VENUES.length})</h2>
+        <div class="home-venues">${venueRows}</div>
+      </section>
+    </div>
+
+    <!-- ALBUM STRUCTURE -->
+    <section class="home-card">
+      <h2 class="home-card__title">Estructura del álbum</h2>
+      <div class="home-album-structure">
+        <div class="home-structure-item">
+          <span class="home-structure-item__num">992</span>
+          <span class="home-structure-item__label">stickers totales</span>
+        </div>
+        <div class="home-structure-item home-structure-item--accent">
+          <span class="home-structure-item__num">48 × 20</span>
+          <span class="home-structure-item__label">selecciones · 1 Logo + 1 Foto de equipo + 18 jugadores</span>
+        </div>
+        <div class="home-structure-item">
+          <span class="home-structure-item__num">20</span>
+          <span class="home-structure-item__label">especiales FWC · países sede, museos FIFA, leyendas</span>
+        </div>
+        <div class="home-structure-item home-structure-item--coke">
+          <span class="home-structure-item__num">12</span>
+          <span class="home-structure-item__label">Coca-Cola Germany · edición exclusiva Alemania</span>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
 function renderGroupedByGroupAndTeam(stickers) {
   const sorted = sortStickers(stickers);
 
@@ -839,10 +1024,7 @@ function renderGroupedByGroupAndTeam(stickers) {
 
       const teamPills = groupInfo?.teams
         ? groupInfo.teams
-            .map(
-              (t) =>
-                `<span class="team-code-pill" style="--team-accent:${GROUPS.find((g) => g.letter === groupKey)?.color || "#003e7a"}">${escapeHtml(t.code)}</span>`,
-            )
+            .map((t) => `<span class="team-code-pill">${escapeHtml(t.code)}</span>`)
             .join("")
         : "";
 
@@ -1013,7 +1195,9 @@ function renderApp() {
   document.querySelector("#results-count").textContent = `${filtered.length} stickers visibles`;
   document.querySelector("#view-mode").value = state.viewMode;
 
-  if (state.section === "stats") {
+  if (state.section === "inicio") {
+    renderHomeView(stats);
+  } else if (state.section === "stats") {
     renderStatsView(stats);
   } else {
     renderCollectionView(filtered);

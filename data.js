@@ -21,7 +21,7 @@ const GROUP_COLORS = {
 };
 
 // Colores de selección (basados en bandera / camiseta principal)
-const TEAM_COLORS = {
+export const TEAM_COLORS = {
   MEX: "#006847",
   RSA: "#007a4d",
   KOR: "#cd2e3a",
