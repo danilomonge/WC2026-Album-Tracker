@@ -16,7 +16,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      has_pages: ${{ steps.detect.outputs.has_pages }}
+    steps:
+      - name: Detect Pages status
+        id: detect
+        run: echo "has_pages=${{ github.event.repository.has_pages }}" >> "$GITHUB_OUTPUT"
+
   deploy:
+    needs: prepare
+    if: ${{ needs.prepare.outputs.has_pages == 'true' }}
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -27,13 +38,17 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
+
+      - name: Prepare static site
+        run: |
+          rm -rf _site
+          mkdir -p _site
+          cp index.html styles.css app.js data.js .nojekyll _site/
 
       - name: Upload static artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: ./_site
 
       - name: Deploy to GitHub Pages
         id: deployment

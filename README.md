@@ -85,6 +85,9 @@ create table if not exists public.user_sticker_progress (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint user_sticker_progress_duplicates_non_negative check (duplicates >= 0),
+  constraint user_sticker_progress_valid_sticker_id check (
+    sticker_id ~ '^(FWC([1-9]|1[0-9]|20)|CC([1-9]|1[0-2])|[A-Z]{3}([1-9]|1[0-9]|20))$'
+  ),
   unique (user_id, sticker_id)
 );
 
@@ -266,7 +269,7 @@ Esa URL también debes añadirla en las redirect URLs de Supabase Auth.
 
 ## GitHub Actions opcional para deploy automático
 
-El repo ya puede incluir un workflow estático para Pages. Si GitHub Pages está habilitado en el repositorio, el despliegue se publicará automáticamente desde GitHub Actions.
+El repo ya puede incluir un workflow estático para Pages. Si GitHub Pages está habilitado en el repositorio, el despliegue publicará solo los archivos del sitio y no el resto del repositorio.
 
 ## Pruebas
 

@@ -62,6 +62,12 @@ export function sanitizeDuplicates(value) {
   return Math.min(parsed, 99);
 }
 
+export function validateStickerId(stickerId) {
+  return /^(FWC([1-9]|1[0-9]|20)|CC([1-9]|1[0-2])|[A-Z]{3}([1-9]|1[0-9]|20))$/.test(
+    String(stickerId || ""),
+  );
+}
+
 function isFileProtocol() {
   return typeof window !== "undefined" && window.location.protocol === "file:";
 }
@@ -217,13 +223,15 @@ export function applyStickerCorrection(sticker) {
 
 export function mergeCatalogWithProgress(catalog, progressRows) {
   const progressMap = new Map(
-    progressRows.map((row) => [
-      row.sticker_id,
-      {
-        obtenido: Boolean(row.obtained) || sanitizeDuplicates(row.duplicates) > 0,
-        repetidos: sanitizeDuplicates(row.duplicates),
-      },
-    ]),
+    progressRows
+      .filter((row) => validateStickerId(row.sticker_id))
+      .map((row) => [
+        row.sticker_id,
+        {
+          obtenido: Boolean(row.obtained) || sanitizeDuplicates(row.duplicates) > 0,
+          repetidos: sanitizeDuplicates(row.duplicates),
+        },
+      ]),
   );
 
   return catalog.map((sticker) => ({
@@ -546,6 +554,11 @@ async function persistSticker(sticker) {
     return false;
   }
 
+  if (!validateStickerId(sticker.id)) {
+    showToast("El identificador del sticker no es válido.");
+    return false;
+  }
+
   const payload = {
     user_id: state.session.user.id,
     sticker_id: sticker.id,
@@ -613,7 +626,7 @@ function renderFilters() {
     .map(
       ([value, label]) => `
         <button class="chip ${state.filter === value ? "is-active" : ""}" data-filter="${value}">
-          ${label}
+          ${escapeHtml(label)}
         </button>
       `,
     )

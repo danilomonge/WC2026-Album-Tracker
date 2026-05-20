@@ -11,6 +11,7 @@ import {
   mergeCatalogWithProgress,
   sanitizeDuplicates,
   validateSupabaseConfig,
+  validateStickerId,
 } from "../app.js";
 
 test("el dataset usa la edicion Alemania con 12 Coca-Cola y 20 FWC", () => {
@@ -189,4 +190,12 @@ test("escapeHtml neutraliza caracteres peligrosos", () => {
     escapeHtml('<script>alert("x")</script>'),
     "&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;",
   );
+});
+
+test("validateStickerId acepta ids validos y rechaza ids arbitrarios", () => {
+  assert.equal(validateStickerId("FWC20"), true);
+  assert.equal(validateStickerId("CC12"), true);
+  assert.equal(validateStickerId("MEX20"), true);
+  assert.equal(validateStickerId("DROP_TABLE"), false);
+  assert.equal(validateStickerId("MEX99"), false);
 });
