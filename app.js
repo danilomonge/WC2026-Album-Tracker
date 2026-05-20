@@ -581,12 +581,21 @@ async function persistSticker(sticker) {
 }
 
 async function updateSticker(stickerId, updater) {
-  if (!state.session || !isAuthRuntimeAvailable()) {
+  if (!isAuthRuntimeAvailable()) {
+    showToast("La edición de stickers requiere abrir la app desde localhost o GitHub Pages.");
+    return;
+  }
+
+  if (!state.session) {
     openModal("#auth-modal");
     return;
   }
 
   const current = state.stickers.find((item) => item.id === stickerId);
+  if (!current) {
+    showToast("No encontramos ese sticker en el catálogo.");
+    return;
+  }
   const next = updater(current);
   state.stickers = state.stickers.map((item) => (item.id === stickerId ? next : item));
   renderApp();
@@ -982,7 +991,12 @@ async function handleResetAlbum() {
 }
 
 async function exportPdf(mode) {
-  if (!state.session || !isAuthRuntimeAvailable()) {
+  if (!isAuthRuntimeAvailable()) {
+    showToast("La exportación autenticada requiere localhost o GitHub Pages.");
+    return;
+  }
+
+  if (!state.session) {
     openModal("#auth-modal");
     return;
   }
@@ -1109,7 +1123,11 @@ function bindEvents() {
     }
 
     if (event.target.closest("#open-auth")) {
-      openModal("#auth-modal");
+      if (!isAuthRuntimeAvailable()) {
+        showToast("El login necesita abrir la app desde localhost o GitHub Pages.");
+      } else {
+        openModal("#auth-modal");
+      }
       return;
     }
 
