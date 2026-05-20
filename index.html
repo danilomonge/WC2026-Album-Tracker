@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://esm.sh; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://esm.sh https://*.supabase.co; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <title>WC2026 Collector · Edición Alemania</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anybody:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-block">
+          <p class="eyebrow">Panini FIFA World Cup 2026</p>
+          <h1>WC2026 Collector</h1>
+          <p class="topbar__subtitle">Edición Alemania · álbum sincronizado con Supabase</p>
+        </div>
+        <div class="topbar__actions">
+          <div class="status-cluster">
+            <span id="config-status" class="status-pill">Supabase sin configurar</span>
+            <span id="sync-status" class="status-pill status-pill--dark">Sincronizado</span>
+          </div>
+          <button id="auth-trigger" class="button button--primary">Configurar</button>
+          <button id="sign-out-button" class="button button--ghost" hidden>Cerrar sesión</button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <aside class="sidebar sidebar--left">
+          <section class="panel panel--hero">
+            <p class="eyebrow">Prototipo Stitch</p>
+            <h2>Planilla de control con energía de app moderna</h2>
+            <p>
+              Navega por grupos, selecciones o páginas reales del álbum y sincroniza
+              tu progreso entre dispositivos.
+            </p>
+            <div id="hero-stats" class="hero-stats"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel__header">
+              <h3>Secciones</h3>
+              <span class="panel__hint">principal</span>
+            </div>
+            <nav id="section-tabs" class="nav-stack"></nav>
+          </section>
+
+          <section class="panel">
+            <div class="panel__header">
+              <h3>Filtros</h3>
+              <span class="panel__hint">rápidos</span>
+            </div>
+            <div id="filter-chips" class="chip-grid"></div>
+          </section>
+        </aside>
+
+        <section class="workspace">
+          <section class="workspace-head">
+            <div>
+              <p class="eyebrow">Álbum oficial</p>
+              <h2 id="section-title">Todos los cromos</h2>
+            </div>
+            <strong id="results-count" class="results-count">0 stickers visibles</strong>
+          </section>
+
+          <section id="read-only-banner" class="banner" data-tone="muted"></section>
+
+          <section class="control-strip">
+            <label class="field">
+              <span>Buscar</span>
+              <input id="query-input" type="search" placeholder="País, nombre, número, tipo..." />
+            </label>
+            <label class="field">
+              <span>Agrupar por</span>
+              <select id="view-mode">
+                <option value="group">Grupo</option>
+                <option value="selection">Selección</option>
+                <option value="page">Página</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Grupo</span>
+              <select id="group-select"></select>
+            </label>
+            <label class="field">
+              <span>Selección</span>
+              <select id="team-select"></select>
+            </label>
+            <label class="field">
+              <span>Página</span>
+              <select id="page-select"></select>
+            </label>
+          </section>
+
+          <section id="collection-content" class="content-board"></section>
+        </section>
+
+        <aside class="sidebar sidebar--right">
+          <section class="panel">
+            <div class="panel__header">
+              <h3>Estadísticas</h3>
+              <span class="panel__hint">en vivo</span>
+            </div>
+            <div id="stats-summary" class="metric-grid"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel__header">
+              <h3>Acciones</h3>
+              <span class="panel__hint">usuario</span>
+            </div>
+            <div class="action-stack">
+              <button id="download-missing-pdf" class="button button--secondary">
+                Descargar PDF de faltantes
+              </button>
+              <button id="download-repeated-pdf" class="button button--secondary">
+                Descargar PDF de repetidos
+              </button>
+              <button id="open-auth" class="button button--ghost">
+                Iniciar sesión / registro
+              </button>
+              <button id="open-config" class="button button--ghost">
+                Configurar Supabase
+              </button>
+              <button id="reset-album" class="button button--danger">
+                Reiniciar progreso
+              </button>
+            </div>
+          </section>
+
+          <section class="panel panel--note">
+            <p>
+              Modo sin cuenta: solo lectura. Para editar stickers y sincronizar progreso,
+              configura Supabase e inicia sesión.
+            </p>
+          </section>
+        </aside>
+      </main>
+
+      <nav id="mobile-nav" class="mobile-nav"></nav>
+    </div>
+
+    <div id="auth-modal" class="modal" hidden>
+      <div class="modal__dialog">
+        <button class="modal__close" data-modal-close data-modal-close-target="#auth-modal">×</button>
+        <p class="eyebrow">Cuenta</p>
+        <h3 id="auth-title">Iniciar sesión</h3>
+        <form id="auth-form" class="modal__form">
+          <label class="field">
+            <span>Email</span>
+            <input id="auth-email" type="email" autocomplete="email" required />
+          </label>
+          <label class="field">
+            <span>Contraseña</span>
+            <input id="auth-password" type="password" autocomplete="current-password" minlength="6" required />
+          </label>
+          <button id="auth-submit" class="button button--primary" type="submit">Entrar</button>
+        </form>
+        <button id="toggle-auth-mode" class="button button--ghost button--full">
+          ¿No tienes cuenta? Regístrate
+        </button>
+      </div>
+    </div>
+
+    <div id="config-modal" class="modal" hidden>
+      <div class="modal__dialog">
+        <button class="modal__close" data-modal-close data-modal-close-target="#config-modal">×</button>
+        <p class="eyebrow">Supabase</p>
+        <h3>Conecta tu proyecto</h3>
+        <form id="config-form" class="modal__form">
+          <label class="field">
+            <span>Project URL</span>
+            <input id="supabase-url" type="url" placeholder="https://tu-proyecto.supabase.co" required />
+          </label>
+          <label class="field">
+            <span>Anon key</span>
+            <textarea id="supabase-anon-key" rows="4" placeholder="sb_publishable_..." required></textarea>
+          </label>
+          <button class="button button--primary" type="submit">Guardar configuración</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+  </body>
+</html>
