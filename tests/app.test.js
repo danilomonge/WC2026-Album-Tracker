@@ -22,7 +22,7 @@ test("el dataset usa la edicion Alemania con 12 Coca-Cola y 20 FWC", () => {
     12,
   );
   assert.equal(
-    STICKERS.filter((sticker) => sticker.numero.startsWith("FWC")).length,
+    STICKERS.filter((sticker) => sticker.grupo === "Especiales").length,
     20,
   );
 });
