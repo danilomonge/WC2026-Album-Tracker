@@ -213,6 +213,11 @@ Total del dataset cargado:
 
 - `992 stickers`
 
+Rango total de páginas cubiertas por el dataset:
+
+- selecciones: `8-105`
+- álbum completo con especiales y Coca-Cola: `1-107`
+
 ## GitHub Pages: instrucciones exactas
 
 ### 1. Crear repositorio
@@ -261,7 +266,7 @@ Esa URL también debes añadirla en las redirect URLs de Supabase Auth.
 
 ## GitHub Actions opcional para deploy automático
 
-Si prefieres publicar con Actions, puedes crear `.github/workflows/pages.yml` con un workflow estático simple. No es obligatorio para que esta app funcione.
+El repo ya puede incluir un workflow estático para Pages. Si GitHub Pages está habilitado en el repositorio, el despliegue se publicará automáticamente desde GitHub Actions.
 
 ## Pruebas
 

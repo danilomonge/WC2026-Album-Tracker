@@ -6,8 +6,11 @@ import {
   applyStickerClick,
   applyStickerCorrection,
   computeStats,
+  escapeHtml,
   filterStickers,
   mergeCatalogWithProgress,
+  sanitizeDuplicates,
+  validateSupabaseConfig,
 } from "../app.js";
 
 test("el dataset usa la edicion Alemania con 12 Coca-Cola y 20 FWC", () => {
@@ -149,4 +152,41 @@ test("computeStats calcula progreso general y de Coca-Cola Alemania", () => {
   assert.equal(stats.cocaCola.total, 1);
   assert.equal(stats.cocaCola.faltantes, 1);
   assert.equal(stats.especiales.obtenidos, 2);
+});
+
+test("sanitizeDuplicates evita negativos y valores no numericos", () => {
+  assert.equal(sanitizeDuplicates(-4), 0);
+  assert.equal(sanitizeDuplicates("abc"), 0);
+  assert.equal(sanitizeDuplicates(3), 3);
+});
+
+test("validateSupabaseConfig exige https, host valido y anon key de supabase", () => {
+  assert.equal(
+    validateSupabaseConfig({
+      url: "https://demo.supabase.co",
+      anonKey: "sb_publishable_demo",
+    }).valid,
+    true,
+  );
+  assert.equal(
+    validateSupabaseConfig({
+      url: "http://demo.supabase.co",
+      anonKey: "sb_publishable_demo",
+    }).valid,
+    false,
+  );
+  assert.equal(
+    validateSupabaseConfig({
+      url: "https://example.com",
+      anonKey: "token",
+    }).valid,
+    false,
+  );
+});
+
+test("escapeHtml neutraliza caracteres peligrosos", () => {
+  assert.equal(
+    escapeHtml('<script>alert("x")</script>'),
+    "&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;",
+  );
 });

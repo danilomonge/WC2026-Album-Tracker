@@ -232,4 +232,5 @@ export const ALBUM_METADATA = {
   totalCocaCola: COCA_COLA_GERMANY.length,
   firstTeamPage: 8,
   lastTeamPage: 105,
+  lastAlbumPage: 107,
 };

@@ -45,7 +45,7 @@ const state = {
   authSubscription: null,
 };
 
-function escapeHtml(value) {
+export function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
@@ -54,7 +54,7 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
-function sanitizeDuplicates(value) {
+export function sanitizeDuplicates(value) {
   const parsed = Number.parseInt(value, 10);
   if (Number.isNaN(parsed) || parsed < 0) {
     return 0;
@@ -70,7 +70,7 @@ function isAuthRuntimeAvailable() {
   return !isFileProtocol();
 }
 
-function validateSupabaseConfig(config) {
+export function validateSupabaseConfig(config) {
   if (!config.url || !config.anonKey) {
     return {
       valid: false,
@@ -625,7 +625,7 @@ function renderSelectOptions() {
   teamSelect.innerHTML = `
     <option value="all">Todas las selecciones</option>
     ${getSelectionOptions(state.selectedGroup)
-      .map((team) => `<option value="${team.country}">${team.country}</option>`)
+      .map((team) => `<option value="${escapeHtml(team.country)}">${escapeHtml(team.country)}</option>`)
       .join("")}
   `;
   if (!getSelectionOptions(state.selectedGroup).some((team) => team.country === state.selectedTeam)) {
@@ -927,7 +927,7 @@ async function handleAuthSubmit(event) {
       ? supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.href },
+          options: { emailRedirectTo: window.location.origin + window.location.pathname },
         })
       : supabase.auth.signInWithPassword({ email, password });
 
@@ -1030,6 +1030,10 @@ async function exportPdf(mode) {
         : `${sticker.grupo} · ${sticker.pais} · ${sticker.numero} · ${sticker.nombre} · x${sticker.repetidos}`;
 
     const wrapped = doc.splitTextToSize(line, 180);
+    if (y + wrapped.length * 6 > 280) {
+      doc.addPage();
+      y = 18;
+    }
     doc.text(wrapped, 14, y);
     y += wrapped.length * 6;
 
