@@ -5,6 +5,11 @@ const STORAGE_KEYS = {
   view: "panini-ui-view",
 };
 
+const DEFAULT_SUPABASE_CONFIG = {
+  url: "https://aeavyxfybxiqrfjrriqe.supabase.co",
+  anonKey: "sb_publishable_6J5tU2ZuqOR8ONsLyYYc_g_EzbB_Bh8",
+};
+
 const SECTION_LABELS = {
   all: "Todos los cromos",
   repetidos: "Mis repetidos",
@@ -113,17 +118,18 @@ export function validateSupabaseConfig(config) {
 
 function loadConfig() {
   if (typeof window === "undefined") {
-    return { url: "", anonKey: "" };
+    return { ...DEFAULT_SUPABASE_CONFIG };
   }
 
   try {
-    return JSON.parse(window.localStorage.getItem(STORAGE_KEYS.config)) || {
-      url: "",
-      anonKey: "",
-    };
+    const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEYS.config));
+    if (saved && saved.url && saved.anonKey) {
+      return saved;
+    }
   } catch {
-    return { url: "", anonKey: "" };
+    // fall through to defaults
   }
+  return { ...DEFAULT_SUPABASE_CONFIG };
 }
 
 function saveConfig(config) {
