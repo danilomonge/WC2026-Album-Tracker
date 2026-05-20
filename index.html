@@ -5,193 +5,290 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' https://esm.sh; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://esm.sh https://*.supabase.co ws://localhost:* http://localhost:* http://127.0.0.1:*; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+      content="default-src 'self'; script-src 'self' https://esm.sh https://cdn.tailwindcss.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://esm.sh https://*.supabase.co ws://localhost:* http://localhost:* http://127.0.0.1:*; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
     />
     <meta name="referrer" content="no-referrer" />
     <title>WC2026 Collector · Edición Alemania</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Anybody:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Anybody:wght@400;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#003e7a",
+              "primary-container": "#0055a4",
+              "primary-fixed": "#d5e3ff",
+              "primary-fixed-dim": "#a8c8ff",
+              "on-primary": "#ffffff",
+              "on-primary-container": "#afccff",
+              secondary: "#006d33",
+              "secondary-container": "#75f999",
+              "on-secondary": "#ffffff",
+              "on-secondary-container": "#007236",
+              tertiary: "#83000a",
+              "tertiary-container": "#af0011",
+              "on-tertiary": "#ffffff",
+              error: "#ba1a1a",
+              "error-container": "#ffdad6",
+              "on-error": "#ffffff",
+              "on-error-container": "#93000a",
+              background: "#fcf9f8",
+              "on-background": "#1c1b1b",
+              surface: "#fcf9f8",
+              "surface-bright": "#fcf9f8",
+              "surface-dim": "#dcd9d9",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-low": "#f6f3f2",
+              "surface-container": "#f0eded",
+              "surface-container-high": "#eae7e7",
+              "surface-container-highest": "#e5e2e1",
+              "surface-variant": "#e5e2e1",
+              "on-surface": "#1c1b1b",
+              "on-surface-variant": "#424751",
+              outline: "#727783",
+              "outline-variant": "#c2c6d3",
+            },
+            fontFamily: {
+              display: ["Anybody", "sans-serif"],
+              body: ["Plus Jakarta Sans", "sans-serif"],
+              label: ["Space Grotesk", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+
     <link rel="stylesheet" href="./styles.css" />
     <script type="module" src="./app.js"></script>
   </head>
-  <body>
-    <div class="app-shell">
-      <header class="topbar">
-        <div class="brand-block">
-          <p class="eyebrow">Panini FIFA World Cup 2026</p>
-          <h1>WC2026 Collector</h1>
-          <p class="topbar__subtitle">Edición Alemania · álbum sincronizado con Supabase</p>
+  <body class="bg-background text-on-background font-body antialiased min-h-screen flex flex-col">
+    <!-- TOP NAV -->
+    <nav
+      class="fixed top-0 left-0 right-0 z-40 bg-surface border-b border-outline-variant shadow-sm h-20 px-4 md:px-10 flex items-center justify-between"
+    >
+      <div class="flex items-center gap-8 min-w-0">
+        <span class="font-display text-2xl md:text-3xl font-black text-primary tracking-tight whitespace-nowrap">
+          WC2026 Collector
+        </span>
+        <div id="section-tabs" class="hidden lg:flex gap-6"></div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="relative hidden sm:block">
+          <input
+            id="query-input"
+            type="search"
+            placeholder="Buscar país, jugador, número…"
+            class="pl-10 pr-4 py-2 bg-surface-container rounded-full border-none focus:ring-2 focus:ring-primary text-sm w-56 md:w-72"
+          />
+          <span class="material-symbols-outlined absolute left-3 top-2.5 text-outline text-[20px]">search</span>
         </div>
-        <div class="topbar__actions">
-          <div class="status-cluster">
-            <span id="config-status" class="status-pill">Supabase sin configurar</span>
-            <span id="sync-status" class="status-pill status-pill--dark">Sincronizado</span>
-          </div>
-          <button id="auth-trigger" class="button button--primary">Configurar</button>
-          <button id="sign-out-button" class="button button--ghost" hidden>Cerrar sesión</button>
-        </div>
-      </header>
 
-      <main class="layout">
-        <aside class="sidebar sidebar--left">
-          <section class="panel panel--hero">
-            <p class="eyebrow">Prototipo Stitch</p>
-            <h2>Planilla de control con energía de app moderna</h2>
-            <p>
-              Navega por grupos, selecciones o páginas reales del álbum y sincroniza
-              tu progreso entre dispositivos.
-            </p>
-            <div id="hero-stats" class="hero-stats"></div>
-          </section>
+        <span id="sync-status" class="hidden md:inline-flex items-center gap-1 text-xs font-label text-on-surface-variant px-2 py-1">
+          <span class="w-2 h-2 rounded-full bg-secondary"></span>
+          Sincronizado
+        </span>
+        <span id="config-status" hidden></span>
 
-          <section class="panel">
-            <div class="panel__header">
-              <h3>Secciones</h3>
-              <span class="panel__hint">principal</span>
-            </div>
-            <nav id="section-tabs" class="nav-stack"></nav>
-          </section>
+        <button
+          id="auth-trigger"
+          class="bg-primary text-on-primary font-label text-sm font-bold px-4 py-2 rounded-full hover:bg-primary-container transition-colors shadow-sm"
+        >
+          Iniciar sesión
+        </button>
+        <button
+          id="sign-out-button"
+          class="hidden md:inline-flex text-on-surface-variant hover:text-primary p-2 rounded-full transition-colors"
+          hidden
+          title="Cerrar sesión"
+        >
+          <span class="material-symbols-outlined">logout</span>
+        </button>
+      </div>
+    </nav>
 
-          <section class="panel">
-            <div class="panel__header">
-              <h3>Filtros</h3>
-              <span class="panel__hint">rápidos</span>
-            </div>
-            <div id="filter-chips" class="chip-grid"></div>
-          </section>
-        </aside>
-
-        <section class="workspace">
-          <section class="workspace-head">
+    <!-- LAYOUT -->
+    <div class="pt-20 pb-24 lg:pb-0 flex flex-1 min-h-0">
+      <!-- MAIN -->
+      <main class="flex-1 overflow-y-auto pitch-bg min-h-0">
+        <div class="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-8">
+          <!-- HEADER CARD -->
+          <header class="bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-sm p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
-              <p class="eyebrow">Álbum oficial</p>
-              <h2 id="section-title">Todos los cromos</h2>
+              <p class="font-label text-xs text-on-surface-variant uppercase tracking-wider">Panini FIFA World Cup 2026</p>
+              <h1 id="section-title" class="font-display text-3xl md:text-5xl font-black text-primary tracking-tight mt-1">
+                Todos los cromos
+              </h1>
+              <p id="results-count" class="text-on-surface-variant mt-2 text-sm">0 stickers visibles</p>
             </div>
-            <strong id="results-count" class="results-count">0 stickers visibles</strong>
-          </section>
-
-          <section id="read-only-banner" class="banner" data-tone="muted"></section>
-
-          <section class="control-strip">
-            <label class="field">
-              <span>Buscar</span>
-              <input id="query-input" type="search" placeholder="País, nombre, número, tipo..." />
-            </label>
-            <label class="field">
-              <span>Agrupar por</span>
-              <select id="view-mode">
-                <option value="group">Grupo</option>
-                <option value="selection">Selección</option>
-                <option value="page">Página</option>
-              </select>
-            </label>
-            <label class="field">
-              <span>Grupo</span>
-              <select id="group-select"></select>
-            </label>
-            <label class="field">
-              <span>Selección</span>
-              <select id="team-select"></select>
-            </label>
-            <label class="field">
-              <span>Página</span>
-              <select id="page-select"></select>
-            </label>
-          </section>
-
-          <section id="collection-content" class="content-board"></section>
-        </section>
-
-        <aside class="sidebar sidebar--right">
-          <section class="panel">
-            <div class="panel__header">
-              <h3>Estadísticas</h3>
-              <span class="panel__hint">en vivo</span>
+            <div class="w-full md:w-80">
+              <div class="flex justify-between text-xs font-label font-bold mb-1.5">
+                <span class="text-on-surface-variant uppercase tracking-wider">Progreso global</span>
+                <span id="progress-percent" class="text-primary">0%</span>
+              </div>
+              <div class="h-3 bg-surface-variant rounded-full overflow-hidden">
+                <div id="progress-bar" class="h-full bg-primary transition-all duration-500" style="width: 0%"></div>
+              </div>
+              <p id="progress-detail" class="text-xs text-on-surface-variant mt-1.5 text-right">0 / 0 stickers</p>
             </div>
-            <div id="stats-summary" class="metric-grid"></div>
-          </section>
+          </header>
 
-          <section class="panel">
-            <div class="panel__header">
-              <h3>Acciones</h3>
-              <span class="panel__hint">usuario</span>
-            </div>
-            <div class="action-stack">
-              <button id="download-missing-pdf" class="button button--secondary">
-                Descargar PDF de faltantes
-              </button>
-              <button id="download-repeated-pdf" class="button button--secondary">
-                Descargar PDF de repetidos
-              </button>
-              <button id="open-auth" class="button button--ghost">
-                Iniciar sesión / registro
-              </button>
-              <button id="open-config" class="button button--ghost">
-                Configurar Supabase
-              </button>
-              <button id="reset-album" class="button button--danger">
-                Reiniciar progreso
-              </button>
+          <!-- BANNER -->
+          <div id="read-only-banner" class="banner" data-tone="muted"></div>
+
+          <!-- CONTROLS -->
+          <section class="bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-sm p-4 md:p-6 space-y-4">
+            <div id="filter-chips" class="flex flex-wrap gap-2"></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <label class="flex flex-col gap-1 text-xs font-label font-bold uppercase tracking-wider text-on-surface-variant">
+                Agrupar por
+                <select
+                  id="view-mode"
+                  class="bg-surface-container border border-outline-variant rounded-lg px-3 py-2 text-sm font-body font-medium text-on-surface focus:ring-2 focus:ring-primary focus:border-primary"
+                >
+                  <option value="group">Grupo</option>
+                  <option value="selection">Selección</option>
+                  <option value="page">Página</option>
+                </select>
+              </label>
+              <label class="flex flex-col gap-1 text-xs font-label font-bold uppercase tracking-wider text-on-surface-variant">
+                Grupo
+                <select id="group-select" class="bg-surface-container border border-outline-variant rounded-lg px-3 py-2 text-sm font-body font-medium text-on-surface focus:ring-2 focus:ring-primary focus:border-primary"></select>
+              </label>
+              <label class="flex flex-col gap-1 text-xs font-label font-bold uppercase tracking-wider text-on-surface-variant">
+                Selección
+                <select id="team-select" class="bg-surface-container border border-outline-variant rounded-lg px-3 py-2 text-sm font-body font-medium text-on-surface focus:ring-2 focus:ring-primary focus:border-primary"></select>
+              </label>
+              <label class="flex flex-col gap-1 text-xs font-label font-bold uppercase tracking-wider text-on-surface-variant">
+                Página
+                <select id="page-select" class="bg-surface-container border border-outline-variant rounded-lg px-3 py-2 text-sm font-body font-medium text-on-surface focus:ring-2 focus:ring-primary focus:border-primary"></select>
+              </label>
             </div>
           </section>
 
-          <section class="panel panel--note">
-            <p>
-              Modo sin cuenta: solo lectura. Para editar stickers y sincronizar progreso,
-              configura Supabase e inicia sesión.
-            </p>
-          </section>
-        </aside>
+          <!-- CONTENT -->
+          <section id="collection-content" class="space-y-10"></section>
+        </div>
       </main>
 
-      <nav id="mobile-nav" class="mobile-nav"></nav>
+      <!-- RIGHT STATS -->
+      <aside class="hidden xl:flex flex-col w-80 bg-surface border-l border-outline-variant p-6 space-y-6 overflow-y-auto shadow-[-4px_0_15px_rgba(0,0,0,0.03)]">
+        <div>
+          <h3 class="font-display text-2xl font-bold text-primary mb-4">Estadísticas</h3>
+          <div id="stats-summary" class="grid grid-cols-2 gap-3"></div>
+        </div>
+
+        <div class="border-t border-outline-variant pt-6 space-y-3">
+          <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Acciones</h4>
+          <button
+            id="download-missing-pdf"
+            class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-surface-container text-on-surface rounded-xl text-sm font-label font-bold hover:bg-surface-variant transition-colors"
+          >
+            <span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+            PDF de faltantes
+          </button>
+          <button
+            id="download-repeated-pdf"
+            class="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-surface-container text-on-surface rounded-xl text-sm font-label font-bold hover:bg-surface-variant transition-colors"
+          >
+            <span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+            PDF de repetidos
+          </button>
+          <button
+            id="open-auth"
+            class="w-full flex items-center justify-center gap-2 py-2.5 px-4 text-primary rounded-xl text-sm font-label font-bold hover:bg-surface-container transition-colors"
+          >
+            <span class="material-symbols-outlined text-[20px]">login</span>
+            Iniciar sesión / registro
+          </button>
+          <button
+            id="reset-album"
+            class="w-full flex items-center justify-center gap-2 py-2.5 px-4 text-error rounded-xl text-sm font-label font-bold hover:bg-error-container transition-colors"
+          >
+            <span class="material-symbols-outlined text-[20px]">restart_alt</span>
+            Reiniciar progreso
+          </button>
+        </div>
+
+        <p class="text-[10px] text-outline text-center mt-auto pt-4 border-t border-outline-variant">
+          Tu progreso se sincroniza en la nube cuando inicias sesión.
+        </p>
+      </aside>
     </div>
 
-    <div id="auth-modal" class="modal" hidden>
-      <div class="modal__dialog">
-        <button class="modal__close" data-modal-close data-modal-close-target="#auth-modal">×</button>
-        <p class="eyebrow">Cuenta</p>
-        <h3 id="auth-title">Iniciar sesión</h3>
-        <form id="auth-form" class="modal__form">
-          <label class="field">
-            <span>Email</span>
-            <input id="auth-email" type="email" autocomplete="email" required />
+    <!-- MOBILE BOTTOM NAV -->
+    <nav
+      id="mobile-nav"
+      class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface border-t border-outline-variant shadow-[0_-4px_12px_rgba(0,0,0,0.06)] px-2 py-2 grid grid-cols-6 gap-1"
+    ></nav>
+
+    <!-- AUTH MODAL -->
+    <div id="auth-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden items-center justify-center p-4" hidden>
+      <div class="bg-surface-container-lowest rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
+        <button
+          class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container hover:bg-surface-variant flex items-center justify-center text-on-surface-variant"
+          data-modal-close
+          data-modal-close-target="#auth-modal"
+        >
+          ×
+        </button>
+        <p class="font-label text-xs uppercase tracking-wider text-on-surface-variant mb-1">Cuenta</p>
+        <h3 id="auth-title" class="font-display text-2xl font-bold text-primary mb-4">Iniciar sesión</h3>
+        <form id="auth-form" class="space-y-4">
+          <label class="flex flex-col gap-1.5">
+            <span class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Email</span>
+            <input
+              id="auth-email"
+              type="email"
+              autocomplete="email"
+              required
+              class="bg-surface-container border border-outline-variant rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary"
+            />
           </label>
-          <label class="field">
-            <span>Contraseña</span>
-            <input id="auth-password" type="password" autocomplete="current-password" minlength="6" required />
+          <label class="flex flex-col gap-1.5">
+            <span class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Contraseña</span>
+            <input
+              id="auth-password"
+              type="password"
+              autocomplete="current-password"
+              minlength="6"
+              required
+              class="bg-surface-container border border-outline-variant rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary"
+            />
           </label>
-          <button id="auth-submit" class="button button--primary" type="submit">Entrar</button>
+          <button
+            id="auth-submit"
+            type="submit"
+            class="w-full bg-primary text-on-primary font-label font-bold py-3 rounded-xl hover:bg-primary-container transition-colors"
+          >
+            Entrar
+          </button>
         </form>
-        <button id="toggle-auth-mode" class="button button--ghost button--full">
+        <button
+          id="toggle-auth-mode"
+          class="w-full mt-3 text-sm text-on-surface-variant hover:text-primary py-2 transition-colors"
+        >
           ¿No tienes cuenta? Regístrate
         </button>
       </div>
     </div>
 
-    <div id="config-modal" class="modal" hidden>
-      <div class="modal__dialog">
-        <button class="modal__close" data-modal-close data-modal-close-target="#config-modal">×</button>
-        <p class="eyebrow">Supabase</p>
-        <h3>Conecta tu proyecto</h3>
-        <form id="config-form" class="modal__form">
-          <label class="field">
-            <span>Project URL</span>
-            <input id="supabase-url" type="url" placeholder="https://tu-proyecto.supabase.co" required />
-          </label>
-          <label class="field">
-            <span>Anon key</span>
-            <textarea id="supabase-anon-key" rows="4" placeholder="sb_publishable_..." required></textarea>
-          </label>
-          <button class="button button--primary" type="submit">Guardar configuración</button>
-        </form>
-      </div>
-    </div>
-
-    <div id="toast" class="toast"></div>
+    <!-- TOAST -->
+    <div
+      id="toast"
+      class="fixed bottom-24 lg:bottom-6 left-1/2 -translate-x-1/2 bg-on-surface text-surface px-4 py-3 rounded-xl shadow-lg text-sm font-medium opacity-0 pointer-events-none transition-opacity z-50"
+    ></div>
   </body>
 </html>

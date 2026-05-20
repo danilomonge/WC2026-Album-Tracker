@@ -19,6 +19,24 @@ const SECTION_LABELS = {
   stats: "Estadísticas",
 };
 
+const SECTION_ICONS = {
+  all: "menu_book",
+  repetidos: "swap_horiz",
+  faltantes: "star_outline",
+  especiales: "auto_awesome",
+  "coca-cola": "local_drink",
+  stats: "query_stats",
+};
+
+const SECTION_SHORT = {
+  all: "Álbum",
+  repetidos: "Repetidos",
+  faltantes: "Faltan",
+  especiales: "Especiales",
+  "coca-cola": "Coca",
+  stats: "Stats",
+};
+
 const FILTER_LABELS = {
   todos: "Todos",
   obtenidos: "Obtenidos",
@@ -541,10 +559,7 @@ async function loadRemoteProgress() {
   state.isSyncing = false;
 
   if (error) {
-    setBannerMessage(
-      "No pudimos sincronizar tu progreso con Supabase. Revisa la tabla `user_sticker_progress` y las políticas RLS.",
-      "warning",
-    );
+    setBannerMessage("No pudimos sincronizar tu progreso. Intenta de nuevo en unos segundos.", "warning");
     state.stickers = state.catalog;
     renderStatus();
     return;
@@ -592,7 +607,7 @@ async function persistSticker(sticker) {
   renderStatus();
 
   if (error) {
-    showToast("No se pudo guardar en Supabase.");
+    showToast("No se pudo guardar tu cambio. Intenta de nuevo.");
     return false;
   }
 
@@ -669,101 +684,89 @@ function renderSelectOptions() {
 }
 
 function renderSectionTabs() {
-  const sections = Object.entries(SECTION_LABELS)
+  const desktopTabs = Object.entries(SECTION_LABELS)
     .map(
       ([value, label]) => `
-        <button class="nav-link ${state.section === value ? "is-active" : ""}" data-section="${value}">
+        <button class="section-tab ${state.section === value ? "is-active" : ""}" data-section="${value}">
           ${escapeHtml(label)}
         </button>
       `,
     )
     .join("");
 
-  document.querySelector("#section-tabs").innerHTML = sections;
-  document.querySelector("#mobile-nav").innerHTML = sections;
+  const mobileTabs = Object.entries(SECTION_LABELS)
+    .map(
+      ([value, label]) => `
+        <button class="mobile-tab ${state.section === value ? "is-active" : ""}" data-section="${value}" title="${escapeHtml(label)}">
+          <span class="material-symbols-outlined">${SECTION_ICONS[value]}</span>
+          <span>${escapeHtml(SECTION_SHORT[value])}</span>
+        </button>
+      `,
+    )
+    .join("");
+
+  document.querySelector("#section-tabs").innerHTML = desktopTabs;
+  document.querySelector("#mobile-nav").innerHTML = mobileTabs;
 }
 
 function renderStatus() {
   const authButton = document.querySelector("#auth-trigger");
   const signOutButton = document.querySelector("#sign-out-button");
   const syncStatus = document.querySelector("#sync-status");
-  const configStatus = document.querySelector("#config-status");
 
-  if (!state.config.url || !state.config.anonKey) {
-    configStatus.textContent = "Supabase sin configurar";
-    authButton.textContent = "Configurar";
-    signOutButton.hidden = true;
-    setBannerMessage(
-      "La app está en modo lectura. Abre la configuración de Supabase para activar inicio de sesión y sincronización entre dispositivos.",
-      "warning",
-    );
-  } else if (!isAuthRuntimeAvailable()) {
-    configStatus.textContent = "Modo archivo";
+  if (!isAuthRuntimeAvailable()) {
     authButton.textContent = "Solo lectura";
     signOutButton.hidden = true;
     setBannerMessage(
-      "Abriste la app como archivo local. La exploración funciona, pero para iniciar sesión con Supabase necesitas usar http://localhost o GitHub Pages.",
+      "Abre la app desde un servidor (http://localhost o GitHub Pages) para iniciar sesión.",
       "warning",
     );
   } else if (!state.session) {
-    configStatus.textContent = "Supabase listo";
     authButton.textContent = "Iniciar sesión";
     signOutButton.hidden = true;
     setBannerMessage(
-      "Modo lectura activo. Puedes explorar todo el álbum, pero necesitas iniciar sesión para marcar cromos, generar PDFs personales y sincronizar tu progreso.",
+      "Modo lectura. Inicia sesión para marcar cromos, generar PDFs y sincronizar tu progreso entre dispositivos.",
       "muted",
     );
   } else {
-    configStatus.textContent = state.session.user.email;
-    authButton.textContent = "Cuenta";
+    authButton.textContent = state.session.user.email.split("@")[0];
     signOutButton.hidden = false;
-    setBannerMessage(
-      `Sincronización activa para ${state.session.user.email}. Tus cambios se guardan en Supabase y se reflejan en todos tus dispositivos.`,
-      "success",
-    );
+    setBannerMessage("", "success");
   }
 
-  syncStatus.textContent = state.isSyncing ? "Sincronizando..." : "Sincronizado";
+  syncStatus.innerHTML = state.isSyncing
+    ? '<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Sincronizando…'
+    : '<span class="w-2 h-2 rounded-full bg-secondary"></span> Sincronizado';
 }
 
 function renderOverview(stats) {
-  document.querySelector("#hero-stats").innerHTML = `
-    <article class="hero-stat">
-      <span class="hero-stat__label">Edición</span>
-      <strong>${escapeHtml(ALBUM_METADATA.edition.toUpperCase())}</strong>
-    </article>
-    <article class="hero-stat">
-      <span class="hero-stat__label">Total stickers</span>
-      <strong>${escapeHtml(stats.total)}</strong>
-    </article>
-    <article class="hero-stat">
-      <span class="hero-stat__label">Coca-Cola</span>
-      <strong>${escapeHtml(stats.cocaCola.total)}</strong>
-    </article>
-    <article class="hero-stat">
-      <span class="hero-stat__label">Páginas de selecciones</span>
-      <strong>${escapeHtml(ALBUM_METADATA.firstTeamPage)}-${escapeHtml(ALBUM_METADATA.lastTeamPage)}</strong>
-    </article>
-  `;
+  const pct = stats.porcentaje.toFixed(1);
+
+  const percentEl = document.querySelector("#progress-percent");
+  const barEl = document.querySelector("#progress-bar");
+  const detailEl = document.querySelector("#progress-detail");
+  if (percentEl) percentEl.textContent = `${pct}%`;
+  if (barEl) barEl.style.width = `${pct}%`;
+  if (detailEl) detailEl.textContent = `${stats.obtenidos} / ${stats.total} stickers`;
 
   document.querySelector("#stats-summary").innerHTML = `
-    <article class="metric-card">
-      <span>Completado</span>
-      <strong>${escapeHtml(stats.porcentaje.toFixed(1))}%</strong>
-      <small>${stats.obtenidos} de ${stats.total}</small>
+    <article class="metric-card tone-success">
+      <span>Obtenidos</span>
+      <strong>${escapeHtml(stats.obtenidos)}</strong>
+      <small>${escapeHtml(pct)}% del álbum</small>
     </article>
-    <article class="metric-card">
+    <article class="metric-card tone-error">
       <span>Faltantes</span>
       <strong>${escapeHtml(stats.faltantes)}</strong>
-      <small>base + especiales + Coca-Cola</small>
+      <small>aún por pegar</small>
     </article>
     <article class="metric-card">
       <span>Repetidos</span>
       <strong>${escapeHtml(stats.repetidos)}</strong>
-      <small>totales registrados</small>
+      <small>disponibles para cambio</small>
     </article>
-    <article class="metric-card metric-card--coke">
-      <span>Coca-Cola Alemania</span>
+    <article class="metric-card tone-coke">
+      <span>Coca-Cola</span>
       <strong>${escapeHtml(stats.cocaCola.obtenidos)}/${escapeHtml(stats.cocaCola.total)}</strong>
       <small>${escapeHtml(stats.cocaCola.repetidos)} repetidos</small>
     </article>
@@ -775,24 +778,32 @@ function renderStickerCard(sticker) {
   const statusClass = sticker.obtenido ? "is-owned" : "is-missing";
   const specialClass = isSpecialSticker(sticker) ? " is-special" : "";
   const cokeClass = isCocaColaSticker(sticker) ? " is-coke" : "";
-  const subtitle = [sticker.tipo, sticker.categoriaEspecial].filter(Boolean).join(" · ");
+  const accent = sticker.colorPais || sticker.colorGrupo || "#c2c6d3";
+  const typePill = sticker.tipo && sticker.tipo !== "Normal"
+    ? `<span class="type-pill">${escapeHtml(sticker.tipo)}</span>`
+    : "";
 
   return `
     <article
       class="sticker-card ${statusClass}${specialClass}${cokeClass}${authClass}"
       data-sticker-id="${sticker.id}"
       data-group="${sticker.grupo}"
-      style="--group-accent:${sticker.colorGrupo}"
+      style="--team-accent:${accent};--group-accent:${sticker.colorGrupo}"
     >
-      <button class="sticker-card__surface" data-action="toggle-sticker" data-sticker-id="${sticker.id}">
-        ${sticker.repetidos > 0 ? `<span class="sticker-card__badge">+${escapeHtml(sticker.repetidos)}</span>` : ""}
-        ${isCocaColaSticker(sticker) ? '<span class="sticker-card__tag">Coca-Cola</span>' : ""}
-        <span class="sticker-card__number">${escapeHtml(sticker.numero)}</span>
-        <strong class="sticker-card__name">${escapeHtml(sticker.nombre)}</strong>
-        <span class="sticker-card__meta">${escapeHtml(sticker.pais)}</span>
-        <span class="sticker-card__meta">${escapeHtml(subtitle || `Pág. ${sticker.pagina}`)}</span>
+      <button type="button" class="sticker-card__surface" data-action="toggle-sticker" data-sticker-id="${sticker.id}">
+        <div class="sticker-card__top">
+          ${typePill}
+          <span class="number-plate">${escapeHtml(sticker.numero)}</span>
+          <span class="page-pill">P${escapeHtml(sticker.pagina)}</span>
+          ${isCocaColaSticker(sticker) ? '<span class="sticker-card__tag">Coca-Cola</span>' : ""}
+        </div>
+        <div class="sticker-card__bottom">
+          <span class="sticker-card__id">${escapeHtml(sticker.id)}</span>
+          <strong class="sticker-card__name">${escapeHtml(sticker.nombre)}</strong>
+        </div>
       </button>
-      <button class="sticker-card__remove" data-action="correct-sticker" data-sticker-id="${sticker.id}" aria-label="Corregir sticker">
+      ${sticker.repetidos > 0 ? `<span class="sticker-card__badge">+${escapeHtml(sticker.repetidos)}</span>` : ""}
+      <button type="button" class="sticker-card__remove" data-action="correct-sticker" data-sticker-id="${sticker.id}" aria-label="Corregir sticker">
         −
       </button>
     </article>
@@ -806,7 +817,7 @@ function renderCollectionView(stickers) {
   if (!groups.length) {
     content.innerHTML = `
       <section class="empty-state">
-        <h3>No encontramos stickers para esta vista.</h3>
+        <h3>No hay stickers para esta vista</h3>
         <p>Prueba con otro filtro, cambia la agrupación o limpia la búsqueda.</p>
       </section>
     `;
@@ -816,24 +827,29 @@ function renderCollectionView(stickers) {
   content.innerHTML = groups
     .map((group) => {
       const obtained = group.stickers.filter((sticker) => sticker.obtenido).length;
-      const progress = group.stickers.length
-        ? (obtained / group.stickers.length) * 100
-        : 0;
+      const firstSticker = group.stickers[0];
+      const accent = group.accent || firstSticker?.colorGrupo || "#003e7a";
+      const teamAccent = firstSticker?.colorPais || accent;
+
+      const isTeamMode = state.viewMode === "selection";
+      const header = isTeamMode
+        ? `
+          <div class="team-header">
+            <div class="team-flag" style="--team-accent:${teamAccent}"></div>
+            <h3>${escapeHtml(group.label)}</h3>
+            <span class="team-progress">${escapeHtml(obtained)} / ${escapeHtml(group.stickers.length)}</span>
+          </div>
+        `
+        : `
+          <div class="group-header" style="--group-accent:${accent}">
+            <h2>${escapeHtml(group.label)}</h2>
+            <span class="team-progress">${escapeHtml(obtained)} / ${escapeHtml(group.stickers.length)}</span>
+          </div>
+        `;
 
       return `
         <section class="board-section">
-          <header class="board-section__header" style="--group-accent:${group.accent}">
-            <div>
-              <p class="eyebrow">Agrupación</p>
-              <h3>${escapeHtml(group.label)}</h3>
-            </div>
-            <div class="board-section__progress">
-              <strong>${escapeHtml(obtained)}/${escapeHtml(group.stickers.length)}</strong>
-              <div class="progress-bar">
-                <span style="width:${progress.toFixed(1)}%"></span>
-              </div>
-            </div>
-          </header>
+          ${header}
           <div class="sticker-grid">
             ${group.stickers.map(renderStickerCard).join("")}
           </div>
@@ -938,12 +954,6 @@ async function handleAuthSubmit(event) {
   const email = document.querySelector("#auth-email").value.trim();
   const password = document.querySelector("#auth-password").value.trim();
 
-  if (!state.config.url || !state.config.anonKey) {
-    showToast("Configura Supabase antes de iniciar sesión.");
-    openModal("#config-modal");
-    return;
-  }
-
   if (!isAuthRuntimeAvailable()) {
     showToast("El login requiere abrir la app desde localhost o GitHub Pages.");
     return;
@@ -968,7 +978,7 @@ async function handleAuthSubmit(event) {
   closeModal("#auth-modal");
   showToast(
     state.authMode === "register"
-      ? "Cuenta creada. Revisa tu correo si Supabase pide confirmación."
+      ? "Cuenta creada. Revisa tu correo si te pide confirmar."
       : "Sesión iniciada.",
   );
 }
@@ -1114,9 +1124,7 @@ function bindEvents() {
     }
 
     if (event.target.closest("#auth-trigger")) {
-      if (!state.config.url || !state.config.anonKey) {
-        openModal("#config-modal");
-      } else if (!isAuthRuntimeAvailable()) {
+      if (!isAuthRuntimeAvailable()) {
         showToast("Usa localhost o GitHub Pages para iniciar sesión.");
       } else if (state.session) {
         showToast(`Conectado como ${state.session.user.email}`);
@@ -1133,11 +1141,6 @@ function bindEvents() {
 
     if (event.target.closest("[data-modal-close]")) {
       closeModal(event.target.closest("[data-modal-close]").dataset.modalCloseTarget);
-      return;
-    }
-
-    if (event.target.closest("#open-config")) {
-      openModal("#config-modal");
       return;
     }
 
@@ -1205,39 +1208,10 @@ function bindEvents() {
   });
 
   document.querySelector("#auth-form").addEventListener("submit", handleAuthSubmit);
-
-  document.querySelector("#config-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const nextConfig = {
-      url: document.querySelector("#supabase-url").value.trim(),
-      anonKey: document.querySelector("#supabase-anon-key").value.trim(),
-    };
-    const validation = validateSupabaseConfig(nextConfig);
-    if (!validation.valid) {
-      showToast(validation.message);
-      return;
-    }
-
-    state.config = nextConfig;
-    saveConfig(state.config);
-    if (state.authSubscription) {
-      state.authSubscription.unsubscribe();
-      state.authSubscription = null;
-    }
-    state.supabase = null;
-    state.session = null;
-    await ensureSupabaseClient();
-    await loadRemoteProgress();
-    closeModal("#config-modal");
-    renderApp();
-    showToast("Configuración de Supabase guardada.");
-  });
 }
 
 async function hydrateApp() {
   loadViewState();
-  document.querySelector("#supabase-url").value = state.config.url || "";
-  document.querySelector("#supabase-anon-key").value = state.config.anonKey || "";
   bindEvents();
   await ensureSupabaseClient();
   await loadRemoteProgress();
