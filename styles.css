@@ -141,6 +141,7 @@
   gap: 16px;
   position: relative;
   overflow: hidden;
+  margin-bottom: 4px;
 }
 .group-header::before {
   content: "";
@@ -150,6 +151,12 @@
   bottom: 0;
   width: 6px;
   background: var(--group-accent, #003e7a);
+}
+.group-header__left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
 }
 .group-header h2 {
   font-family: "Anybody", sans-serif;
@@ -164,7 +171,7 @@
   gap: 6px;
   flex-wrap: wrap;
 }
-.group-header .group-codes span {
+.team-code-pill {
   font-family: "Space Grotesk", sans-serif;
   font-weight: 700;
   font-size: 11px;
@@ -173,6 +180,17 @@
   border: 1px solid #c2c6d3;
   padding: 3px 10px;
   border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+/* ---------- Team sub-section ---------- */
+.team-subsection {
+  padding: 16px 0 8px;
+  border-bottom: 1px solid #e5e2e1;
+}
+.team-subsection:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 /* ---------- Selection (team) header ---------- */
@@ -180,8 +198,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 4px 12px;
-  border-bottom: 1px solid #c2c6d3;
+  padding: 6px 4px 12px;
   margin-bottom: 14px;
 }
 .team-header .team-flag {
@@ -200,7 +217,31 @@
   color: #1c1b1b;
   margin: 0;
 }
-.team-header .team-progress {
+.team-header__info {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.team-header__code {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: #727783;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.team-header__label {
+  font-family: "Anybody", sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: #1c1b1b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.team-header .team-progress,
+.group-header .team-progress {
   margin-left: auto;
   font-family: "Space Grotesk", sans-serif;
   font-weight: 700;
@@ -209,6 +250,8 @@
   background: #eae7e7;
   padding: 4px 12px;
   border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* ---------- Sticker grid ---------- */

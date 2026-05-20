@@ -810,11 +810,89 @@ function renderStickerCard(sticker) {
   `;
 }
 
+function renderGroupedByGroupAndTeam(stickers) {
+  const sorted = sortStickers(stickers);
+
+  const groupMap = new Map();
+  sorted.forEach((sticker) => {
+    const groupKey = sticker.grupo;
+    if (!groupMap.has(groupKey)) groupMap.set(groupKey, new Map());
+    const teamMap = groupMap.get(groupKey);
+    const teamKey = sticker.pais;
+    if (!teamMap.has(teamKey)) teamMap.set(teamKey, []);
+    teamMap.get(teamKey).push(sticker);
+  });
+
+  return [...groupMap.entries()]
+    .map(([groupKey, teamMap]) => {
+      const groupInfo = GROUPS.find((g) => g.letter === groupKey);
+      const groupColor = groupInfo?.color || "#003e7a";
+      const groupLabel =
+        groupKey === "Especiales"
+          ? "Especiales FWC"
+          : groupKey === "Coca-Cola"
+            ? "Coca-Cola Germany"
+            : `Grupo ${groupKey}`;
+
+      const allGroupStickers = [...teamMap.values()].flat();
+      const groupObtained = allGroupStickers.filter((s) => s.obtenido).length;
+
+      const teamPills = groupInfo?.teams
+        ? groupInfo.teams
+            .map(
+              (t) =>
+                `<span class="team-code-pill" style="--team-accent:${GROUPS.find((g) => g.letter === groupKey)?.color || "#003e7a"}">${escapeHtml(t.code)}</span>`,
+            )
+            .join("")
+        : "";
+
+      const teamSections = [...teamMap.entries()]
+        .map(([teamKey, teamStickers]) => {
+          const obtained = teamStickers.filter((s) => s.obtenido).length;
+          const first = teamStickers[0];
+          const teamAccent = first?.colorPais || groupColor;
+          const teamCode = first?.equipoCodigo || "";
+          const teamPage = first?.paginaInicioSeleccion;
+          const pageLabel = teamPage ? ` · Pág. ${teamPage}` : "";
+
+          return `
+            <div class="team-subsection">
+              <div class="team-header">
+                <div class="team-flag" style="--team-accent:${teamAccent}"></div>
+                <div class="team-header__info">
+                  ${teamCode ? `<span class="team-header__code">${escapeHtml(teamCode)}</span>` : ""}
+                  <span class="team-header__label">${escapeHtml(teamKey)}${pageLabel}</span>
+                </div>
+                <span class="team-progress">${obtained} / ${teamStickers.length}</span>
+              </div>
+              <div class="sticker-grid">
+                ${teamStickers.map(renderStickerCard).join("")}
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+
+      return `
+        <section class="board-section">
+          <div class="group-header" style="--group-accent:${groupColor}">
+            <div class="group-header__left">
+              <h2>${escapeHtml(groupLabel)}</h2>
+              ${teamPills ? `<div class="group-codes">${teamPills}</div>` : ""}
+            </div>
+            <span class="team-progress">${groupObtained} / ${allGroupStickers.length}</span>
+          </div>
+          ${teamSections}
+        </section>
+      `;
+    })
+    .join("");
+}
+
 function renderCollectionView(stickers) {
   const content = document.querySelector("#collection-content");
-  const groups = groupStickers(stickers, state.viewMode);
 
-  if (!groups.length) {
+  if (!stickers.length) {
     content.innerHTML = `
       <section class="empty-state">
         <h3>No hay stickers para esta vista</h3>
@@ -824,32 +902,25 @@ function renderCollectionView(stickers) {
     return;
   }
 
+  if (state.viewMode === "group") {
+    content.innerHTML = renderGroupedByGroupAndTeam(stickers);
+    return;
+  }
+
+  const groups = groupStickers(stickers, state.viewMode);
   content.innerHTML = groups
     .map((group) => {
       const obtained = group.stickers.filter((sticker) => sticker.obtenido).length;
       const firstSticker = group.stickers[0];
-      const accent = group.accent || firstSticker?.colorGrupo || "#003e7a";
-      const teamAccent = firstSticker?.colorPais || accent;
+      const teamAccent = firstSticker?.colorPais || firstSticker?.colorGrupo || "#003e7a";
 
-      const isTeamMode = state.viewMode === "selection";
-      const header = isTeamMode
-        ? `
+      return `
+        <section class="board-section">
           <div class="team-header">
             <div class="team-flag" style="--team-accent:${teamAccent}"></div>
             <h3>${escapeHtml(group.label)}</h3>
             <span class="team-progress">${escapeHtml(obtained)} / ${escapeHtml(group.stickers.length)}</span>
           </div>
-        `
-        : `
-          <div class="group-header" style="--group-accent:${accent}">
-            <h2>${escapeHtml(group.label)}</h2>
-            <span class="team-progress">${escapeHtml(obtained)} / ${escapeHtml(group.stickers.length)}</span>
-          </div>
-        `;
-
-      return `
-        <section class="board-section">
-          ${header}
           <div class="sticker-grid">
             ${group.stickers.map(renderStickerCard).join("")}
           </div>
