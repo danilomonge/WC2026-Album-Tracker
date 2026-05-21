@@ -188,13 +188,13 @@
       </main>
 
       <!-- RIGHT STATS -->
-      <aside class="hidden xl:flex flex-col w-80 bg-surface border-l border-outline-variant p-6 space-y-6 overflow-y-auto shadow-[-4px_0_15px_rgba(0,0,0,0.03)]">
-        <div>
-          <h3 class="font-display text-2xl font-bold text-primary mb-4">Estadísticas</h3>
-          <div id="stats-summary" class="grid grid-cols-2 gap-3"></div>
-        </div>
+      <aside class="hidden xl:flex flex-col self-start sticky top-28 w-80 min-h-[calc(100vh-7rem)] bg-surface border-l border-outline-variant p-6 shadow-[-4px_0_15px_rgba(0,0,0,0.03)]">
+        <div class="flex min-h-[calc(100vh-7rem)] flex-col justify-between gap-6">
+          <div>
+            <h3 class="font-display text-2xl font-bold text-primary mb-4">Estadísticas</h3>
+            <div id="stats-summary" class="grid grid-cols-2 gap-3"></div>
 
-        <div class="border-t border-outline-variant pt-6 space-y-3">
+            <div class="border-t border-outline-variant pt-6 mt-6 space-y-3">
           <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Acciones</h4>
           <button
             id="download-missing-pdf"
@@ -224,11 +224,12 @@
             <span class="material-symbols-outlined text-[20px]">restart_alt</span>
             Reiniciar progreso
           </button>
-        </div>
+          </div>
 
-        <p class="text-[10px] text-outline text-center mt-auto pt-4 border-t border-outline-variant">
+          <p class="text-[10px] text-outline text-center pt-4 border-t border-outline-variant">
           Tu progreso se sincroniza en la nube cuando inicias sesión.
-        </p>
+          </p>
+        </div>
       </aside>
     </div>
 
