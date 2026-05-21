@@ -243,9 +243,9 @@
 }
 .team-header h3 {
   font-family: "Anybody", sans-serif;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 20px;
-  color: #1c1b1b;
+  color: #ffffff !important;
   margin: 0;
 }
 .team-header__info {
@@ -258,18 +258,19 @@
   font-family: "Space Grotesk", sans-serif;
   font-weight: 700;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.6) !important;
   letter-spacing: 0.08em;
   white-space: nowrap;
 }
 .team-header__label {
   font-family: "Anybody", sans-serif;
-  font-weight: 700;
-  font-size: 18px;
-  color: #ffffff;
+  font-weight: 800;
+  font-size: 19px;
+  color: #ffffff !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 .team-header .team-progress,
 .group-header .team-progress {
