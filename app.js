@@ -1,4 +1,12 @@
-import { ALBUM_METADATA, GROUPS, SELECTIONS, STICKERS, TEAM_COLORS } from "./data.js";
+import * as DATA from "./data.js";
+
+const { ALBUM_METADATA, GROUPS, SELECTIONS, STICKERS, TEAM_COLORS } = DATA;
+
+function getTeamFlagStyle(teamCode, fallbackColor = "#c2c6d3") {
+  const flagStyles = DATA.TEAM_FLAG_STYLES || {};
+  return flagStyles[teamCode] || fallbackColor;
+}
+
 
 const STORAGE_KEYS = {
   config: "panini-supabase-config",
@@ -1051,7 +1059,7 @@ function renderGroupedByGroupAndTeam(stickers) {
           return `
             <div class="team-subsection">
               <div class="team-header">
-                <div class="team-flag" style="--team-accent:${teamAccent}"></div>
+                <div class="team-flag" style="--team-flag:${getTeamFlagStyle(teamCode, teamAccent)};--team-accent:${teamAccent}"></div>
                 <div class="team-header__info">
                   ${teamCode ? `<span class="team-header__code">${escapeHtml(teamCode)}</span>` : ""}
                   <span class="team-header__label">${escapeHtml(teamKey)}${pageLabel}</span>
@@ -1110,7 +1118,7 @@ function renderCollectionView(stickers) {
       return `
         <section class="board-section">
           <div class="team-header">
-            <div class="team-flag" style="--team-accent:${teamAccent}"></div>
+            <div class="team-flag" style="--team-flag:${getTeamFlagStyle(firstSticker?.equipoCodigo, teamAccent)};--team-accent:${teamAccent}"></div>
             <h3>${escapeHtml(group.label)}</h3>
             <span class="team-progress">${escapeHtml(obtained)} / ${escapeHtml(group.stickers.length)}</span>
           </div>
