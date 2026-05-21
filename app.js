@@ -87,7 +87,7 @@ const TRANSLATIONS = {
     // Sidebar stats
     obtained:"Obtenidos", missing:"Faltantes", duplicates:"Repetidos",
     yet_to_paste:"aún por pegar", available_for_trade:"disponibles para cambio", pct_of_album:"% del álbum",
-    global_progress:"Progreso global", stickers_visible:"stickers visibles",
+    global_progress:"Progreso global", stickers_visible:"stickers visibles", stickers_visible_short:"stickers visibles",
     // Sidebar actions
     actions:"Acciones", pdf_missing:"PDF de faltantes", pdf_duplicates:"PDF de repetidos",
     sign_in_register:"Iniciar sesión / registro", reset_progress:"Reiniciar progreso",
@@ -162,7 +162,7 @@ const TRANSLATIONS = {
     "banner.not_signed_in":"Read-only mode. Sign in to mark stickers, generate PDFs and sync your progress.",
     obtained:"Collected", missing:"Missing", duplicates:"Duplicates",
     yet_to_paste:"still to paste", available_for_trade:"available for trade", pct_of_album:"% of album",
-    global_progress:"Global progress", stickers_visible:"stickers visible",
+    global_progress:"Global progress", stickers_visible:"stickers visible", stickers_visible_short:"stickers visible",
     actions:"Actions", pdf_missing:"PDF of missing", pdf_duplicates:"PDF of duplicates",
     sign_in_register:"Sign in / Register", reset_progress:"Reset progress",
     sync_note:"Your progress syncs to the cloud when you sign in.",
@@ -923,15 +923,18 @@ function renderStatus() {
 
   if (!isAuthRuntimeAvailable()) {
     authButton.textContent = t("read_only");
-    signOutButton.hidden = true;
+    signOutButton.classList.add("opacity-30", "cursor-not-allowed", "pointer-events-none");
+    signOutButton.classList.remove("hover:text-primary", "hover:bg-primary");
     setBannerMessage(t("banner.file_protocol"), "warning");
   } else if (!state.session) {
     authButton.textContent = t("sign_in");
-    signOutButton.hidden = true;
+    signOutButton.classList.add("opacity-30", "cursor-not-allowed", "pointer-events-none");
+    signOutButton.classList.remove("hover:text-primary");
     setBannerMessage(t("banner.not_signed_in"), "muted");
   } else {
     authButton.textContent = state.session.user.email.split("@")[0];
-    signOutButton.hidden = false;
+    signOutButton.classList.remove("opacity-30", "cursor-not-allowed", "pointer-events-none");
+    signOutButton.classList.add("hover:text-primary");
     setBannerMessage("", "success");
   }
 
@@ -1052,7 +1055,7 @@ function renderHomeView(stats) {
     return `
       <div class="home-group-card" style="--group-accent:${group.color}">
         <div class="home-group-card__header">
-          <span class="home-group-card__letter">Grupo ${escapeHtml(group.letter)}</span>
+          <span class="home-group-card__letter">${t("group_letter")} ${escapeHtml(group.letter)}</span>
           <span class="home-group-card__pct">${groupPct}%</span>
         </div>
         <div class="home-group-card__teams">${teamPills}</div>
@@ -1077,26 +1080,26 @@ function renderHomeView(stats) {
     <!-- HERO -->
     <section class="home-hero">
       <div class="home-hero__inner">
-        <p class="home-hero__eyebrow">Panini Official · Edición Alemania</p>
+        <p class="home-hero__eyebrow">Panini Official · ${state.lang === "en" ? "Germany Edition" : "Edición Alemania"}</p>
         <h1 class="home-hero__title">FIFA World Cup 2026™</h1>
         <p class="home-hero__dates">11 Jun – 19 Jul 2026</p>
         <div class="home-hero__hosts">
-          <span class="home-host-badge home-host-badge--usa">Estados Unidos</span>
-          <span class="home-host-badge home-host-badge--can">Canadá</span>
-          <span class="home-host-badge home-host-badge--mex">México</span>
+          <span class="home-host-badge home-host-badge--usa">${state.lang === "en" ? "United States" : "Estados Unidos"}</span>
+          <span class="home-host-badge home-host-badge--can">${state.lang === "en" ? "Canada" : "Canadá"}</span>
+          <span class="home-host-badge home-host-badge--mex">${state.lang === "en" ? "Mexico" : "México"}</span>
         </div>
       </div>
       <div class="home-hero__kpis">
-        <div class="home-kpi"><strong>48</strong><small>selecciones</small></div>
-        <div class="home-kpi"><strong>12</strong><small>grupos</small></div>
-        <div class="home-kpi"><strong>104</strong><small>partidos</small></div>
-        <div class="home-kpi"><strong>16</strong><small>sedes</small></div>
+        <div class="home-kpi"><strong>48</strong><small>${t("home.selections")}</small></div>
+        <div class="home-kpi"><strong>12</strong><small>${t("home.groups_count")}</small></div>
+        <div class="home-kpi"><strong>104</strong><small>${t("home.matches")}</small></div>
+        <div class="home-kpi"><strong>16</strong><small>${t("home.venues")}</small></div>
       </div>
     </section>
 
     <!-- ALBUM PROGRESS -->
     <section class="home-card">
-      <h2 class="home-card__title">Mi álbum</h2>
+      <h2 class="home-card__title">${t("home.album_title")}</h2>
       <div class="home-album-bar">
         <div class="home-album-bar__track">
           <div class="home-album-bar__fill" style="width:${pct}%"></div>
@@ -1105,89 +1108,89 @@ function renderHomeView(stats) {
       </div>
       <div class="home-album-metrics">
         <div class="home-album-metric home-album-metric--owned">
-          <strong>${escapeHtml(stats.obtenidos)}</strong><span>obtenidos</span>
+          <strong>${escapeHtml(stats.obtenidos)}</strong><span>${t("home.obtained")}</span>
         </div>
         <div class="home-album-metric home-album-metric--missing">
-          <strong>${escapeHtml(stats.faltantes)}</strong><span>faltantes</span>
+          <strong>${escapeHtml(stats.faltantes)}</strong><span>${t("home.missing")}</span>
         </div>
         <div class="home-album-metric">
-          <strong>${escapeHtml(stats.repetidos)}</strong><span>repetidos</span>
+          <strong>${escapeHtml(stats.repetidos)}</strong><span>${t("home.duplicates")}</span>
         </div>
         <div class="home-album-metric home-album-metric--coke">
           <strong>${escapeHtml(stats.cocaCola.obtenidos)}/${escapeHtml(stats.cocaCola.total)}</strong><span>Coca-Cola</span>
         </div>
         <div class="home-album-metric">
-          <strong>${escapeHtml(stats.especiales.obtenidos)}/${escapeHtml(stats.especiales.total)}</strong><span>especiales</span>
+          <strong>${escapeHtml(stats.especiales.obtenidos)}/${escapeHtml(stats.especiales.total)}</strong><span>${t("home.specials")}</span>
         </div>
         <div class="home-album-metric">
-          <strong>${escapeHtml(stats.total)}</strong><span>stickers totales</span>
+          <strong>${escapeHtml(stats.total)}</strong><span>${t("home.total")}</span>
         </div>
       </div>
     </section>
 
     <!-- GROUPS GRID -->
     <section class="home-card">
-      <h2 class="home-card__title">Los 12 grupos</h2>
+      <h2 class="home-card__title">${t("home.groups")}</h2>
       <div class="home-groups-grid">${groupsGrid}</div>
     </section>
 
     <!-- TOURNAMENT FORMAT + VENUES -->
     <div class="home-two-col">
       <section class="home-card">
-        <h2 class="home-card__title">Formato del torneo</h2>
+        <h2 class="home-card__title">${t("home.tournament")}</h2>
         <ol class="home-format-list">
           <li>
-            <span class="home-format-list__label">Fase de grupos</span>
-            <span class="home-format-list__desc">12 grupos de 4 equipos · 48 partidos · Los 2 primeros de cada grupo + 8 mejores terceros clasifican</span>
+            <span class="home-format-list__label">${t("home.stage.group")}</span>
+            <span class="home-format-list__desc">${t("home.stage.group_desc")}</span>
           </li>
           <li>
-            <span class="home-format-list__label">Ronda de 32</span>
-            <span class="home-format-list__desc">32 equipos · primera eliminatoria directa de la historia del mundial</span>
+            <span class="home-format-list__label">${t("home.stage.r32")}</span>
+            <span class="home-format-list__desc">${t("home.stage.r32_desc")}</span>
           </li>
           <li>
-            <span class="home-format-list__label">Octavos de final</span>
-            <span class="home-format-list__desc">16 equipos</span>
+            <span class="home-format-list__label">${t("home.stage.r16")}</span>
+            <span class="home-format-list__desc">${t("home.stage.r16_desc")}</span>
           </li>
           <li>
-            <span class="home-format-list__label">Cuartos de final</span>
-            <span class="home-format-list__desc">8 equipos</span>
+            <span class="home-format-list__label">${t("home.stage.qf")}</span>
+            <span class="home-format-list__desc">${t("home.stage.qf_desc")}</span>
           </li>
           <li>
-            <span class="home-format-list__label">Semifinales</span>
-            <span class="home-format-list__desc">4 equipos</span>
+            <span class="home-format-list__label">${t("home.stage.sf")}</span>
+            <span class="home-format-list__desc">${t("home.stage.sf_desc")}</span>
           </li>
           <li>
-            <span class="home-format-list__label">Final</span>
-            <span class="home-format-list__desc">MetLife Stadium · East Rutherford, NJ · 19 Jul 2026</span>
+            <span class="home-format-list__label">${t("home.stage.final")}</span>
+            <span class="home-format-list__desc">${t("home.stage.final_desc")}</span>
           </li>
         </ol>
       </section>
 
       <section class="home-card">
-        <h2 class="home-card__title">Sedes (${WC2026_VENUES.length})</h2>
+        <h2 class="home-card__title">${t("home.venues_title")} (${WC2026_VENUES.length})</h2>
         <div class="home-venues">${venueRows}</div>
       </section>
     </div>
 
     <!-- ALBUM STRUCTURE -->
     <section class="home-card">
-      <h2 class="home-card__title">Estructura del álbum</h2>
+      <h2 class="home-card__title">${t("home.album_structure")}</h2>
       <div class="home-album-structure">
         <div class="home-structure-item">
           <span class="home-structure-item__num">992</span>
-          <span class="home-structure-item__label">stickers totales</span>
+          <span class="home-structure-item__label">${t("home.album.total")}</span>
         </div>
         <div class="home-structure-item home-structure-item--accent">
           <span class="home-structure-item__num">48 × 20</span>
-          <span class="home-structure-item__label">selecciones · 1 Logo + 1 Foto de equipo + 18 jugadores</span>
+          <span class="home-structure-item__label">${t("home.album.selections")}</span>
         </div>
         <div class="home-structure-item">
           <span class="home-structure-item__num">20</span>
-          <span class="home-structure-item__label">especiales FWC · países sede, museos FIFA, leyendas</span>
+          <span class="home-structure-item__label">${t("home.album.specials")}</span>
         </div>
         <div class="home-structure-item home-structure-item--coke">
           <span class="home-structure-item__num">12</span>
-          <span class="home-structure-item__label">Coca-Cola Germany · edición exclusiva Alemania</span>
+          <span class="home-structure-item__label">${t("home.album.coke")}</span>
         </div>
       </div>
     </section>
@@ -1426,14 +1429,19 @@ function renderApp() {
 
   // Hide album chrome on home / stats pages
   const isAlbumSection = !["inicio", "stats", "coca-cola"].includes(state.section);
+  const showHeader = !["inicio", "stats"].includes(state.section); // show for album sections + coca-cola
   const showBanner = !["inicio", "stats"].includes(state.section);
-  document.querySelector("#album-header").classList.toggle("is-hidden", !isAlbumSection);
+  document.querySelector("#album-header").classList.toggle("is-hidden", !showHeader);
   document.querySelector("#read-only-banner").classList.toggle("is-hidden", !showBanner);
   document.querySelector("#controls-panel").classList.toggle("is-hidden", !isAlbumSection);
 
-  if (isAlbumSection) {
-    document.querySelector("#section-title").textContent = SECTION_LABELS[state.section];
-    document.querySelector("#results-count").textContent = `${filtered.length} stickers visibles`;
+  if (showHeader) {
+    document.querySelector("#section-title").textContent = t(state.section);
+    document.querySelector("#results-count").textContent = state.section === "coca-cola"
+      ? `12 stickers`
+      : `${filtered.length} ${t("stickers_visible")}`;
+    document.querySelector("#progress-detail").textContent =
+      `${state.stickers.filter(s => s.obtenido).length} / ${state.stickers.length} stickers`;
   }
 
   if (state.section === "inicio") {
@@ -1672,8 +1680,18 @@ function bindEvents() {
     }
   });
 
+  // Logo → home
+  document.querySelector("#logo-home")?.addEventListener("click", () => {
+    state.section = "inicio";
+    renderApp();
+  });
+
   document.querySelector("#query-input").addEventListener("input", (event) => {
     state.query = event.target.value;
+    // Auto-navigate to album when searching from home or stats
+    if (state.query.trim() && ["inicio", "stats"].includes(state.section)) {
+      state.section = "all";
+    }
     renderApp();
   });
 
