@@ -187,28 +187,27 @@ const GROUP_PAGE_MAP = {
   ],
 };
 
-// Especiales de torneo: 20 stickers reales (#00 Panini Logo + FWC1–FWC19).
+// Especiales de torneo: 19 stickers reales (FWC1–FWC19, sin FWC16).
+// Páginas vacías (solo info): 4, 5, 6, 7, 56, 57, 110, 111.
 const TOURNAMENT_SPECIALS = [
-  ["FWC0", "00", "Panini Logo", "Logo", "Tournament Opener", 1],
-  ["FWC1", "FWC1", "Official Emblem", "Logo", "Tournament Opener", 1],
-  ["FWC2", "FWC2", "Official Emblem", "Logo", "Tournament Opener", 1],
-  ["FWC3", "FWC3", "Official Mascots", "Mascota", "Tournament Opener", 2],
-  ["FWC4", "FWC4", "Official Slogan", "Especial", "Tournament Opener", 2],
-  ["FWC5", "FWC5", "Official Ball", "Especial", "Tournament Opener", 2],
-  ["FWC6", "FWC6", "Canada — Host Country", "Host City", "Host Countries", 3],
-  ["FWC7", "FWC7", "Mexico — Host Country", "Host City", "Host Countries", 3],
-  ["FWC8", "FWC8", "USA — Host Country", "Host City", "Host Countries", 3],
-  ["FWC9", "FWC9", "Italy 1934", "Especial", "FIFA Museum", 4],
-  ["FWC10", "FWC10", "Uruguay 1950", "Especial", "FIFA Museum", 4],
-  ["FWC11", "FWC11", "West Germany 1954", "Especial", "FIFA Museum", 4],
-  ["FWC12", "FWC12", "Brazil 1962", "Especial", "FIFA Museum", 5],
-  ["FWC13", "FWC13", "West Germany 1974", "Especial", "FIFA Museum", 5],
-  ["FWC14", "FWC14", "Argentina 1986", "Especial", "FIFA Museum", 5],
-  ["FWC15", "FWC15", "Brazil 1994", "Especial", "FIFA Museum", 6],
-  ["FWC16", "FWC16", "Brazil 2002", "Especial", "FIFA Museum", 6],
-  ["FWC17", "FWC17", "Italy 2006", "Especial", "FIFA Museum", 6],
-  ["FWC18", "FWC18", "Germany 2014", "Especial", "FIFA Museum", 7],
-  ["FWC19", "FWC19", "Argentina 2022", "Especial", "FIFA Museum", 7],
+  ["FWC1",  "FWC1",  "Official Emblem",          "Logo",     "Tournament Opener", 1],
+  ["FWC2",  "FWC2",  "Official Emblem",          "Logo",     "Tournament Opener", 1],
+  ["FWC3",  "FWC3",  "Official Mascots",         "Mascota",  "Tournament Opener", 1],
+  ["FWC4",  "FWC4",  "Official Slogan",          "Especial", "Tournament Opener", 1],
+  ["FWC5",  "FWC5",  "Official Ball",            "Especial", "Tournament Opener", 2],
+  ["FWC6",  "FWC6",  "Canada — Host Country",   "Host City", "Host Countries",   2],
+  ["FWC7",  "FWC7",  "Mexico — Host Country",   "Host City", "Host Countries",   3],
+  ["FWC8",  "FWC8",  "USA — Host Country",      "Host City", "Host Countries",   3],
+  ["FWC9",  "FWC9",  "Italy 1934",              "Especial", "FIFA Museum",       106],
+  ["FWC10", "FWC10", "Uruguay 1950",            "Especial", "FIFA Museum",       106],
+  ["FWC11", "FWC11", "West Germany 1954",       "Especial", "FIFA Museum",       107],
+  ["FWC12", "FWC12", "Brazil 1962",             "Especial", "FIFA Museum",       107],
+  ["FWC13", "FWC13", "West Germany 1974",       "Especial", "FIFA Museum",       107],
+  ["FWC14", "FWC14", "Argentina 1986",          "Especial", "FIFA Museum",       108],
+  ["FWC15", "FWC15", "Brazil 1994",             "Especial", "FIFA Museum",       108],
+  ["FWC17", "FWC17", "Italy 2006",              "Especial", "FIFA Museum",       109],
+  ["FWC18", "FWC18", "Germany 2014",            "Especial", "FIFA Museum",       109],
+  ["FWC19", "FWC19", "Argentina 2022",          "Especial", "FIFA Museum",       109],
 ];
 
 // Roster real por selección. Cada lista tiene 19 entradas (posiciones 2–12 y 14–20).
@@ -552,17 +551,32 @@ const TEAM_ROSTERS = {
   ],
 };
 
-// Coca-Cola Germany (subset regional opcional, 12 cromos).
-const COCA_COLA_GERMANY = Array.from({ length: 12 }, (_, index) => ({
+// Coca-Cola (12 cromos). Páginas 112–113.
+const COCA_COLA_NAMES = [
+  "Lamine Yamal",      // CC1  — pág 112
+  "Joshua Kimmich",    // CC2  — pág 112
+  "Eduardo Camavinga", // CC3  — pág 112
+  "Joško Gvardiol",    // CC4  — pág 112
+  "Federico Valverde", // CC5  — pág 112
+  "Virgil van Dijk",   // CC6  — pág 113
+  "Alphonso Davies",   // CC7  — pág 113
+  "Raúl Jiménez",      // CC8  — pág 113
+  "William Saliba",    // CC9  — pág 113
+  "Lautaro Martínez",  // CC10 — pág 113
+  "Harry Kane",        // CC11 — pág 113
+  "Antonee Robinson",  // CC12 — pág 113
+];
+
+const COCA_COLA_GERMANY = COCA_COLA_NAMES.map((nombre, index) => ({
   id: `CC${index + 1}`,
   numero: `CC${index + 1}`,
   grupo: "Coca-Cola",
   pais: "Coca-Cola",
-  nombre: `Coca-Cola Germany ${String(index + 1).padStart(2, "0")}`,
+  nombre,
   tipo: "Coca-Cola",
   categoriaEspecial: "Coca-Cola Germany",
-  pagina: index < 6 ? 106 : 107,
-  paginaInicioSeleccion: 106,
+  pagina: index < 5 ? 112 : 113,
+  paginaInicioSeleccion: 112,
   obtenido: false,
   repetidos: 0,
   ordenGrupo: 14,
@@ -681,5 +695,5 @@ export const ALBUM_METADATA = {
   totalCocaCola: COCA_COLA_GERMANY.length,
   firstTeamPage: 8,
   lastTeamPage: 105,
-  lastAlbumPage: 107,
+  lastAlbumPage: 113,
 };
