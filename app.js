@@ -865,10 +865,7 @@ function renderHomeView(stats) {
     const teamPills = group.teams
       .map(
         (t) =>
-          `<span class="home-team-pill" style="--team-accent:${TEAM_COLORS[t.code] || group.color}">
-            <span class="home-team-pill__dot"></span>
-            ${escapeHtml(t.code)}
-          </span>`,
+          `<span class="home-team-pill">${escapeHtml(getTeamFlagEmoji(t.code))} ${escapeHtml(t.code)}</span>`,
       )
       .join("");
     return `
@@ -1145,7 +1142,7 @@ function renderStatsView(stats) {
 
   content.innerHTML = `
     <section class="stats-board">
-      <article class="stats-panel">
+      <article class="stats-panel stats-panel--overview">
         <h3>Panorama general</h3>
         <div class="stats-grid">
           <div class="stats-pill"><span>Obtenidos</span><strong>${escapeHtml(stats.obtenidos)}</strong></div>
@@ -1196,7 +1193,7 @@ function renderStatsView(stats) {
             .join("")}
         </div>
       </article>
-      <article class="stats-panel">
+      <article class="stats-panel stats-panel--priority">
         <h3>Pendientes prioritarios</h3>
         <div class="stats-kpis">
           <div class="stats-kpi">

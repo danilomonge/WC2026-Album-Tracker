@@ -691,6 +691,20 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+@media (min-width: 768px) {
+  .stats-board {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "overview groups"
+      "top groups"
+      "priority groups";
+  }
+  .stats-panel--overview { grid-area: overview; }
+  .stats-panel--top-selections { grid-area: top; }
+  .stats-panel--groups { grid-area: groups; }
+  .stats-panel--priority { grid-area: priority; }
+}
 .stats-note {
   margin-top: 12px;
   padding: 10px 12px;
@@ -1029,7 +1043,7 @@
 .home-team-pill {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   font-family: "Space Grotesk", sans-serif;
   font-weight: 700;
   font-size: 10px;
@@ -1039,13 +1053,6 @@
   border-radius: 4px;
   padding: 2px 6px;
   color: #424751;
-}
-.home-team-pill__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--team-accent, #c2c6d3);
-  flex-shrink: 0;
 }
 .home-group-card__bar {
   height: 4px;
