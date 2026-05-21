@@ -691,21 +691,24 @@
   flex-direction: column;
   gap: 14px;
 }
+.stats-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-self: flex-start; /* never stretch to match sibling height */
+  width: 100%;
+}
 @media (min-width: 768px) {
   .stats-cols {
     flex-direction: row;
-    align-items: flex-start;
+    align-items: flex-start; /* prevent cross-axis stretch on children */
     gap: 14px;
   }
   .stats-col {
     flex: 1 1 0;
     min-width: 0;
+    width: auto;
   }
-}
-.stats-col {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
 }
 .stats-note {
   margin-top: 12px;
