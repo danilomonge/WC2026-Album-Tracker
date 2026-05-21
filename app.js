@@ -1425,7 +1425,7 @@ function renderApp() {
   document.querySelector("#view-mode").value = state.viewMode;
 
   // Hide album chrome on home / stats pages
-  const isAlbumSection = !["inicio", "stats"].includes(state.section);
+  const isAlbumSection = !["inicio", "stats", "coca-cola"].includes(state.section);
   document.querySelector("#album-header").classList.toggle("is-hidden", !isAlbumSection);
   document.querySelector("#read-only-banner").classList.toggle("is-hidden", !isAlbumSection);
   document.querySelector("#controls-panel").classList.toggle("is-hidden", !isAlbumSection);
