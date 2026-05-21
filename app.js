@@ -99,7 +99,7 @@ export function sanitizeDuplicates(value) {
 }
 
 export function validateStickerId(stickerId) {
-  return /^(FWC([1-9]|1[0-9]|20)|CC([1-9]|1[0-2])|[A-Z]{3}([1-9]|1[0-9]|20))$/.test(
+  return /^(FWC([0-9]|1[0-9]|20)|CC([1-9]|1[0-2])|[A-Z]{3}([1-9]|1[0-9]|20))$/.test(
     String(stickerId || ""),
   );
 }
