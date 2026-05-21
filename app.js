@@ -865,7 +865,7 @@ function renderHomeView(stats) {
     const teamPills = group.teams
       .map(
         (t) =>
-          `<span class="home-team-pill">${escapeHtml(getTeamFlagEmoji(t.code))} ${escapeHtml(t.code)}</span>`,
+          `<span class="home-team-pill"><span class="home-team-pill__flag" style="background:${getTeamFlagStyle(t.code)}"></span>${escapeHtml(t.code)}</span>`,
       )
       .join("");
     return `
@@ -1058,7 +1058,7 @@ function renderGroupedByGroupAndTeam(stickers) {
           return `
             <div class="team-subsection">
               <div class="team-header">
-                <div class="team-flag" role="img" aria-label="Bandera de ${escapeHtml(teamKey)}">${escapeHtml(getTeamFlagEmoji(teamCode))}</div>
+                <div class="team-flag" role="img" aria-label="Bandera de ${escapeHtml(teamKey)}" style="background:${getTeamFlagStyle(teamCode)}"></div>
                 <div class="team-header__info">
                   ${teamCode ? `<span class="team-header__code">${escapeHtml(teamCode)}</span>` : ""}
                   <span class="team-header__label">${escapeHtml(teamKey)}${pageLabel}</span>
@@ -1117,7 +1117,7 @@ function renderCollectionView(stickers) {
       return `
         <section class="board-section">
           <div class="team-header">
-            <div class="team-flag" role="img" aria-label="Bandera de ${escapeHtml(group.label)}">${escapeHtml(getTeamFlagEmoji(firstSticker?.equipoCodigo))}</div>
+            <div class="team-flag" role="img" aria-label="Bandera de ${escapeHtml(group.label)}" style="background:${getTeamFlagStyle(firstSticker?.equipoCodigo)}"></div>
             <h3>${escapeHtml(group.label)}</h3>
             <span class="team-progress">${escapeHtml(obtained)} / ${escapeHtml(group.stickers.length)}</span>
           </div>
