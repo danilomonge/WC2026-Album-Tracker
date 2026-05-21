@@ -12,9 +12,10 @@
 /* Pitch background grid for main canvas */
 .pitch-bg {
   background:
-    radial-gradient(circle at 20% 15%, rgba(74, 144, 226, 0.18), transparent 30%),
-    radial-gradient(circle at 80% 0%, rgba(0, 201, 255, 0.14), transparent 34%),
-    linear-gradient(160deg, #0a1424 0%, #101b31 48%, #0b1220 100%);
+    radial-gradient(ellipse at 15% 10%, rgba(0, 140, 255, 0.22) 0%, transparent 40%),
+    radial-gradient(ellipse at 85% 5%,  rgba(0, 220, 200, 0.14) 0%, transparent 35%),
+    radial-gradient(ellipse at 50% 95%, rgba(80, 0, 180, 0.18) 0%, transparent 45%),
+    linear-gradient(160deg, #060d1a 0%, #0c1a30 40%, #101e3a 70%, #080f20 100%);
 }
 
 /* ---------- Modals ---------- */
@@ -207,12 +208,12 @@
 
 /* ---------- Team sub-section ---------- */
 .team-subsection {
-  padding: 16px 0 8px;
+  padding: 16px 0 20px;
   border-bottom: 1px solid #e5e2e1;
 }
 .team-subsection:last-child {
   border-bottom: none;
-  padding-bottom: 0;
+  padding-bottom: 4px;
 }
 
 /* ---------- Selection (team) header ---------- */
@@ -224,18 +225,13 @@
   margin-bottom: 14px;
 }
 .team-header .team-flag {
-  width: 38px;
-  height: 26px;
-  border-radius: 4px;
-  background: #ffffff;
-  border: 1px solid #c2c6d3;
   flex-shrink: 0;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 28px;
   line-height: 1;
+  user-select: none;
 }
 .team-header h3 {
   font-family: "Anybody", sans-serif;
@@ -557,9 +553,8 @@
   padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   justify-content: center;
-  min-height: 164px;
   position: relative;
   overflow: hidden;
 }

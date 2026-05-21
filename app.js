@@ -1,7 +1,11 @@
-import { ALBUM_METADATA, GROUPS, SELECTIONS, STICKERS, TEAM_COLORS, TEAM_FLAG_STYLES } from "./data.js";
+import { ALBUM_METADATA, GROUPS, SELECTIONS, STICKERS, TEAM_COLORS, TEAM_FLAG_STYLES, TEAM_FLAG_EMOJIS } from "./data.js";
 
 function getTeamFlagStyle(teamCode, fallbackColor = "#c2c6d3") {
   return TEAM_FLAG_STYLES[teamCode] || TEAM_COLORS[teamCode] || fallbackColor;
+}
+
+function getTeamFlagEmoji(teamCode) {
+  return TEAM_FLAG_EMOJIS[teamCode] || "🏳️";
 }
 
 
@@ -1058,7 +1062,7 @@ function renderGroupedByGroupAndTeam(stickers) {
           return `
             <div class="team-subsection">
               <div class="team-header">
-                <div class="team-flag" role="img" aria-label="Bandera de ${escapeHtml(teamKey)}" style="background:${getTeamFlagStyle(teamCode)}"></div>
+                <div class="team-flag" role="img" aria-label="Bandera de ${escapeHtml(teamKey)}">${getTeamFlagEmoji(teamCode)}</div>
                 <div class="team-header__info">
                   ${teamCode ? `<span class="team-header__code">${escapeHtml(teamCode)}</span>` : ""}
                   <span class="team-header__label">${escapeHtml(teamKey)}${pageLabel}</span>
@@ -1117,7 +1121,7 @@ function renderCollectionView(stickers) {
       return `
         <section class="board-section">
           <div class="team-header">
-            <div class="team-flag" role="img" aria-label="Bandera de ${escapeHtml(group.label)}" style="background:${getTeamFlagStyle(firstSticker?.equipoCodigo)}"></div>
+            <div class="team-flag" role="img" aria-label="Bandera de ${escapeHtml(group.label)}">${getTeamFlagEmoji(firstSticker?.equipoCodigo)}</div>
             <h3>${escapeHtml(group.label)}</h3>
             <span class="team-progress">${escapeHtml(obtained)} / ${escapeHtml(group.stickers.length)}</span>
           </div>
