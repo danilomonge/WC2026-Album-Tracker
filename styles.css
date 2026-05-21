@@ -11,11 +11,10 @@
 
 /* Pitch background grid for main canvas */
 .pitch-bg {
-  background-color: #f6f3f2;
-  background-image:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(74, 144, 226, 0.18), transparent 30%),
+    radial-gradient(circle at 80% 0%, rgba(0, 201, 255, 0.14), transparent 34%),
+    linear-gradient(160deg, #0a1424 0%, #101b31 48%, #0b1220 100%);
 }
 
 /* ---------- Modals ---------- */
@@ -228,10 +227,15 @@
   width: 38px;
   height: 26px;
   border-radius: 4px;
-  background: var(--team-flag, var(--team-accent, #c2c6d3));
+  background: #ffffff;
   border: 1px solid #c2c6d3;
   flex-shrink: 0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
 }
 .team-header h3 {
   font-family: "Anybody", sans-serif;
@@ -553,7 +557,9 @@
   padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  justify-content: center;
+  min-height: 164px;
   position: relative;
   overflow: hidden;
 }
