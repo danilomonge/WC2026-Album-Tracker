@@ -62,10 +62,12 @@
 /* ---------- Section tabs (second nav bar) ---------- */
 .section-tab {
   display: flex;
+  flex: 1 1 0;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
+  min-width: max-content;
   align-self: stretch;          /* stretch to full bar height */
   font-family: "Space Grotesk", sans-serif;
   font-weight: 600;
@@ -599,6 +601,7 @@
   border: 1px solid #c2c6d3;
   border-radius: 16px;
   padding: 20px;
+  align-self: start;
 }
 .stats-panel h3 {
   font-family: "Anybody", sans-serif;
@@ -675,11 +678,87 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
+  align-items: start;
 }
 @media (min-width: 768px) {
   .stats-board {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+.stats-note {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #f5f8ff;
+  border: 1px solid #d5e3ff;
+  border-radius: 10px;
+}
+.stats-note strong {
+  display: block;
+  font-family: "Space Grotesk", sans-serif;
+  color: #003e7a;
+  font-size: 13px;
+}
+.stats-note span {
+  color: #424751;
+  font-size: 12px;
+}
+.stats-kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.stats-kpi {
+  border: 1px solid #d5d9e5;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fbfbfd;
+}
+.stats-kpi span {
+  display: block;
+  color: #727783;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.stats-kpi strong {
+  font-family: "Anybody", sans-serif;
+  font-size: 24px;
+  color: #003e7a;
+}
+.mini-list {
+  margin-top: 14px;
+  border-top: 1px dashed #d8dce8;
+  padding-top: 12px;
+}
+.mini-list h4 {
+  margin: 0 0 8px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 13px;
+  color: #424751;
+}
+.mini-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px dashed #e5e2e1;
+}
+.mini-row:last-child { border-bottom: none; }
+.mini-row strong {
+  display: block;
+  font-size: 13px;
+  color: #1c1b1b;
+}
+.mini-row span {
+  font-size: 11px;
+  color: #727783;
+}
+.mini-row em {
+  font-style: normal;
+  font-weight: 700;
+  color: #003e7a;
+  font-size: 12px;
 }
 
 /* ---------- Empty state ---------- */
