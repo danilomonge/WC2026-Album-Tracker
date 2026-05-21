@@ -187,9 +187,10 @@ const GROUP_PAGE_MAP = {
   ],
 };
 
-// Especiales de torneo: 19 stickers reales (FWC1–FWC19, sin FWC16).
+// Especiales de torneo: 21 stickers reales (FWC0–FWC19).
 // Páginas vacías (solo info): 4, 5, 6, 7, 56, 57, 110, 111.
 const TOURNAMENT_SPECIALS = [
+  ["FWC0",  "00",    "Panini Logo",              "Logo",     "Tournament Opener", 0],
   ["FWC1",  "FWC1",  "Official Emblem",          "Logo",     "Tournament Opener", 1],
   ["FWC2",  "FWC2",  "Official Emblem",          "Logo",     "Tournament Opener", 1],
   ["FWC3",  "FWC3",  "Official Mascots",         "Mascota",  "Tournament Opener", 1],
@@ -205,6 +206,7 @@ const TOURNAMENT_SPECIALS = [
   ["FWC13", "FWC13", "West Germany 1974",       "Especial", "FIFA Museum",       107],
   ["FWC14", "FWC14", "Argentina 1986",          "Especial", "FIFA Museum",       108],
   ["FWC15", "FWC15", "Brazil 1994",             "Especial", "FIFA Museum",       108],
+  ["FWC16", "FWC16", "Brazil 2002",             "Especial", "FIFA Museum",       109],
   ["FWC17", "FWC17", "Italy 2006",              "Especial", "FIFA Museum",       109],
   ["FWC18", "FWC18", "Germany 2014",            "Especial", "FIFA Museum",       109],
   ["FWC19", "FWC19", "Argentina 2022",          "Especial", "FIFA Museum",       109],
