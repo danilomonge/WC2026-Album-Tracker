@@ -31,6 +31,11 @@ function getTeamFlagStyle(teamCode, fallbackColor = "#c2c6d3") {
 }
 
 
+function getTeamFlagStyle(teamCode, fallbackColor = "#c2c6d3") {
+  return TEAM_COLORS[teamCode] || fallbackColor;
+}
+
+
 const STORAGE_KEYS = {
   config: "panini-supabase-config",
   view: "panini-ui-view",
