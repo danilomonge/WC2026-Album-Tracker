@@ -120,7 +120,7 @@
     <nav
       class="hidden lg:flex fixed top-14 left-0 right-0 z-30 bg-surface border-b border-outline-variant shadow-[0_2px_8px_rgba(0,0,0,0.05)] h-14 px-4 md:px-8 items-stretch overflow-x-auto"
     >
-      <div id="section-tabs" class="flex items-stretch gap-1"></div>
+      <div id="section-tabs" class="flex items-stretch gap-1 w-full"></div>
     </nav>
 
     <!-- LAYOUT -->
@@ -188,11 +188,11 @@
       </main>
 
       <!-- RIGHT STATS -->
-      <aside class="hidden xl:flex flex-col self-start sticky top-28 w-80 min-h-[calc(100vh-7rem)] bg-surface border-l border-outline-variant p-6 shadow-[-4px_0_15px_rgba(0,0,0,0.03)]">
-        <div class="flex min-h-[calc(100vh-7rem)] flex-col justify-between gap-6">
-          <div>
-            <h3 class="font-display text-2xl font-bold text-primary mb-4">Estadísticas</h3>
-            <div id="stats-summary" class="grid grid-cols-2 gap-3"></div>
+      <aside class="hidden xl:flex flex-col self-start sticky top-28 w-72 max-h-[calc(100vh-8rem)] bg-surface border-l border-outline-variant p-5 space-y-5 overflow-y-auto shadow-[-4px_0_15px_rgba(0,0,0,0.03)]">
+        <div>
+          <h3 class="font-display text-2xl font-bold text-primary mb-4">Estadísticas</h3>
+          <div id="stats-summary" class="grid grid-cols-2 gap-3"></div>
+        </div>
 
             <div class="border-t border-outline-variant pt-6 mt-6 space-y-3">
           <h4 class="font-label text-xs font-bold text-on-surface-variant uppercase tracking-wider">Acciones</h4>
@@ -226,7 +226,7 @@
           </button>
           </div>
 
-          <p class="text-[10px] text-outline text-center pt-4 border-t border-outline-variant">
+        <p class="text-[10px] text-outline text-center pt-4 border-t border-outline-variant">
           Tu progreso se sincroniza en la nube cuando inicias sesión.
           </p>
         </div>

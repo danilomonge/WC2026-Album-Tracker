@@ -72,6 +72,29 @@ export const TEAM_COLORS = {
   PAN: "#005293",
 };
 
+// Estilos CSS de bandera por selección (aproximación visual para chips pequeños).
+export const TEAM_FLAG_STYLES = {
+  MEX: "linear-gradient(to right, #006847 0 33.33%, #ffffff 33.33% 66.66%, #ce1126 66.66% 100%)",
+  RSA: "linear-gradient(150deg, transparent 0 34%, #ffb612 34% 40%, #007a4d 40% 60%, #ffffff 60% 66%, #000000 66% 72%, transparent 72%), linear-gradient(to bottom, #de3831 0 50%, #002395 50% 100%)",
+  KOR: "radial-gradient(circle at 50% 50%, #cd2e3a 0 22%, #0047a0 22% 44%, #ffffff 44% 100%)",
+  CZE: "conic-gradient(from 180deg at 0% 50%, #11457e 0 90deg, transparent 90deg), linear-gradient(to bottom, #ffffff 0 50%, #d7141a 50% 100%)",
+  CAN: "linear-gradient(to right, #d52b1e 0 25%, #ffffff 25% 75%, #d52b1e 75% 100%)",
+  BIH: "linear-gradient(145deg, #002f6c 0 58%, #fcd116 58% 65%, #002f6c 65% 100%)",
+  QAT: "repeating-linear-gradient(162deg, #8a1538 0 68%, #ffffff 68% 70%, #8a1538 70% 72%, #ffffff 72% 74%, #8a1538 74% 76%, #ffffff 76% 78%, #8a1538 78% 80%, #ffffff 80% 82%, #8a1538 82% 100%)",
+  SUI: "linear-gradient(#d52b1e, #d52b1e)", BRA: "radial-gradient(circle at 50% 50%, #002776 0 18%, #ffdf00 18% 42%, #009b3a 42% 100%)",
+  MAR: "linear-gradient(#c1272d, #c1272d)", HAI: "linear-gradient(to bottom, #00209f 0 50%, #d21034 50% 100%)", SCO: "linear-gradient(#005eb8, #005eb8)",
+  USA: "repeating-linear-gradient(to bottom, #b22234 0 7.69%, #ffffff 7.69% 15.38%)", PAR: "linear-gradient(to right, #d52b1e 0 33.33%, #ffffff 33.33% 66.66%, #0038a8 66.66% 100%)", AUS: "linear-gradient(#012169, #012169)", TUR: "linear-gradient(#e30a17, #e30a17)",
+  GER: "linear-gradient(to bottom, #000000 0 33.33%, #dd0000 33.33% 66.66%, #ffce00 66.66% 100%)", CUW: "linear-gradient(150deg, #ffda44 0 18%, transparent 18%), linear-gradient(to bottom, #003893 0 45%, #ffda44 45% 55%, #003893 55% 100%)", CIV: "linear-gradient(to right, #f77f00 0 33.33%, #ffffff 33.33% 66.66%, #009e60 66.66% 100%)", ECU: "linear-gradient(to bottom, #fcd116 0 50%, #003893 50% 75%, #ce1126 75% 100%)",
+  NED: "linear-gradient(to bottom, #ae1c28 0 33.33%, #ffffff 33.33% 66.66%, #21468b 66.66% 100%)", JPN: "radial-gradient(circle at 50% 50%, #bc002d 0 24%, #ffffff 24% 100%)", SWE: "linear-gradient(90deg, transparent 0 26%, #fecc00 26% 38%, transparent 38%), linear-gradient(transparent 0 42%, #fecc00 42% 58%, transparent 58%), linear-gradient(#006aa7, #006aa7)", TUN: "radial-gradient(circle at 50% 50%, #ffffff 0 26%, #e70013 26% 100%)",
+  BEL: "linear-gradient(to right, #000000 0 33.33%, #ffe936 33.33% 66.66%, #ef3340 66.66% 100%)", EGY: "linear-gradient(to bottom, #ce1126 0 33.33%, #ffffff 33.33% 66.66%, #000000 66.66% 100%)", IRN: "linear-gradient(to bottom, #239f40 0 33.33%, #ffffff 33.33% 66.66%, #da0000 66.66% 100%)", NZL: "linear-gradient(#00247d, #00247d)",
+  ESP: "linear-gradient(to bottom, #aa151b 0 25%, #f1bf00 25% 75%, #aa151b 75% 100%)", CPV: "linear-gradient(transparent 0 46%, #ffffff 46% 50%, #cf2027 50% 54%, #ffffff 54% 58%, transparent 58%), linear-gradient(#003893, #003893)", KSA: "linear-gradient(#006c35, #006c35)", URU: "repeating-linear-gradient(to bottom, #ffffff 0 11.11%, #5eb6e4 11.11% 22.22%)",
+  FRA: "linear-gradient(to right, #0055a4 0 33.33%, #ffffff 33.33% 66.66%, #ef4135 66.66% 100%)", SEN: "linear-gradient(to right, #00853f 0 33.33%, #fdef42 33.33% 66.66%, #e31b23 66.66% 100%)", IRQ: "linear-gradient(to bottom, #ce1126 0 33.33%, #ffffff 33.33% 66.66%, #000000 66.66% 100%)", NOR: "linear-gradient(90deg, transparent 0 26%, #ffffff 26% 34%, #00205b 34% 40%, #ffffff 40% 48%, transparent 48%), linear-gradient(transparent 0 38%, #ffffff 38% 46%, #00205b 46% 54%, #ffffff 54% 62%, transparent 62%), linear-gradient(#ba0c2f, #ba0c2f)",
+  ARG: "linear-gradient(to bottom, #74acdf 0 33.33%, #ffffff 33.33% 66.66%, #74acdf 66.66% 100%)", ALG: "linear-gradient(to right, #006233 0 50%, #ffffff 50% 100%)", AUT: "linear-gradient(to bottom, #ed2939 0 33.33%, #ffffff 33.33% 66.66%, #ed2939 66.66% 100%)", JOR: "linear-gradient(150deg, #ce1126 0 22%, transparent 22%), linear-gradient(to bottom, #000000 0 33.33%, #ffffff 33.33% 66.66%, #007a3d 66.66% 100%)",
+  POR: "linear-gradient(to right, #006600 0 40%, #ff0000 40% 100%)", COD: "linear-gradient(160deg, transparent 0 40%, #f7d618 40% 46%, #ce1021 46% 54%, #f7d618 54% 60%, transparent 60%), linear-gradient(#00a3e0, #00a3e0)", UZB: "linear-gradient(to bottom, #1eb5e6 0 33.33%, #ffffff 33.33% 66.66%, #1eb53a 66.66% 100%)", COL: "linear-gradient(to bottom, #fcd116 0 50%, #003893 50% 75%, #ce1126 75% 100%)",
+  ENG: "linear-gradient(90deg, transparent 0 43%, #ce1126 43% 57%, transparent 57%), linear-gradient(transparent 0 40%, #ce1126 40% 60%, transparent 60%), linear-gradient(#ffffff, #ffffff)", CRO: "linear-gradient(to bottom, #ff0000 0 33.33%, #ffffff 33.33% 66.66%, #171796 66.66% 100%)", GHA: "linear-gradient(to bottom, #ce1126 0 33.33%, #fcd116 33.33% 66.66%, #006b3f 66.66% 100%)", PAN: "linear-gradient(135deg, #005293 0 50%, #ffffff 50%), linear-gradient(315deg, #d21034 0 50%, #ffffff 50%)",
+};
+
+
 // Grupos A–L, cada uno con 4 selecciones y su página inicial.
 const GROUP_PAGE_MAP = {
   A: [
