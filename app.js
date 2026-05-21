@@ -45,15 +45,6 @@ const SECTION_SHORT = {
   stats: "Stats",
 };
 
-const SECTION_EMOJIS = {
-  inicio: "🏠",
-  all: "📖",
-  repetidos: "🔁",
-  faltantes: "⭐",
-  especiales: "✨",
-  "coca-cola": "🥤",
-  stats: "📊",
-};
 
 const FILTER_LABELS = {
   todos: "Todos",
@@ -713,7 +704,7 @@ function renderSectionTabs() {
       ([value]) => `
         <button class="section-tab ${state.section === value ? "is-active" : ""}" data-section="${value}">
           <span class="material-symbols-outlined">${SECTION_ICONS[value]}</span>
-          <span>${escapeHtml(SECTION_EMOJIS[value])} ${escapeHtml(SECTION_SHORT[value])}</span>
+          <span>${escapeHtml(SECTION_SHORT[value])}</span>
         </button>
       `,
     )
@@ -724,7 +715,7 @@ function renderSectionTabs() {
       ([value, label]) => `
         <button class="mobile-tab ${state.section === value ? "is-active" : ""}" data-section="${value}" title="${escapeHtml(label)}">
           <span class="material-symbols-outlined">${SECTION_ICONS[value]}</span>
-          <span>${escapeHtml(SECTION_EMOJIS[value])} ${escapeHtml(SECTION_SHORT[value])}</span>
+          <span>${escapeHtml(SECTION_SHORT[value])}</span>
         </button>
       `,
     )
