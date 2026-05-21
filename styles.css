@@ -903,12 +903,19 @@
   color: rgba(255,255,255,0.65);
 }
 
+/* Home cards wrapper — tighter vertical rhythm */
+#collection-content:has(.home-hero) {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 /* Home card wrapper */
 .home-card {
   background: #ffffff;
   border: 1px solid #e5e2e1;
   border-radius: 20px;
-  padding: 28px 28px 24px;
+  padding: 24px 24px 20px;
 }
 .home-card__title {
   font-family: "Anybody", sans-serif;
