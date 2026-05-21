@@ -13,17 +13,17 @@
 .pitch-bg {
   background:
     /* top-left electric cyan bloom */
-    radial-gradient(ellipse at 8% 0%,   rgba(0, 200, 255, 0.28) 0%, transparent 38%),
-    /* top-right violet pulse */
-    radial-gradient(ellipse at 92% 0%,  rgba(120, 0, 255, 0.20) 0%, transparent 35%),
-    /* center-left neon blue glow */
-    radial-gradient(ellipse at 20% 55%, rgba(0, 100, 255, 0.16) 0%, transparent 40%),
+    radial-gradient(ellipse at 8% 0%,   rgba(0, 180, 255, 0.22) 0%, transparent 38%),
+    /* top-right deep navy fade */
+    radial-gradient(ellipse at 92% 0%,  rgba(0, 30, 80, 0.60) 0%, transparent 40%),
+    /* center-left blue glow */
+    radial-gradient(ellipse at 20% 55%, rgba(0, 80, 200, 0.14) 0%, transparent 40%),
     /* bottom-right teal shimmer */
-    radial-gradient(ellipse at 80% 90%, rgba(0, 220, 180, 0.18) 0%, transparent 40%),
-    /* bottom-center deep purple accent */
-    radial-gradient(ellipse at 50% 100%, rgba(60, 0, 160, 0.22) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 90%, rgba(0, 180, 160, 0.14) 0%, transparent 40%),
+    /* bottom-center black vignette */
+    radial-gradient(ellipse at 50% 100%, rgba(0, 0, 0, 0.55) 0%, transparent 55%),
     /* base: rich near-black navy */
-    linear-gradient(155deg, #04091a 0%, #07112a 35%, #0a1835 60%, #050c1e 100%);
+    linear-gradient(155deg, #03080f 0%, #06101f 35%, #091530 60%, #040a18 100%);
 }
 
 /* ---------- Modals ---------- */
