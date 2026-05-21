@@ -92,7 +92,7 @@ const TRANSLATIONS = {
     actions:"Acciones", pdf_missing:"PDF de faltantes", pdf_duplicates:"PDF de repetidos",
     sign_in_register:"Iniciar sesión / registro", reset_progress:"Reiniciar progreso",
     sync_note:"Tu progreso se sincroniza en la nube cuando inicias sesión.",
-    language_label:"Idioma",
+    language_label:"Idioma", language:"Idioma",
     // Stats view
     "stats.overview":"Panorama general","stats.completed":"Completado",
     "stats.top_selections":"Selecciones con más progreso","stats.by_group":"Progreso por grupo",
@@ -166,7 +166,7 @@ const TRANSLATIONS = {
     actions:"Actions", pdf_missing:"PDF of missing", pdf_duplicates:"PDF of duplicates",
     sign_in_register:"Sign in / Register", reset_progress:"Reset progress",
     sync_note:"Your progress syncs to the cloud when you sign in.",
-    language_label:"Language",
+    language_label:"Language", language:"Language",
     "stats.overview":"Overview","stats.completed":"Completed",
     "stats.top_selections":"Top selections by progress","stats.by_group":"Progress by group",
     "stats.priority":"Priority pending","stats.selections_100":"Selections at 100%",
@@ -245,11 +245,11 @@ function applyStaticTranslations() {
       else el.textContent = t(key);
     }
   });
-  // Language toggle button label
-  const langBtn = document.querySelector("#lang-toggle");
-  if (langBtn) langBtn.title = t("language_label");
-  const langLabel = document.querySelector("#lang-label");
-  if (langLabel) langLabel.textContent = state.lang === "es" ? "ES → EN" : "EN → ES";
+  // Language toggle button flags
+  const fromFlag = document.querySelector("#lang-from-flag");
+  const toFlag   = document.querySelector("#lang-to-flag");
+  if (fromFlag) fromFlag.textContent = state.lang === "es" ? "🇪🇸" : "🇬🇧";
+  if (toFlag)   toFlag.textContent   = state.lang === "es" ? "🇬🇧" : "🇪🇸";
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
