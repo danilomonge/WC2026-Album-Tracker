@@ -171,7 +171,7 @@ function loadViewState() {
       state.selectedGroup = saved.selectedGroup || state.selectedGroup;
       state.selectedTeam = saved.selectedTeam || state.selectedTeam;
       state.selectedPage = saved.selectedPage || state.selectedPage;
-      state.query = saved.query || state.query;
+      // query is intentionally NOT restored — searches should not persist across page loads
     }
   } catch {
     return;
@@ -192,7 +192,7 @@ function saveViewState() {
       selectedGroup: state.selectedGroup,
       selectedTeam: state.selectedTeam,
       selectedPage: state.selectedPage,
-      query: state.query,
+      // query is intentionally excluded — searches should not persist across page loads
     }),
   );
 }
@@ -1356,6 +1356,10 @@ function bindEvents() {
     const sectionButton = event.target.closest("[data-section]");
     if (sectionButton) {
       state.section = sectionButton.dataset.section;
+      // Reset transient UI state on section change so the new view is never
+      // contaminated by a search or filter left over from another section.
+      state.query = "";
+      state.filter = "todos";
       renderApp();
       return;
     }
