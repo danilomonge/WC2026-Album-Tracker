@@ -1009,7 +1009,7 @@ function renderStickerCard(sticker) {
       </article>
       ${sticker.repetidos > 0 ? `<span class="sticker-card__badge">+${escapeHtml(sticker.repetidos)}</span>` : ""}
       <button type="button" class="sticker-card__remove" data-action="correct-sticker" data-sticker-id="${sticker.id}" aria-label="Corregir sticker">
-        −
+        <span class="sticker-card__remove-icon"></span>
       </button>
     </div>
   `;

@@ -457,10 +457,6 @@
   border: 2px solid #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
   cursor: pointer;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 0;
-  padding-bottom: 1px;
   opacity: 0;
   transform: scale(0.6);
   transition: opacity 0.15s, transform 0.15s;
@@ -1216,6 +1212,15 @@
   font-weight: 600;
   color: #424751;
   line-height: 1.35;
+}
+
+/* ---------- Remove button icon (CSS bar, no font metrics) ---------- */
+.sticker-card__remove-icon {
+  display: block;
+  width: 10px;
+  height: 2px;
+  background: #ffffff;
+  border-radius: 1px;
 }
 
 /* ---------- Nav bar interactive elements ---------- */
