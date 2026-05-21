@@ -52,9 +52,9 @@
   display: none;
 }
 .banner[data-tone="muted"] {
-  background: rgba(0, 40, 90, 0.18);
+  background: rgba(168, 200, 255, 0.18);
   color: #ffffff;
-  border-color: rgba(100, 160, 255, 0.25);
+  border-color: rgba(168, 200, 255, 0.45);
 }
 .banner[data-tone="warning"] {
   background: #fff4cf;
