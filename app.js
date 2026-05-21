@@ -1125,9 +1125,13 @@ function renderCollectionView(stickers) {
 
 function renderStatsView(stats) {
   const content = document.querySelector("#collection-content");
+  const completionPct = stats.porcentaje.toFixed(1);
   const selectionProgress = [...stats.bySelection]
     .sort((left, right) => right.progress - left.progress)
     .slice(0, 12);
+  const bottomSelections = [...stats.bySelection]
+    .sort((left, right) => left.progress - right.progress || left.label.localeCompare(right.label))
+    .slice(0, 3);
 
   content.innerHTML = `
     <section class="stats-board">
@@ -1140,6 +1144,10 @@ function renderStatsView(stats) {
           <div class="stats-pill"><span>Especiales</span><strong>${escapeHtml(stats.especiales.obtenidos)}/${escapeHtml(stats.especiales.total)}</strong></div>
           <div class="stats-pill"><span>Coca-Cola</span><strong>${escapeHtml(stats.cocaCola.obtenidos)}/${escapeHtml(stats.cocaCola.total)}</strong></div>
           <div class="stats-pill"><span>Edición</span><strong>Alemania</strong></div>
+        </div>
+        <div class="stats-note">
+          <strong>Completado: ${escapeHtml(completionPct)}%</strong>
+          <span>${escapeHtml(stats.obtenidos)} obtenidos · ${escapeHtml(stats.faltantes)} por pegar</span>
         </div>
       </article>
       <article class="stats-panel">
@@ -1172,6 +1180,43 @@ function renderStatsView(stats) {
                     <span>Grupo ${escapeHtml(selection.group)} · Pág. ${escapeHtml(selection.page)}</span>
                   </div>
                   <div class="progress-bar progress-bar--tight"><span style="width:${selection.progress.toFixed(1)}%;background:${selection.color}"></span></div>
+                </div>
+              `,
+            )
+            .join("")}
+        </div>
+      </article>
+      <article class="stats-panel">
+        <h3>Pendientes prioritarios</h3>
+        <div class="stats-kpis">
+          <div class="stats-kpi">
+            <span>Selecciones al 100%</span>
+            <strong>${escapeHtml(stats.bySelection.filter((selection) => selection.progress === 100).length)}</strong>
+          </div>
+          <div class="stats-kpi">
+            <span>Grupos al 100%</span>
+            <strong>${escapeHtml(stats.byGroup.filter((group) => group.progress === 100).length)}</strong>
+          </div>
+          <div class="stats-kpi">
+            <span>Especiales pendientes</span>
+            <strong>${escapeHtml(stats.especiales.faltantes)}</strong>
+          </div>
+          <div class="stats-kpi">
+            <span>Coca-Cola pendientes</span>
+            <strong>${escapeHtml(stats.cocaCola.faltantes)}</strong>
+          </div>
+        </div>
+        <div class="mini-list">
+          <h4>Selecciones más rezagadas</h4>
+          ${bottomSelections
+            .map(
+              (selection) => `
+                <div class="mini-row">
+                  <div>
+                    <strong>${escapeHtml(selection.label)}</strong>
+                    <span>${escapeHtml(selection.obtenidos)} de ${escapeHtml(selection.total)} · Grupo ${escapeHtml(selection.group)}</span>
+                  </div>
+                  <em>${escapeHtml(selection.progress.toFixed(1))}%</em>
                 </div>
               `,
             )
