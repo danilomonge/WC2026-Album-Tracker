@@ -1321,73 +1321,83 @@ function renderStatsView(stats) {
     .sort((left, right) => left.progress - right.progress || left.label.localeCompare(right.label))
     .slice(0, 3);
 
+  const panelOverview = `
+    <article class="stats-panel">
+      <h3>${t("stats.overview")}</h3>
+      <div class="stats-grid">
+        <div class="stats-pill"><span>${t("obtained")}</span><strong>${escapeHtml(stats.obtenidos)}</strong></div>
+        <div class="stats-pill"><span>${t("missing")}</span><strong>${escapeHtml(stats.faltantes)}</strong></div>
+        <div class="stats-pill"><span>${t("duplicates")}</span><strong>${escapeHtml(stats.repetidos)}</strong></div>
+        <div class="stats-pill"><span>${t("especiales")}</span><strong>${escapeHtml(stats.especiales.obtenidos)}/${escapeHtml(stats.especiales.total)}</strong></div>
+        <div class="stats-pill"><span>Coca-Cola</span><strong>${escapeHtml(stats.cocaCola.obtenidos)}/${escapeHtml(stats.cocaCola.total)}</strong></div>
+        <div class="stats-pill"><span>${t("stats.edition")}</span><strong>${t("stats.edition")}</strong></div>
+      </div>
+      <div class="stats-note">
+        <strong>${t("stats.completed")}: ${escapeHtml(completionPct)}%</strong>
+        <span>${escapeHtml(stats.obtenidos)} ${t("home.obtained")} · ${escapeHtml(stats.faltantes)} ${t("yet_to_paste")}</span>
+      </div>
+    </article>`;
+
+  const panelGroups = `
+    <article class="stats-panel">
+      <h3>${t("stats.by_group")}</h3>
+      <div class="rank-list">
+        ${stats.byGroup.map(group => `
+          <div class="rank-row">
+            <div>
+              <strong>${escapeHtml(group.label)}</strong>
+              <span>${escapeHtml(group.obtenidos)} ${t("stats.of")} ${escapeHtml(group.total)}</span>
+            </div>
+            <div class="progress-bar"><span style="width:${group.progress.toFixed(1)}%;background:${group.color}"></span></div>
+          </div>
+        `).join("")}
+      </div>
+    </article>`;
+
+  const panelSelections = `
+    <article class="stats-panel">
+      <h3>${t("stats.top_selections")}</h3>
+      <div class="rank-list">
+        ${selectionProgress.map(selection => `
+          <div class="rank-row">
+            <div>
+              <strong>${escapeHtml(selection.label)}</strong>
+              <span>${t("group_letter")} ${escapeHtml(selection.group)} · ${t("page_abbr")} ${escapeHtml(selection.page)}</span>
+            </div>
+            <div class="progress-bar"><span style="width:${selection.progress.toFixed(1)}%;background:${selection.color}"></span></div>
+          </div>
+        `).join("")}
+      </div>
+    </article>`;
+
+  const panelPriority = `
+    <article class="stats-panel">
+      <h3>${t("stats.priority")}</h3>
+      <div class="stats-kpis">
+        <div class="stats-kpi"><span>${t("stats.selections_100")}</span><strong>${escapeHtml(stats.bySelection.filter(s => s.progress === 100).length)}</strong></div>
+        <div class="stats-kpi"><span>${t("stats.groups_100")}</span><strong>${escapeHtml(stats.byGroup.filter(g => g.progress === 100).length)}</strong></div>
+        <div class="stats-kpi"><span>${t("stats.especiales_pending")}</span><strong>${escapeHtml(stats.especiales.faltantes)}</strong></div>
+        <div class="stats-kpi"><span>${t("stats.coke_pending")}</span><strong>${escapeHtml(stats.cocaCola.faltantes)}</strong></div>
+      </div>
+      <div class="mini-list">
+        <h4>${t("stats.lagging")}</h4>
+        ${bottomSelections.map(selection => `
+          <div class="mini-row">
+            <div>
+              <strong>${escapeHtml(selection.label)}</strong>
+              <span>${escapeHtml(selection.obtenidos)} ${t("stats.of")} ${escapeHtml(selection.total)} · ${t("group_letter")} ${escapeHtml(selection.group)}</span>
+            </div>
+            <em>${escapeHtml(selection.progress.toFixed(1))}%</em>
+          </div>
+        `).join("")}
+      </div>
+    </article>`;
+
   content.innerHTML = `
-    <section class="stats-board">
-      <article class="stats-panel">
-        <h3>${t("stats.overview")}</h3>
-        <div class="stats-grid">
-          <div class="stats-pill"><span>${t("obtained")}</span><strong>${escapeHtml(stats.obtenidos)}</strong></div>
-          <div class="stats-pill"><span>${t("missing")}</span><strong>${escapeHtml(stats.faltantes)}</strong></div>
-          <div class="stats-pill"><span>${t("duplicates")}</span><strong>${escapeHtml(stats.repetidos)}</strong></div>
-          <div class="stats-pill"><span>${t("especiales")}</span><strong>${escapeHtml(stats.especiales.obtenidos)}/${escapeHtml(stats.especiales.total)}</strong></div>
-          <div class="stats-pill"><span>Coca-Cola</span><strong>${escapeHtml(stats.cocaCola.obtenidos)}/${escapeHtml(stats.cocaCola.total)}</strong></div>
-          <div class="stats-pill"><span>${t("stats.edition")}</span><strong>${t("stats.edition")}</strong></div>
-        </div>
-        <div class="stats-note">
-          <strong>${t("stats.completed")}: ${escapeHtml(completionPct)}%</strong>
-          <span>${escapeHtml(stats.obtenidos)} ${t("home.obtained")} · ${escapeHtml(stats.faltantes)} ${t("yet_to_paste")}</span>
-        </div>
-      </article>
-      <article class="stats-panel">
-        <h3>${t("stats.top_selections")}</h3>
-        <div class="rank-list">
-          ${selectionProgress.map(selection => `
-            <div class="rank-row">
-              <div>
-                <strong>${escapeHtml(selection.label)}</strong>
-                <span>${t("group_letter")} ${escapeHtml(selection.group)} · ${t("page_abbr")} ${escapeHtml(selection.page)}</span>
-              </div>
-              <div class="progress-bar"><span style="width:${selection.progress.toFixed(1)}%;background:${selection.color}"></span></div>
-            </div>
-          `).join("")}
-        </div>
-      </article>
-      <article class="stats-panel">
-        <h3>${t("stats.by_group")}</h3>
-        <div class="rank-list">
-          ${stats.byGroup.map(group => `
-            <div class="rank-row">
-              <div>
-                <strong>${escapeHtml(group.label)}</strong>
-                <span>${escapeHtml(group.obtenidos)} ${t("stats.of")} ${escapeHtml(group.total)}</span>
-              </div>
-              <div class="progress-bar"><span style="width:${group.progress.toFixed(1)}%;background:${group.color}"></span></div>
-            </div>
-          `).join("")}
-        </div>
-      </article>
-      <article class="stats-panel">
-        <h3>${t("stats.priority")}</h3>
-        <div class="stats-kpis">
-          <div class="stats-kpi"><span>${t("stats.selections_100")}</span><strong>${escapeHtml(stats.bySelection.filter(s => s.progress === 100).length)}</strong></div>
-          <div class="stats-kpi"><span>${t("stats.groups_100")}</span><strong>${escapeHtml(stats.byGroup.filter(g => g.progress === 100).length)}</strong></div>
-          <div class="stats-kpi"><span>${t("stats.especiales_pending")}</span><strong>${escapeHtml(stats.especiales.faltantes)}</strong></div>
-          <div class="stats-kpi"><span>${t("stats.coke_pending")}</span><strong>${escapeHtml(stats.cocaCola.faltantes)}</strong></div>
-        </div>
-        <div class="mini-list">
-          <h4>${t("stats.lagging")}</h4>
-          ${bottomSelections.map(selection => `
-            <div class="mini-row">
-              <div>
-                <strong>${escapeHtml(selection.label)}</strong>
-                <span>${escapeHtml(selection.obtenidos)} ${t("stats.of")} ${escapeHtml(selection.total)} · ${t("group_letter")} ${escapeHtml(selection.group)}</span>
-              </div>
-              <em>${escapeHtml(selection.progress.toFixed(1))}%</em>
-            </div>
-          `).join("")}
-        </div>
-      </article>
-    </section>
+    <div class="stats-cols">
+      <div class="stats-col">${panelOverview}${panelGroups}</div>
+      <div class="stats-col">${panelSelections}${panelPriority}</div>
+    </div>
   `;
 }
 
