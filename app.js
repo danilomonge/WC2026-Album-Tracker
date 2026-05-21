@@ -1,16 +1,7 @@
-import { ALBUM_METADATA, GROUPS, SELECTIONS, STICKERS, TEAM_COLORS } from "./data.js";
+import { ALBUM_METADATA, GROUPS, SELECTIONS, STICKERS, TEAM_COLORS, TEAM_FLAG_STYLES } from "./data.js";
 
-const TEAM_FLAG_EMOJIS = {
-  MEX: "🇲🇽", RSA: "🇿🇦", KOR: "🇰🇷", CZE: "🇨🇿", CAN: "🇨🇦", BIH: "🇧🇦", QAT: "🇶🇦", SUI: "🇨🇭",
-  BRA: "🇧🇷", MAR: "🇲🇦", HAI: "🇭🇹", SCO: "🏴", USA: "🇺🇸", PAR: "🇵🇾", AUS: "🇦🇺", TUR: "🇹🇷",
-  GER: "🇩🇪", CUW: "🇨🇼", CIV: "🇨🇮", ECU: "🇪🇨", NED: "🇳🇱", JPN: "🇯🇵", SWE: "🇸🇪", TUN: "🇹🇳",
-  BEL: "🇧🇪", EGY: "🇪🇬", IRN: "🇮🇷", NZL: "🇳🇿", ESP: "🇪🇸", CPV: "🇨🇻", KSA: "🇸🇦", URU: "🇺🇾",
-  FRA: "🇫🇷", SEN: "🇸🇳", IRQ: "🇮🇶", NOR: "🇳🇴", ARG: "🇦🇷", ALG: "🇩🇿", AUT: "🇦🇹", JOR: "🇯🇴",
-  POR: "🇵🇹", COD: "🇨🇩", UZB: "🇺🇿", COL: "🇨🇴", ENG: "🏴", CRO: "🇭🇷", GHA: "🇬🇭", PAN: "🇵🇦",
-};
-
-function getTeamFlagEmoji(teamCode) {
-  return TEAM_FLAG_EMOJIS[teamCode] || "🏳️";
+function getTeamFlagStyle(teamCode, fallbackColor = "#c2c6d3") {
+  return TEAM_FLAG_STYLES[teamCode] || TEAM_COLORS[teamCode] || fallbackColor;
 }
 
 
@@ -717,7 +708,7 @@ function renderSectionTabs() {
       ([value]) => `
         <button class="section-tab ${state.section === value ? "is-active" : ""}" data-section="${value}">
           <span class="material-symbols-outlined">${SECTION_ICONS[value]}</span>
-          <span>${escapeHtml(stripLeadingEmojiLabel(SECTION_SHORT[value]))}</span>
+          <span>${escapeHtml(SECTION_SHORT[value])}</span>
         </button>
       `,
     )
@@ -728,7 +719,7 @@ function renderSectionTabs() {
       ([value, label]) => `
         <button class="mobile-tab ${state.section === value ? "is-active" : ""}" data-section="${value}" title="${escapeHtml(label)}">
           <span class="material-symbols-outlined">${SECTION_ICONS[value]}</span>
-          <span>${escapeHtml(stripLeadingEmojiLabel(SECTION_SHORT[value]))}</span>
+          <span>${escapeHtml(SECTION_SHORT[value])}</span>
         </button>
       `,
     )
