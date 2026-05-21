@@ -1146,7 +1146,7 @@ function renderStatsView(stats) {
 
   content.innerHTML = `
     <section class="stats-board">
-      <article class="stats-panel stats-panel--overview">
+      <article class="stats-panel">
         <h3>Panorama general</h3>
         <div class="stats-grid">
           <div class="stats-pill"><span>Obtenidos</span><strong>${escapeHtml(stats.obtenidos)}</strong></div>
@@ -1172,7 +1172,7 @@ function renderStatsView(stats) {
                     <strong>${escapeHtml(selection.label)}</strong>
                     <span>Grupo ${escapeHtml(selection.group)} · Pág. ${escapeHtml(selection.page)}</span>
                   </div>
-                  <div class="progress-bar progress-bar--tight"><span style="width:${selection.progress.toFixed(1)}%;background:${selection.color}"></span></div>
+                  <div class="progress-bar"><span style="width:${selection.progress.toFixed(1)}%;background:${selection.color}"></span></div>
                 </div>
               `,
             )
@@ -1190,14 +1190,14 @@ function renderStatsView(stats) {
                     <strong>${escapeHtml(group.label)}</strong>
                     <span>${escapeHtml(group.obtenidos)} de ${escapeHtml(group.total)}</span>
                   </div>
-                  <div class="progress-bar progress-bar--tight"><span style="width:${group.progress.toFixed(1)}%;background:${group.color}"></span></div>
+                  <div class="progress-bar"><span style="width:${group.progress.toFixed(1)}%;background:${group.color}"></span></div>
                 </div>
               `,
             )
             .join("")}
         </div>
       </article>
-      <article class="stats-panel stats-panel--priority">
+      <article class="stats-panel">
         <h3>Pendientes prioritarios</h3>
         <div class="stats-kpis">
           <div class="stats-kpi">
