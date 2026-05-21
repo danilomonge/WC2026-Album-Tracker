@@ -1,38 +1,16 @@
-import { ALBUM_METADATA, GROUPS, SELECTIONS, STICKERS, TEAM_COLORS, TEAM_FLAG_STYLES } from "./data.js";
+import { ALBUM_METADATA, GROUPS, SELECTIONS, STICKERS } from "./data.js";
 
-function getTeamFlagStyle(teamCode, fallbackColor = "#c2c6d3") {
-  return TEAM_FLAG_STYLES[teamCode] || fallbackColor;
-}
+const TEAM_FLAG_EMOJIS = {
+  MEX: "🇲🇽", RSA: "🇿🇦", KOR: "🇰🇷", CZE: "🇨🇿", CAN: "🇨🇦", BIH: "🇧🇦", QAT: "🇶🇦", SUI: "🇨🇭",
+  BRA: "🇧🇷", MAR: "🇲🇦", HAI: "🇭🇹", SCO: "🏴", USA: "🇺🇸", PAR: "🇵🇾", AUS: "🇦🇺", TUR: "🇹🇷",
+  GER: "🇩🇪", CUW: "🇨🇼", CIV: "🇨🇮", ECU: "🇪🇨", NED: "🇳🇱", JPN: "🇯🇵", SWE: "🇸🇪", TUN: "🇹🇳",
+  BEL: "🇧🇪", EGY: "🇪🇬", IRN: "🇮🇷", NZL: "🇳🇿", ESP: "🇪🇸", CPV: "🇨🇻", KSA: "🇸🇦", URU: "🇺🇾",
+  FRA: "🇫🇷", SEN: "🇸🇳", IRQ: "🇮🇶", NOR: "🇳🇴", ARG: "🇦🇷", ALG: "🇩🇿", AUT: "🇦🇹", JOR: "🇯🇴",
+  POR: "🇵🇹", COD: "🇨🇩", UZB: "🇺🇿", COL: "🇨🇴", ENG: "🏴", CRO: "🇭🇷", GHA: "🇬🇭", PAN: "🇵🇦",
+};
 
-
-function getTeamFlagStyle(teamCode, fallbackColor = "#c2c6d3") {
-  const flags = {
-    MEX: "linear-gradient(to right, #006847 0 33.33%, #ffffff 33.33% 66.66%, #ce1126 66.66% 100%)",
-    RSA: "linear-gradient(to bottom, #de3831 0 33.33%, #ffffff 33.33% 66.66%, #002395 66.66% 100%)",
-    KOR: "#ffffff",
-    CZE: "linear-gradient(to bottom, #ffffff 0 50%, #d7141a 50% 100%)",
-    CAN: "linear-gradient(to right, #d52b1e 0 25%, #ffffff 25% 75%, #d52b1e 75% 100%)",
-    BIH: "linear-gradient(135deg, #002f6c 0 62%, #fcd116 62% 70%, #002f6c 70% 100%)",
-    QAT: "linear-gradient(to right, #8a1538 0 70%, #ffffff 70% 100%)",
-    SUI: "#d52b1e",
-    BRA: "#009b3a", MAR: "#c1272d", HAI: "linear-gradient(to bottom, #00209f 0 50%, #d21034 50% 100%)", SCO: "#005eb8",
-    USA: "repeating-linear-gradient(to bottom, #b22234 0 8%, #ffffff 8% 16%)", PAR: "linear-gradient(to right, #d52b1e 0 33.33%, #ffffff 33.33% 66.66%, #0038a8 66.66% 100%)", AUS: "#012169", TUR: "#e30a17",
-    GER: "linear-gradient(to bottom, #000000 0 33.33%, #dd0000 33.33% 66.66%, #ffce00 66.66% 100%)", CUW: "linear-gradient(to bottom, #002b7f 0 100%)", CIV: "linear-gradient(to right, #f77f00 0 33.33%, #ffffff 33.33% 66.66%, #009e60 66.66% 100%)", ECU: "linear-gradient(to bottom, #fcd116 0 50%, #003893 50% 75%, #ce1126 75% 100%)",
-    NED: "linear-gradient(to bottom, #ae1c28 0 33.33%, #ffffff 33.33% 66.66%, #21468b 66.66% 100%)", JPN: "#ffffff", SWE: "#006aa7", TUN: "#e70013",
-    BEL: "linear-gradient(to right, #000000 0 33.33%, #ffe936 33.33% 66.66%, #ef3340 66.66% 100%)", EGY: "linear-gradient(to bottom, #ce1126 0 33.33%, #ffffff 33.33% 66.66%, #000000 66.66% 100%)", IRN: "linear-gradient(to bottom, #239f40 0 33.33%, #ffffff 33.33% 66.66%, #da0000 66.66% 100%)", NZL: "#00247d",
-    ESP: "linear-gradient(to bottom, #aa151b 0 25%, #f1bf00 25% 75%, #aa151b 75% 100%)", CPV: "#003893", KSA: "#006c35", URU: "repeating-linear-gradient(to bottom, #ffffff 0 12.5%, #5eb6e4 12.5% 25%)",
-    FRA: "linear-gradient(to right, #0055a4 0 33.33%, #ffffff 33.33% 66.66%, #ef4135 66.66% 100%)", SEN: "linear-gradient(to right, #00853f 0 33.33%, #fdef42 33.33% 66.66%, #e31b23 66.66% 100%)", IRQ: "linear-gradient(to bottom, #ce1126 0 33.33%, #ffffff 33.33% 66.66%, #000000 66.66% 100%)", NOR: "#ba0c2f",
-    ARG: "linear-gradient(to bottom, #74acdf 0 33.33%, #ffffff 33.33% 66.66%, #74acdf 66.66% 100%)", ALG: "linear-gradient(to right, #006233 0 50%, #ffffff 50% 100%)", AUT: "linear-gradient(to bottom, #ed2939 0 33.33%, #ffffff 33.33% 66.66%, #ed2939 66.66% 100%)", JOR: "linear-gradient(to bottom, #000000 0 33.33%, #ffffff 33.33% 66.66%, #007a3d 66.66% 100%)",
-    POR: "linear-gradient(to right, #006600 0 40%, #ff0000 40% 100%)", COD: "#00a3e0", UZB: "linear-gradient(to bottom, #1eb5e6 0 33.33%, #ffffff 33.33% 66.66%, #1eb53a 66.66% 100%)", COL: "linear-gradient(to bottom, #fcd116 0 50%, #003893 50% 75%, #ce1126 75% 100%)",
-    ENG: "#ffffff", CRO: "linear-gradient(to bottom, #ff0000 0 33.33%, #ffffff 33.33% 66.66%, #171796 66.66% 100%)", GHA: "linear-gradient(to bottom, #ce1126 0 33.33%, #fcd116 33.33% 66.66%, #006b3f 66.66% 100%)", PAN: "linear-gradient(to bottom, #ffffff 0 50%, #d21034 50% 100%)",
-  };
-
-  return flags[teamCode] || fallbackColor;
-}
-
-
-function getTeamFlagStyle(teamCode, fallbackColor = "#c2c6d3") {
-  return TEAM_COLORS[teamCode] || fallbackColor;
+function getTeamFlagEmoji(teamCode) {
+  return TEAM_FLAG_EMOJIS[teamCode] || "🏳️";
 }
 
 
@@ -76,15 +54,6 @@ const SECTION_SHORT = {
   stats: "Stats",
 };
 
-const SECTION_EMOJIS = {
-  inicio: "🏠",
-  all: "📖",
-  repetidos: "🔁",
-  faltantes: "⭐",
-  especiales: "✨",
-  "coca-cola": "🥤",
-  stats: "📊",
-};
 
 const FILTER_LABELS = {
   todos: "Todos",
@@ -98,6 +67,10 @@ const FILTER_LABELS = {
   "team-photos": "Team Photos",
   logos: "Logos",
 };
+
+function stripLeadingEmojiLabel(value) {
+  return String(value || "").replace(/^[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9]+/, "").trim();
+}
 
 const state = {
   catalog: STICKERS,
@@ -135,7 +108,7 @@ export function sanitizeDuplicates(value) {
 }
 
 export function validateStickerId(stickerId) {
-  return /^(FWC([1-9]|1[0-9]|20)|CC([1-9]|1[0-2])|[A-Z]{3}([1-9]|1[0-9]|20))$/.test(
+  return /^(FWC([0-9]|1[0-9]|20)|CC([1-9]|1[0-2])|[A-Z]{3}([1-9]|1[0-9]|20))$/.test(
     String(stickerId || ""),
   );
 }
@@ -744,7 +717,7 @@ function renderSectionTabs() {
       ([value]) => `
         <button class="section-tab ${state.section === value ? "is-active" : ""}" data-section="${value}">
           <span class="material-symbols-outlined">${SECTION_ICONS[value]}</span>
-          <span>${escapeHtml(SECTION_EMOJIS[value])} ${escapeHtml(SECTION_SHORT[value])}</span>
+          <span>${escapeHtml(stripLeadingEmojiLabel(SECTION_SHORT[value]))}</span>
         </button>
       `,
     )
@@ -755,7 +728,7 @@ function renderSectionTabs() {
       ([value, label]) => `
         <button class="mobile-tab ${state.section === value ? "is-active" : ""}" data-section="${value}" title="${escapeHtml(label)}">
           <span class="material-symbols-outlined">${SECTION_ICONS[value]}</span>
-          <span>${escapeHtml(SECTION_EMOJIS[value])} ${escapeHtml(SECTION_SHORT[value])}</span>
+          <span>${escapeHtml(stripLeadingEmojiLabel(SECTION_SHORT[value]))}</span>
         </button>
       `,
     )
@@ -901,10 +874,7 @@ function renderHomeView(stats) {
     const teamPills = group.teams
       .map(
         (t) =>
-          `<span class="home-team-pill" style="--team-accent:${TEAM_COLORS[t.code] || group.color}">
-            <span class="home-team-pill__dot"></span>
-            ${escapeHtml(t.code)}
-          </span>`,
+          `<span class="home-team-pill">${escapeHtml(getTeamFlagEmoji(t.code))} ${escapeHtml(t.code)}</span>`,
       )
       .join("");
     return `
@@ -1097,7 +1067,7 @@ function renderGroupedByGroupAndTeam(stickers) {
           return `
             <div class="team-subsection">
               <div class="team-header">
-                <div class="team-flag" style="--team-flag:${getTeamFlagStyle(teamCode, teamAccent)};--team-accent:${teamAccent}"></div>
+                <div class="team-flag" role="img" aria-label="Bandera de ${escapeHtml(teamKey)}">${escapeHtml(getTeamFlagEmoji(teamCode))}</div>
                 <div class="team-header__info">
                   ${teamCode ? `<span class="team-header__code">${escapeHtml(teamCode)}</span>` : ""}
                   <span class="team-header__label">${escapeHtml(teamKey)}${pageLabel}</span>
@@ -1156,7 +1126,7 @@ function renderCollectionView(stickers) {
       return `
         <section class="board-section">
           <div class="team-header">
-            <div class="team-flag" style="--team-flag:${getTeamFlagStyle(firstSticker?.equipoCodigo, teamAccent)};--team-accent:${teamAccent}"></div>
+            <div class="team-flag" role="img" aria-label="Bandera de ${escapeHtml(group.label)}">${escapeHtml(getTeamFlagEmoji(firstSticker?.equipoCodigo))}</div>
             <h3>${escapeHtml(group.label)}</h3>
             <span class="team-progress">${escapeHtml(obtained)} / ${escapeHtml(group.stickers.length)}</span>
           </div>
@@ -1181,7 +1151,7 @@ function renderStatsView(stats) {
 
   content.innerHTML = `
     <section class="stats-board">
-      <article class="stats-panel">
+      <article class="stats-panel stats-panel--overview">
         <h3>Panorama general</h3>
         <div class="stats-grid">
           <div class="stats-pill"><span>Obtenidos</span><strong>${escapeHtml(stats.obtenidos)}</strong></div>
@@ -1196,25 +1166,7 @@ function renderStatsView(stats) {
           <span>${escapeHtml(stats.obtenidos)} obtenidos · ${escapeHtml(stats.faltantes)} por pegar</span>
         </div>
       </article>
-      <article class="stats-panel">
-        <h3>Progreso por grupo</h3>
-        <div class="rank-list">
-          ${stats.byGroup
-            .map(
-              (group) => `
-                <div class="rank-row">
-                  <div>
-                    <strong>${escapeHtml(group.label)}</strong>
-                    <span>${escapeHtml(group.obtenidos)} de ${escapeHtml(group.total)}</span>
-                  </div>
-                  <div class="progress-bar progress-bar--tight"><span style="width:${group.progress.toFixed(1)}%;background:${group.color}"></span></div>
-                </div>
-              `,
-            )
-            .join("")}
-        </div>
-      </article>
-      <article class="stats-panel">
+      <article class="stats-panel stats-panel--top-selections">
         <h3>Selecciones con más progreso</h3>
         <div class="rank-list">
           ${selectionProgress
@@ -1232,7 +1184,25 @@ function renderStatsView(stats) {
             .join("")}
         </div>
       </article>
-      <article class="stats-panel">
+      <article class="stats-panel stats-panel--groups">
+        <h3>Progreso por grupo</h3>
+        <div class="rank-list">
+          ${stats.byGroup
+            .map(
+              (group) => `
+                <div class="rank-row">
+                  <div>
+                    <strong>${escapeHtml(group.label)}</strong>
+                    <span>${escapeHtml(group.obtenidos)} de ${escapeHtml(group.total)}</span>
+                  </div>
+                  <div class="progress-bar progress-bar--tight"><span style="width:${group.progress.toFixed(1)}%;background:${group.color}"></span></div>
+                </div>
+              `,
+            )
+            .join("")}
+        </div>
+      </article>
+      <article class="stats-panel stats-panel--priority">
         <h3>Pendientes prioritarios</h3>
         <div class="stats-kpis">
           <div class="stats-kpi">
