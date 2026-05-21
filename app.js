@@ -63,6 +63,197 @@ const FILTER_LABELS = {
   logos: "Logos",
 };
 
+// ─── i18n ────────────────────────────────────────────────────────────────────
+const TRANSLATIONS = {
+  es: {
+    // Sections
+    inicio:"Inicio", all:"Todos los cromos", repetidos:"Mis repetidos",
+    faltantes:"Me faltan", especiales:"Especiales", "coca-cola":"Coca-Cola", stats:"Estadísticas",
+    "short.inicio":"Inicio","short.all":"Álbum","short.repetidos":"Repetidos",
+    "short.faltantes":"Faltan","short.especiales":"Especiales","short.coca-cola":"Coca","short.stats":"Stats",
+    // Filters
+    "filter.todos":"Todos","filter.obtenidos":"Obtenidos","filter.repetidos":"Repetidos",
+    "filter.faltantes":"Faltantes","filter.especiales":"Especiales","filter.coca-cola":"Coca-Cola",
+    "filter.escudos":"Escudos","filter.estadios":"Estadios","filter.team-photos":"Team Photos","filter.logos":"Logos",
+    // Controls
+    group_by:"Agrupar por", group:"Grupo", selection:"Selección", page:"Página",
+    all_groups:"Todos los grupos", group_letter:"Grupo", all_selections:"Todas las selecciones",
+    all_pages:"Todas las páginas", page_abbr:"Pág.", page_full:"Página",
+    // Status / auth
+    syncing:"Sincronizando…", synced:"Sincronizado", read_only:"Solo lectura", sign_in:"Iniciar sesión",
+    search_placeholder:"Buscar país, jugador, número…",
+    "banner.file_protocol":"Abre la app desde un servidor (http://localhost o GitHub Pages) para iniciar sesión.",
+    "banner.not_signed_in":"Modo lectura. Inicia sesión para marcar cromos, generar PDFs y sincronizar tu progreso entre dispositivos.",
+    // Sidebar stats
+    obtained:"Obtenidos", missing:"Faltantes", duplicates:"Repetidos",
+    yet_to_paste:"aún por pegar", available_for_trade:"disponibles para cambio", pct_of_album:"% del álbum",
+    global_progress:"Progreso global", stickers_visible:"stickers visibles",
+    // Sidebar actions
+    actions:"Acciones", pdf_missing:"PDF de faltantes", pdf_duplicates:"PDF de repetidos",
+    sign_in_register:"Iniciar sesión / registro", reset_progress:"Reiniciar progreso",
+    sync_note:"Tu progreso se sincroniza en la nube cuando inicias sesión.",
+    language_label:"Idioma",
+    // Stats view
+    "stats.overview":"Panorama general","stats.completed":"Completado",
+    "stats.top_selections":"Selecciones con más progreso","stats.by_group":"Progreso por grupo",
+    "stats.priority":"Pendientes prioritarios","stats.selections_100":"Selecciones al 100%",
+    "stats.groups_100":"Grupos al 100%","stats.especiales_pending":"Especiales pendientes",
+    "stats.coke_pending":"Coca-Cola pendientes","stats.lagging":"Selecciones más rezagadas",
+    "stats.of":"de","stats.edition":"Alemania",
+    // Empty state
+    "empty.title":"No hay stickers para esta vista",
+    "empty.desc":"Prueba con otro filtro, cambia la agrupación o limpia la búsqueda.",
+    // Auth
+    "auth.account":"Cuenta","auth.title.login":"Iniciar sesión","auth.title.register":"Crear cuenta",
+    "auth.email":"Email","auth.password":"Contraseña",
+    "auth.submit.login":"Entrar","auth.submit.register":"Registrarme",
+    "auth.toggle.to_register":"¿No tienes cuenta? Regístrate",
+    "auth.toggle.to_login":"¿Ya tienes cuenta? Inicia sesión",
+    // Home
+    "home.album_title":"Mi álbum","home.groups":"Los 12 grupos","home.tournament":"Formato del torneo",
+    "home.venues_title":"Sedes","home.album_structure":"Estructura del álbum",
+    "home.selections":"selecciones","home.groups_count":"grupos","home.matches":"partidos","home.venues":"sedes",
+    "home.obtained":"obtenidos","home.missing":"faltantes","home.duplicates":"repetidos",
+    "home.specials":"especiales","home.total":"stickers totales",
+    "home.stage.group":"Fase de grupos",
+    "home.stage.group_desc":"12 grupos de 4 equipos · 48 partidos · Los 2 primeros de cada grupo + 8 mejores terceros clasifican",
+    "home.stage.r32":"Ronda de 32","home.stage.r32_desc":"32 equipos · primera eliminatoria directa de la historia del mundial",
+    "home.stage.r16":"Octavos de final","home.stage.r16_desc":"16 equipos",
+    "home.stage.qf":"Cuartos de final","home.stage.qf_desc":"8 equipos",
+    "home.stage.sf":"Semifinales","home.stage.sf_desc":"4 equipos",
+    "home.stage.final":"Final","home.stage.final_desc":"MetLife Stadium · East Rutherford, NJ · 19 Jul 2026",
+    "home.album.total":"stickers totales","home.album.selections":"selecciones · 1 Logo + 1 Foto de equipo + 18 jugadores",
+    "home.album.specials":"especiales FWC · países sede, museos FIFA, leyendas",
+    "home.album.coke":"Coca-Cola Germany · edición exclusiva Alemania",
+    // Toasts / confirms
+    "confirm.reset":"¿Seguro que quieres borrar todo tu progreso sincronizado?",
+    "toast.sync_error":"No pudimos sincronizar tu progreso. Intenta de nuevo en unos segundos.",
+    "toast.sign_in_required":"Inicia sesión para guardar tu progreso.",
+    "toast.invalid_sticker":"El identificador del sticker no es válido.",
+    "toast.save_error":"No se pudo guardar tu cambio. Intenta de nuevo.",
+    "toast.file_protocol":"La edición de stickers requiere abrir la app desde localhost o GitHub Pages.",
+    "toast.not_found":"No encontramos ese sticker en el catálogo.",
+    "toast.reset_success":"Álbum reiniciado.","toast.reset_error":"No se pudo reiniciar el álbum.",
+    "toast.no_stickers":"No hay stickers para exportar.",
+    "toast.reset_session":"Necesitas una sesión activa para reiniciar el álbum.",
+    "toast.account_created":"Cuenta creada. Revisa tu correo si te pide confirmar.",
+    "toast.signed_in":"Sesión iniciada.","toast.init_error":"No pudimos inicializar la aplicación.",
+    "toast.use_server":"Usa localhost o GitHub Pages para iniciar sesión.",
+    "toast.login_server":"El login requiere abrir la app desde localhost o GitHub Pages.",
+    "toast.export_server":"La exportación autenticada requiere localhost o GitHub Pages.",
+    "pdf.missing_title":"Panini 2026 · Faltantes","pdf.duplicates_title":"Panini 2026 · Repetidos",
+    "pdf.user":"Usuario","pdf.generated":"Generado","pdf.filename_missing":"panini-faltantes-germany.pdf",
+    "pdf.filename_duplicates":"panini-repetidos-germany.pdf",
+  },
+  en: {
+    inicio:"Home", all:"All stickers", repetidos:"My duplicates",
+    faltantes:"Missing", especiales:"Specials", "coca-cola":"Coca-Cola", stats:"Statistics",
+    "short.inicio":"Home","short.all":"Album","short.repetidos":"Dupes",
+    "short.faltantes":"Missing","short.especiales":"Specials","short.coca-cola":"Coke","short.stats":"Stats",
+    "filter.todos":"All","filter.obtenidos":"Collected","filter.repetidos":"Duplicates",
+    "filter.faltantes":"Missing","filter.especiales":"Specials","filter.coca-cola":"Coca-Cola",
+    "filter.escudos":"Shields","filter.estadios":"Stadiums","filter.team-photos":"Team Photos","filter.logos":"Logos",
+    group_by:"Group by", group:"Group", selection:"Selection", page:"Page",
+    all_groups:"All groups", group_letter:"Group", all_selections:"All selections",
+    all_pages:"All pages", page_abbr:"Pg.", page_full:"Page",
+    syncing:"Syncing…", synced:"Synced", read_only:"Read only", sign_in:"Sign in",
+    search_placeholder:"Search country, player, number…",
+    "banner.file_protocol":"Open the app from a server (http://localhost or GitHub Pages) to sign in.",
+    "banner.not_signed_in":"Read-only mode. Sign in to mark stickers, generate PDFs and sync your progress.",
+    obtained:"Collected", missing:"Missing", duplicates:"Duplicates",
+    yet_to_paste:"still to paste", available_for_trade:"available for trade", pct_of_album:"% of album",
+    global_progress:"Global progress", stickers_visible:"stickers visible",
+    actions:"Actions", pdf_missing:"PDF of missing", pdf_duplicates:"PDF of duplicates",
+    sign_in_register:"Sign in / Register", reset_progress:"Reset progress",
+    sync_note:"Your progress syncs to the cloud when you sign in.",
+    language_label:"Language",
+    "stats.overview":"Overview","stats.completed":"Completed",
+    "stats.top_selections":"Top selections by progress","stats.by_group":"Progress by group",
+    "stats.priority":"Priority pending","stats.selections_100":"Selections at 100%",
+    "stats.groups_100":"Groups at 100%","stats.especiales_pending":"Specials pending",
+    "stats.coke_pending":"Coca-Cola pending","stats.lagging":"Most lagging selections",
+    "stats.of":"of","stats.edition":"Germany",
+    "empty.title":"No stickers for this view",
+    "empty.desc":"Try a different filter, change the grouping, or clear the search.",
+    "auth.account":"Account","auth.title.login":"Sign in","auth.title.register":"Create account",
+    "auth.email":"Email","auth.password":"Password",
+    "auth.submit.login":"Sign in","auth.submit.register":"Register",
+    "auth.toggle.to_register":"Don't have an account? Register",
+    "auth.toggle.to_login":"Already have an account? Sign in",
+    "home.album_title":"My album","home.groups":"The 12 groups","home.tournament":"Tournament format",
+    "home.venues_title":"Venues","home.album_structure":"Album structure",
+    "home.selections":"selections","home.groups_count":"groups","home.matches":"matches","home.venues":"venues",
+    "home.obtained":"collected","home.missing":"missing","home.duplicates":"duplicates",
+    "home.specials":"specials","home.total":"total stickers",
+    "home.stage.group":"Group stage",
+    "home.stage.group_desc":"12 groups of 4 teams · 48 matches · Top 2 from each group + 8 best third-place teams advance",
+    "home.stage.r32":"Round of 32","home.stage.r32_desc":"32 teams · first-ever direct knockout round in World Cup history",
+    "home.stage.r16":"Round of 16","home.stage.r16_desc":"16 teams",
+    "home.stage.qf":"Quarter-finals","home.stage.qf_desc":"8 teams",
+    "home.stage.sf":"Semi-finals","home.stage.sf_desc":"4 teams",
+    "home.stage.final":"Final","home.stage.final_desc":"MetLife Stadium · East Rutherford, NJ · 19 Jul 2026",
+    "home.album.total":"total stickers","home.album.selections":"selections · 1 Logo + 1 Team photo + 18 players",
+    "home.album.specials":"FWC specials · host nations, FIFA museums, legends",
+    "home.album.coke":"Coca-Cola Germany · Germany exclusive edition",
+    "confirm.reset":"Are you sure you want to delete all your synced progress?",
+    "toast.sync_error":"Could not sync your progress. Please try again in a few seconds.",
+    "toast.sign_in_required":"Sign in to save your progress.",
+    "toast.invalid_sticker":"The sticker ID is not valid.",
+    "toast.save_error":"Could not save your change. Please try again.",
+    "toast.file_protocol":"Sticker editing requires opening the app from localhost or GitHub Pages.",
+    "toast.not_found":"That sticker was not found in the catalog.",
+    "toast.reset_success":"Album reset.","toast.reset_error":"Could not reset the album.",
+    "toast.no_stickers":"No stickers to export.",
+    "toast.reset_session":"You need an active session to reset the album.",
+    "toast.account_created":"Account created. Check your email if asked to confirm.",
+    "toast.signed_in":"Signed in.","toast.init_error":"Could not initialize the application.",
+    "toast.use_server":"Use localhost or GitHub Pages to sign in.",
+    "toast.login_server":"Login requires opening the app from localhost or GitHub Pages.",
+    "toast.export_server":"Authenticated export requires localhost or GitHub Pages.",
+    "pdf.missing_title":"Panini 2026 · Missing","pdf.duplicates_title":"Panini 2026 · Duplicates",
+    "pdf.user":"User","pdf.generated":"Generated","pdf.filename_missing":"panini-missing-germany.pdf",
+    "pdf.filename_duplicates":"panini-duplicates-germany.pdf",
+  },
+};
+
+function t(key) {
+  return (TRANSLATIONS[state?.lang ?? "es"] ?? TRANSLATIONS.es)[key] ?? TRANSLATIONS.es[key] ?? key;
+}
+
+function applyStaticTranslations() {
+  // Inputs with placeholder
+  const qInput = document.querySelector("#query-input");
+  if (qInput) qInput.placeholder = t("search_placeholder");
+  // View mode select options
+  const viewMode = document.querySelector("#view-mode");
+  if (viewMode) {
+    [...viewMode.options].forEach(opt => {
+      if (opt.value === "group")     opt.text = t("group");
+      if (opt.value === "selection") opt.text = t("selection");
+      if (opt.value === "page")      opt.text = t("page");
+    });
+  }
+  // Controls labels (first text-node children of label elements)
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.dataset.i18n;
+    if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+      el.placeholder = t(key);
+    } else {
+      // Update just the first text node (preserves child elements like <select>)
+      const textNode = [...el.childNodes].find(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim());
+      if (textNode) textNode.textContent = t(key) + " ";
+      else el.textContent = t(key);
+    }
+  });
+  // Language toggle button label
+  const langBtn = document.querySelector("#lang-toggle");
+  if (langBtn) langBtn.title = t("language_label");
+  const langLabel = document.querySelector("#lang-label");
+  if (langLabel) langLabel.textContent = state.lang === "es" ? "ES → EN" : "EN → ES";
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 function stripLeadingEmojiLabel(value) {
   return String(value || "").replace(/^\p{Extended_Pictographic}+\s*/u, "").trim();
 }
@@ -83,6 +274,7 @@ const state = {
   isSyncing: false,
   config: loadConfig(),
   authSubscription: null,
+  lang: (typeof localStorage !== "undefined" && localStorage.getItem("panini-lang")) || "es",
 };
 
 export function escapeHtml(value) {
@@ -582,7 +774,7 @@ async function loadRemoteProgress() {
   state.isSyncing = false;
 
   if (error) {
-    setBannerMessage("No pudimos sincronizar tu progreso. Intenta de nuevo en unos segundos.", "warning");
+    setBannerMessage(t("toast.sync_error"), "warning");
     state.stickers = state.catalog;
     renderStatus();
     return;
@@ -594,12 +786,12 @@ async function loadRemoteProgress() {
 
 async function persistSticker(sticker) {
   if (!state.session || !state.supabase) {
-    showToast("Inicia sesión para guardar tu progreso.");
+    showToast(t("toast.sign_in_required"));
     return false;
   }
 
   if (!validateStickerId(sticker.id)) {
-    showToast("El identificador del sticker no es válido.");
+    showToast(t("toast.invalid_sticker"));
     return false;
   }
 
@@ -630,7 +822,7 @@ async function persistSticker(sticker) {
   renderStatus();
 
   if (error) {
-    showToast("No se pudo guardar tu cambio. Intenta de nuevo.");
+    showToast(t("toast.save_error"));
     return false;
   }
 
@@ -639,7 +831,7 @@ async function persistSticker(sticker) {
 
 async function updateSticker(stickerId, updater) {
   if (!isAuthRuntimeAvailable()) {
-    showToast("La edición de stickers requiere abrir la app desde localhost o GitHub Pages.");
+    showToast(t("toast.file_protocol"));
     return;
   }
 
@@ -650,7 +842,7 @@ async function updateSticker(stickerId, updater) {
 
   const current = state.stickers.find((item) => item.id === stickerId);
   if (!current) {
-    showToast("No encontramos ese sticker en el catálogo.");
+    showToast(t("toast.not_found"));
     return;
   }
   const next = updater(current);
@@ -666,14 +858,12 @@ async function updateSticker(stickerId, updater) {
 
 function renderFilters() {
   const filterBar = document.querySelector("#filter-chips");
-  filterBar.innerHTML = Object.entries(FILTER_LABELS)
-    .map(
-      ([value, label]) => `
-        <button class="chip ${state.filter === value ? "is-active" : ""}" data-filter="${value}">
-          ${escapeHtml(label)}
-        </button>
-      `,
-    )
+  filterBar.innerHTML = Object.keys(FILTER_LABELS)
+    .map(value => `
+      <button class="chip ${state.filter === value ? "is-active" : ""}" data-filter="${value}">
+        ${escapeHtml(t("filter." + value))}
+      </button>
+    `)
     .join("");
 }
 
@@ -683,13 +873,13 @@ function renderSelectOptions() {
   const pageSelect = document.querySelector("#page-select");
 
   groupSelect.innerHTML = `
-    <option value="all">Todos los grupos</option>
-    ${GROUPS.map((group) => `<option value="${group.letter}">Grupo ${group.letter}</option>`).join("")}
+    <option value="all">${t("all_groups")}</option>
+    ${GROUPS.map((group) => `<option value="${group.letter}">${t("group_letter")} ${group.letter}</option>`).join("")}
   `;
   groupSelect.value = state.selectedGroup;
 
   teamSelect.innerHTML = `
-    <option value="all">Todas las selecciones</option>
+    <option value="all">${t("all_selections")}</option>
     ${getSelectionOptions(state.selectedGroup)
       .map((team) => `<option value="${escapeHtml(team.country)}">${escapeHtml(team.country)}</option>`)
       .join("")}
@@ -700,34 +890,27 @@ function renderSelectOptions() {
   teamSelect.value = state.selectedTeam;
 
   pageSelect.innerHTML = `
-    <option value="all">Todas las páginas</option>
-    ${getPageOptions().map((page) => `<option value="${page}">Pág. ${page}</option>`).join("")}
+    <option value="all">${t("all_pages")}</option>
+    ${getPageOptions().map((page) => `<option value="${page}">${t("page_abbr")} ${page}</option>`).join("")}
   `;
   pageSelect.value = state.selectedPage;
 }
 
 function renderSectionTabs() {
-  const desktopTabs = Object.entries(SECTION_LABELS)
-    .map(
-      ([value]) => `
-        <button class="section-tab ${state.section === value ? "is-active" : ""}" data-section="${value}">
-          <span class="material-symbols-outlined">${SECTION_ICONS[value]}</span>
-          <span>${escapeHtml(SECTION_SHORT[value])}</span>
-        </button>
-      `,
-    )
-    .join("");
+  const sections = Object.keys(SECTION_LABELS);
+  const desktopTabs = sections.map(value => `
+    <button class="section-tab ${state.section === value ? "is-active" : ""}" data-section="${value}">
+      <span class="material-symbols-outlined">${SECTION_ICONS[value]}</span>
+      <span>${escapeHtml(t("short." + value))}</span>
+    </button>
+  `).join("");
 
-  const mobileTabs = Object.entries(SECTION_LABELS)
-    .map(
-      ([value, label]) => `
-        <button class="mobile-tab ${state.section === value ? "is-active" : ""}" data-section="${value}" title="${escapeHtml(label)}">
-          <span class="material-symbols-outlined">${SECTION_ICONS[value]}</span>
-          <span>${escapeHtml(SECTION_SHORT[value])}</span>
-        </button>
-      `,
-    )
-    .join("");
+  const mobileTabs = sections.map(value => `
+    <button class="mobile-tab ${state.section === value ? "is-active" : ""}" data-section="${value}" title="${escapeHtml(t(value))}">
+      <span class="material-symbols-outlined">${SECTION_ICONS[value]}</span>
+      <span>${escapeHtml(t("short." + value))}</span>
+    </button>
+  `).join("");
 
   document.querySelector("#section-tabs").innerHTML = desktopTabs;
   document.querySelector("#mobile-nav").innerHTML = mobileTabs;
@@ -739,19 +922,13 @@ function renderStatus() {
   const syncStatus = document.querySelector("#sync-status");
 
   if (!isAuthRuntimeAvailable()) {
-    authButton.textContent = "Solo lectura";
+    authButton.textContent = t("read_only");
     signOutButton.hidden = true;
-    setBannerMessage(
-      "Abre la app desde un servidor (http://localhost o GitHub Pages) para iniciar sesión.",
-      "warning",
-    );
+    setBannerMessage(t("banner.file_protocol"), "warning");
   } else if (!state.session) {
-    authButton.textContent = "Iniciar sesión";
+    authButton.textContent = t("sign_in");
     signOutButton.hidden = true;
-    setBannerMessage(
-      "Modo lectura. Inicia sesión para marcar cromos, generar PDFs y sincronizar tu progreso entre dispositivos.",
-      "muted",
-    );
+    setBannerMessage(t("banner.not_signed_in"), "muted");
   } else {
     authButton.textContent = state.session.user.email.split("@")[0];
     signOutButton.hidden = false;
@@ -759,8 +936,8 @@ function renderStatus() {
   }
 
   syncStatus.innerHTML = state.isSyncing
-    ? '<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Sincronizando…'
-    : '<span class="w-2 h-2 rounded-full bg-secondary"></span> Sincronizado';
+    ? `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> ${t("syncing")}`
+    : `<span class="w-2 h-2 rounded-full bg-secondary"></span> ${t("synced")}`;
 }
 
 function renderOverview(stats) {
@@ -775,24 +952,24 @@ function renderOverview(stats) {
 
   document.querySelector("#stats-summary").innerHTML = `
     <article class="metric-card tone-success">
-      <span>Obtenidos</span>
+      <span>${t("obtained")}</span>
       <strong>${escapeHtml(stats.obtenidos)}</strong>
-      <small>${escapeHtml(pct)}% del álbum</small>
+      <small>${escapeHtml(pct)}${t("pct_of_album")}</small>
     </article>
     <article class="metric-card tone-error">
-      <span>Faltantes</span>
+      <span>${t("missing")}</span>
       <strong>${escapeHtml(stats.faltantes)}</strong>
-      <small>aún por pegar</small>
+      <small>${t("yet_to_paste")}</small>
     </article>
     <article class="metric-card">
-      <span>Repetidos</span>
+      <span>${t("duplicates")}</span>
       <strong>${escapeHtml(stats.repetidos)}</strong>
-      <small>disponibles para cambio</small>
+      <small>${t("available_for_trade")}</small>
     </article>
     <article class="metric-card tone-coke">
       <span>Coca-Cola</span>
       <strong>${escapeHtml(stats.cocaCola.obtenidos)}/${escapeHtml(stats.cocaCola.total)}</strong>
-      <small>${escapeHtml(stats.cocaCola.repetidos)} repetidos</small>
+      <small>${escapeHtml(stats.cocaCola.repetidos)} ${t("duplicates").toLowerCase()}</small>
     </article>
   `;
 }
@@ -1147,91 +1324,67 @@ function renderStatsView(stats) {
   content.innerHTML = `
     <section class="stats-board">
       <article class="stats-panel">
-        <h3>Panorama general</h3>
+        <h3>${t("stats.overview")}</h3>
         <div class="stats-grid">
-          <div class="stats-pill"><span>Obtenidos</span><strong>${escapeHtml(stats.obtenidos)}</strong></div>
-          <div class="stats-pill"><span>Faltantes</span><strong>${escapeHtml(stats.faltantes)}</strong></div>
-          <div class="stats-pill"><span>Repetidos</span><strong>${escapeHtml(stats.repetidos)}</strong></div>
-          <div class="stats-pill"><span>Especiales</span><strong>${escapeHtml(stats.especiales.obtenidos)}/${escapeHtml(stats.especiales.total)}</strong></div>
+          <div class="stats-pill"><span>${t("obtained")}</span><strong>${escapeHtml(stats.obtenidos)}</strong></div>
+          <div class="stats-pill"><span>${t("missing")}</span><strong>${escapeHtml(stats.faltantes)}</strong></div>
+          <div class="stats-pill"><span>${t("duplicates")}</span><strong>${escapeHtml(stats.repetidos)}</strong></div>
+          <div class="stats-pill"><span>${t("especiales")}</span><strong>${escapeHtml(stats.especiales.obtenidos)}/${escapeHtml(stats.especiales.total)}</strong></div>
           <div class="stats-pill"><span>Coca-Cola</span><strong>${escapeHtml(stats.cocaCola.obtenidos)}/${escapeHtml(stats.cocaCola.total)}</strong></div>
-          <div class="stats-pill"><span>Edición</span><strong>Alemania</strong></div>
+          <div class="stats-pill"><span>${t("stats.edition")}</span><strong>${t("stats.edition")}</strong></div>
         </div>
         <div class="stats-note">
-          <strong>Completado: ${escapeHtml(completionPct)}%</strong>
-          <span>${escapeHtml(stats.obtenidos)} obtenidos · ${escapeHtml(stats.faltantes)} por pegar</span>
+          <strong>${t("stats.completed")}: ${escapeHtml(completionPct)}%</strong>
+          <span>${escapeHtml(stats.obtenidos)} ${t("home.obtained")} · ${escapeHtml(stats.faltantes)} ${t("yet_to_paste")}</span>
         </div>
       </article>
       <article class="stats-panel">
-        <h3>Selecciones con más progreso</h3>
+        <h3>${t("stats.top_selections")}</h3>
         <div class="rank-list">
-          ${selectionProgress
-            .map(
-              (selection) => `
-                <div class="rank-row">
-                  <div>
-                    <strong>${escapeHtml(selection.label)}</strong>
-                    <span>Grupo ${escapeHtml(selection.group)} · Pág. ${escapeHtml(selection.page)}</span>
-                  </div>
-                  <div class="progress-bar"><span style="width:${selection.progress.toFixed(1)}%;background:${selection.color}"></span></div>
-                </div>
-              `,
-            )
-            .join("")}
+          ${selectionProgress.map(selection => `
+            <div class="rank-row">
+              <div>
+                <strong>${escapeHtml(selection.label)}</strong>
+                <span>${t("group_letter")} ${escapeHtml(selection.group)} · ${t("page_abbr")} ${escapeHtml(selection.page)}</span>
+              </div>
+              <div class="progress-bar"><span style="width:${selection.progress.toFixed(1)}%;background:${selection.color}"></span></div>
+            </div>
+          `).join("")}
         </div>
       </article>
       <article class="stats-panel">
-        <h3>Progreso por grupo</h3>
+        <h3>${t("stats.by_group")}</h3>
         <div class="rank-list">
-          ${stats.byGroup
-            .map(
-              (group) => `
-                <div class="rank-row">
-                  <div>
-                    <strong>${escapeHtml(group.label)}</strong>
-                    <span>${escapeHtml(group.obtenidos)} de ${escapeHtml(group.total)}</span>
-                  </div>
-                  <div class="progress-bar"><span style="width:${group.progress.toFixed(1)}%;background:${group.color}"></span></div>
-                </div>
-              `,
-            )
-            .join("")}
+          ${stats.byGroup.map(group => `
+            <div class="rank-row">
+              <div>
+                <strong>${escapeHtml(group.label)}</strong>
+                <span>${escapeHtml(group.obtenidos)} ${t("stats.of")} ${escapeHtml(group.total)}</span>
+              </div>
+              <div class="progress-bar"><span style="width:${group.progress.toFixed(1)}%;background:${group.color}"></span></div>
+            </div>
+          `).join("")}
         </div>
       </article>
       <article class="stats-panel">
-        <h3>Pendientes prioritarios</h3>
+        <h3>${t("stats.priority")}</h3>
         <div class="stats-kpis">
-          <div class="stats-kpi">
-            <span>Selecciones al 100%</span>
-            <strong>${escapeHtml(stats.bySelection.filter((selection) => selection.progress === 100).length)}</strong>
-          </div>
-          <div class="stats-kpi">
-            <span>Grupos al 100%</span>
-            <strong>${escapeHtml(stats.byGroup.filter((group) => group.progress === 100).length)}</strong>
-          </div>
-          <div class="stats-kpi">
-            <span>Especiales pendientes</span>
-            <strong>${escapeHtml(stats.especiales.faltantes)}</strong>
-          </div>
-          <div class="stats-kpi">
-            <span>Coca-Cola pendientes</span>
-            <strong>${escapeHtml(stats.cocaCola.faltantes)}</strong>
-          </div>
+          <div class="stats-kpi"><span>${t("stats.selections_100")}</span><strong>${escapeHtml(stats.bySelection.filter(s => s.progress === 100).length)}</strong></div>
+          <div class="stats-kpi"><span>${t("stats.groups_100")}</span><strong>${escapeHtml(stats.byGroup.filter(g => g.progress === 100).length)}</strong></div>
+          <div class="stats-kpi"><span>${t("stats.especiales_pending")}</span><strong>${escapeHtml(stats.especiales.faltantes)}</strong></div>
+          <div class="stats-kpi"><span>${t("stats.coke_pending")}</span><strong>${escapeHtml(stats.cocaCola.faltantes)}</strong></div>
         </div>
         <div class="mini-list">
-          <h4>Selecciones más rezagadas</h4>
-          ${bottomSelections
-            .map(
-              (selection) => `
-                <div class="mini-row">
-                  <div>
-                    <strong>${escapeHtml(selection.label)}</strong>
-                    <span>${escapeHtml(selection.obtenidos)} de ${escapeHtml(selection.total)} · Grupo ${escapeHtml(selection.group)}</span>
-                  </div>
-                  <em>${escapeHtml(selection.progress.toFixed(1))}%</em>
-                </div>
-              `,
-            )
-            .join("")}
+          <h4>${t("stats.lagging")}</h4>
+          ${bottomSelections.map(selection => `
+            <div class="mini-row">
+              <div>
+                <strong>${escapeHtml(selection.label)}</strong>
+                <span>${escapeHtml(selection.obtenidos)} ${t("stats.of")} ${escapeHtml(selection.total)} · ${t("group_letter")} ${escapeHtml(selection.group)}</span>
+              </div>
+              <em>${escapeHtml(selection.progress.toFixed(1))}%</em>
+            </div>
+          `).join("")}
         </div>
       </article>
     </section>
@@ -1240,6 +1393,7 @@ function renderStatsView(stats) {
 
 function renderApp() {
   saveViewState();
+  applyStaticTranslations();
   renderSectionTabs();
   renderFilters();
   renderSelectOptions();
@@ -1286,7 +1440,7 @@ async function handleAuthSubmit(event) {
   const password = document.querySelector("#auth-password").value.trim();
 
   if (!isAuthRuntimeAvailable()) {
-    showToast("El login requiere abrir la app desde localhost o GitHub Pages.");
+    showToast(t("toast.login_server"));
     return;
   }
 
@@ -1307,11 +1461,7 @@ async function handleAuthSubmit(event) {
   }
 
   closeModal("#auth-modal");
-  showToast(
-    state.authMode === "register"
-      ? "Cuenta creada. Revisa tu correo si te pide confirmar."
-      : "Sesión iniciada.",
-  );
+  showToast(state.authMode === "register" ? t("toast.account_created") : t("toast.signed_in"));
 }
 
 async function handleSignOut() {
@@ -1327,11 +1477,11 @@ async function handleSignOut() {
 
 async function handleResetAlbum() {
   if (!state.session || !state.supabase) {
-    showToast("Necesitas una sesión activa para reiniciar el álbum.");
+    showToast(t("toast.reset_session"));
     return;
   }
 
-  if (!window.confirm("¿Seguro que quieres borrar todo tu progreso sincronizado?")) {
+  if (!window.confirm(t("confirm.reset"))) {
     return;
   }
 
@@ -1341,18 +1491,18 @@ async function handleResetAlbum() {
     .eq("user_id", state.session.user.id);
 
   if (error) {
-    showToast("No se pudo reiniciar el álbum.");
+    showToast(t("toast.reset_error"));
     return;
   }
 
   state.stickers = state.catalog;
   renderApp();
-  showToast("Álbum reiniciado.");
+  showToast(t("toast.reset_success"));
 }
 
 async function exportPdf(mode) {
   if (!isAuthRuntimeAvailable()) {
-    showToast("La exportación autenticada requiere localhost o GitHub Pages.");
+    showToast(t("toast.export_server"));
     return;
   }
 
@@ -1378,18 +1528,12 @@ async function exportPdf(mode) {
   let y = 18;
 
   doc.setFontSize(18);
-  doc.text(
-    mode === "faltantes"
-      ? "Panini 2026 · Faltantes"
-      : "Panini 2026 · Repetidos",
-    14,
-    y,
-  );
+  doc.text(mode === "faltantes" ? t("pdf.missing_title") : t("pdf.duplicates_title"), 14, y);
   y += 8;
   doc.setFontSize(10);
-  doc.text(`Usuario: ${state.session.user.email}`, 14, y);
+  doc.text(`${t("pdf.user")}: ${state.session.user.email}`, 14, y);
   y += 6;
-  doc.text(`Generado: ${dateStamp}`, 14, y);
+  doc.text(`${t("pdf.generated")}: ${dateStamp}`, 14, y);
   y += 8;
 
   stickers.forEach((sticker, index) => {
@@ -1412,19 +1556,15 @@ async function exportPdf(mode) {
     y += wrapped.length * 6;
 
     if (index === stickers.length - 1 && stickers.length === 0) {
-      doc.text("No hay stickers para exportar.", 14, y);
+      doc.text(t("toast.no_stickers"), 14, y);
     }
   });
 
   if (stickers.length === 0) {
-    doc.text("No hay stickers para exportar.", 14, y);
+    doc.text(t("toast.no_stickers"), 14, y);
   }
 
-  doc.save(
-    mode === "faltantes"
-      ? "panini-faltantes-germany.pdf"
-      : "panini-repetidos-germany.pdf",
-  );
+  doc.save(mode === "faltantes" ? t("pdf.filename_missing") : t("pdf.filename_duplicates"));
 }
 
 function bindEvents() {
@@ -1458,9 +1598,16 @@ function bindEvents() {
       return;
     }
 
+    if (event.target.closest("#lang-toggle")) {
+      state.lang = state.lang === "es" ? "en" : "es";
+      localStorage.setItem("panini-lang", state.lang);
+      renderApp();
+      return;
+    }
+
     if (event.target.closest("#auth-trigger")) {
       if (!isAuthRuntimeAvailable()) {
-        showToast("Usa localhost o GitHub Pages para iniciar sesión.");
+        showToast(t("toast.use_server"));
       } else if (state.session) {
         showToast(`Conectado como ${state.session.user.email}`);
       } else {
@@ -1481,7 +1628,7 @@ function bindEvents() {
 
     if (event.target.closest("#open-auth")) {
       if (!isAuthRuntimeAvailable()) {
-        showToast("El login necesita abrir la app desde localhost o GitHub Pages.");
+        showToast(t("toast.login_server"));
       } else {
         openModal("#auth-modal");
       }
@@ -1491,13 +1638,11 @@ function bindEvents() {
     if (event.target.closest("#toggle-auth-mode")) {
       state.authMode = state.authMode === "login" ? "register" : "login";
       document.querySelector("#auth-title").textContent =
-        state.authMode === "login" ? "Iniciar sesión" : "Crear cuenta";
+        t(state.authMode === "login" ? "auth.title.login" : "auth.title.register");
       document.querySelector("#auth-submit").textContent =
-        state.authMode === "login" ? "Entrar" : "Registrarme";
+        t(state.authMode === "login" ? "auth.submit.login" : "auth.submit.register");
       document.querySelector("#toggle-auth-mode").textContent =
-        state.authMode === "login"
-          ? "¿No tienes cuenta? Regístrate"
-          : "¿Ya tienes cuenta? Inicia sesión";
+        t(state.authMode === "login" ? "auth.toggle.to_register" : "auth.toggle.to_login");
       return;
     }
 
@@ -1561,7 +1706,7 @@ if (typeof window !== "undefined") {
   window.addEventListener("DOMContentLoaded", () => {
     hydrateApp().catch((error) => {
       console.error(error);
-      showToast("No pudimos inicializar la aplicación.");
+      showToast(t("toast.init_error"));
     });
   });
 }
