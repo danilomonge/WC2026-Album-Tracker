@@ -999,7 +999,7 @@ function renderStickerCard(sticker) {
             ${typePill}
             <span class="number-plate">${escapeHtml(sticker.numero)}</span>
             <span class="page-pill">P${escapeHtml(sticker.pagina)}</span>
-            ${isCocaColaSticker(sticker) ? '<span class="sticker-card__tag">Coca-Cola</span>' : ""}
+            ${isCocaColaSticker(sticker) ? `<span class="sticker-card__tag">Coca-Cola ${sticker.numero.replace("CC", "")}</span>` : ""}
           </div>
           <div class="sticker-card__bottom">
             <span class="sticker-card__id">${escapeHtml(sticker.id)}</span>
