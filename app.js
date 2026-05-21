@@ -1046,7 +1046,7 @@ function renderHomeView(stats) {
     const teamPills = group.teams
       .map(
         (t) =>
-          `<span class="home-team-pill"><span class="home-team-pill__flag" style="background:${getTeamFlagStyle(t.code)}"></span>${escapeHtml(t.code)}</span>`,
+          `<span class="home-team-pill"><span class="home-team-pill__emoji">${getTeamFlagEmoji(t.code)}</span>${escapeHtml(t.code)}</span>`,
       )
       .join("");
     return `

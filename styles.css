@@ -1058,13 +1058,10 @@
   padding: 2px 6px;
   color: #424751;
 }
-.home-team-pill__flag {
-  display: inline-block;
-  width: 16px;
-  height: 11px;
-  border-radius: 2px;
+.home-team-pill__emoji {
+  font-size: 13px;
+  line-height: 1;
   flex-shrink: 0;
-  border: 1px solid rgba(0,0,0,0.08);
 }
 .home-group-card__bar {
   height: 4px;
