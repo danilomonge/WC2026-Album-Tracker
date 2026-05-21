@@ -58,16 +58,27 @@
 
 /* ---------- Section tabs (top nav) ---------- */
 .section-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
   font-family: "Space Grotesk", sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.03em;
-  padding: 6px 2px;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  padding: 6px 8px 4px;
   color: #424751;
   border-bottom: 2px solid transparent;
+  border-radius: 8px 8px 0 0;
   transition: all 0.2s;
   background: transparent;
   cursor: pointer;
+  white-space: nowrap;
+}
+.section-tab .material-symbols-outlined {
+  font-size: 20px;
+  font-variation-settings: "FILL" 0, "wght" 300;
+  transition: font-variation-settings 0.2s;
 }
 .section-tab:hover {
   color: #003e7a;
@@ -75,6 +86,9 @@
 .section-tab.is-active {
   color: #003e7a;
   border-bottom-color: #003e7a;
+}
+.section-tab.is-active .material-symbols-outlined {
+  font-variation-settings: "FILL" 1, "wght" 400;
 }
 
 /* ---------- Mobile bottom nav tabs ---------- */
@@ -267,6 +281,11 @@
   }
 }
 
+/* ---------- Sticker card wrapper (lets badge & remove button overflow the card) ---------- */
+.sticker-card-wrap {
+  position: relative;
+}
+
 /* ---------- Sticker card ---------- */
 .sticker-card {
   position: relative;
@@ -380,11 +399,11 @@
   overflow: hidden;
 }
 
-/* Repeated badge */
+/* Repeated badge — anchored to wrapper, not to the clipped article */
 .sticker-card__badge {
   position: absolute;
-  top: -6px;
-  right: -6px;
+  top: -7px;
+  right: -7px;
   z-index: 5;
   background: #006d33;
   color: #ffffff;
@@ -398,35 +417,36 @@
   font-weight: 700;
   font-size: 11px;
   border: 2px solid #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
 }
 
-/* Remove/correct button */
+/* Remove/correct button — anchored to wrapper, shows on wrap hover or owned state */
 .sticker-card__remove {
   position: absolute;
-  top: -6px;
-  left: -6px;
+  top: -7px;
+  left: -7px;
   z-index: 5;
   background: #ba1a1a;
   color: #ffffff;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 2px solid #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
   cursor: pointer;
   font-weight: 700;
   font-size: 14px;
   line-height: 1;
   opacity: 0;
-  transform: scale(0.7);
+  transform: scale(0.6);
   transition: opacity 0.15s, transform 0.15s;
 }
-.sticker-card:hover .sticker-card__remove,
-.sticker-card.is-owned .sticker-card__remove {
+.sticker-card-wrap:hover .sticker-card__remove,
+.sticker-card-wrap:has(.sticker-card.is-owned) .sticker-card__remove {
   opacity: 1;
   transform: scale(1);
 }

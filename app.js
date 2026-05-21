@@ -689,9 +689,10 @@ function renderSelectOptions() {
 function renderSectionTabs() {
   const desktopTabs = Object.entries(SECTION_LABELS)
     .map(
-      ([value, label]) => `
+      ([value]) => `
         <button class="section-tab ${state.section === value ? "is-active" : ""}" data-section="${value}">
-          ${escapeHtml(label)}
+          <span class="material-symbols-outlined">${SECTION_ICONS[value]}</span>
+          <span>${escapeHtml(SECTION_SHORT[value])}</span>
         </button>
       `,
     )
@@ -786,30 +787,34 @@ function renderStickerCard(sticker) {
     ? `<span class="type-pill">${escapeHtml(sticker.tipo)}</span>`
     : "";
 
+  // The badge and remove button are placed OUTSIDE the <article> (which has
+  // overflow:hidden) but inside a position:relative wrapper, so they are never clipped.
   return `
-    <article
-      class="sticker-card ${statusClass}${specialClass}${cokeClass}${authClass}"
-      data-sticker-id="${sticker.id}"
-      data-group="${sticker.grupo}"
-      style="--team-accent:${accent};--group-accent:${sticker.colorGrupo}"
-    >
-      <button type="button" class="sticker-card__surface" data-action="toggle-sticker" data-sticker-id="${sticker.id}">
-        <div class="sticker-card__top">
-          ${typePill}
-          <span class="number-plate">${escapeHtml(sticker.numero)}</span>
-          <span class="page-pill">P${escapeHtml(sticker.pagina)}</span>
-          ${isCocaColaSticker(sticker) ? '<span class="sticker-card__tag">Coca-Cola</span>' : ""}
-        </div>
-        <div class="sticker-card__bottom">
-          <span class="sticker-card__id">${escapeHtml(sticker.id)}</span>
-          <strong class="sticker-card__name">${escapeHtml(sticker.nombre)}</strong>
-        </div>
-      </button>
+    <div class="sticker-card-wrap">
+      <article
+        class="sticker-card ${statusClass}${specialClass}${cokeClass}${authClass}"
+        data-sticker-id="${sticker.id}"
+        data-group="${sticker.grupo}"
+        style="--team-accent:${accent};--group-accent:${sticker.colorGrupo}"
+      >
+        <button type="button" class="sticker-card__surface" data-action="toggle-sticker" data-sticker-id="${sticker.id}">
+          <div class="sticker-card__top">
+            ${typePill}
+            <span class="number-plate">${escapeHtml(sticker.numero)}</span>
+            <span class="page-pill">P${escapeHtml(sticker.pagina)}</span>
+            ${isCocaColaSticker(sticker) ? '<span class="sticker-card__tag">Coca-Cola</span>' : ""}
+          </div>
+          <div class="sticker-card__bottom">
+            <span class="sticker-card__id">${escapeHtml(sticker.id)}</span>
+            <strong class="sticker-card__name">${escapeHtml(sticker.nombre)}</strong>
+          </div>
+        </button>
+      </article>
       ${sticker.repetidos > 0 ? `<span class="sticker-card__badge">+${escapeHtml(sticker.repetidos)}</span>` : ""}
       <button type="button" class="sticker-card__remove" data-action="correct-sticker" data-sticker-id="${sticker.id}" aria-label="Corregir sticker">
         −
       </button>
-    </article>
+    </div>
   `;
 }
 
