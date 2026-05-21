@@ -226,7 +226,7 @@
   width: 38px;
   height: 26px;
   border-radius: 4px;
-  background: var(--team-accent, #c2c6d3);
+  background: var(--team-flag, var(--team-accent, #c2c6d3));
   border: 1px solid #c2c6d3;
   flex-shrink: 0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
