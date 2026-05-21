@@ -12,10 +12,9 @@
 /* Pitch background grid for main canvas */
 .pitch-bg {
   background:
-    radial-gradient(circle at 18% 10%, rgba(0, 247, 255, 0.12), transparent 34%),
-    radial-gradient(circle at 85% 0%, rgba(0, 140, 255, 0.14), transparent 38%),
-    radial-gradient(circle at 50% 120%, rgba(99, 102, 241, 0.16), transparent 42%),
-    linear-gradient(165deg, #040814 0%, #060c1f 45%, #02050f 100%);
+    radial-gradient(circle at 20% 15%, rgba(74, 144, 226, 0.18), transparent 30%),
+    radial-gradient(circle at 80% 0%, rgba(0, 201, 255, 0.14), transparent 34%),
+    linear-gradient(160deg, #0a1424 0%, #101b31 48%, #0b1220 100%);
 }
 
 /* ---------- Modals ---------- */
@@ -237,7 +236,6 @@
   justify-content: center;
   font-size: 18px;
   line-height: 1;
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
 }
 .team-header h3 {
   font-family: "Anybody", sans-serif;
