@@ -59,6 +59,10 @@ const FILTER_LABELS = {
   logos: "Logos",
 };
 
+function stripLeadingEmojiLabel(value) {
+  return String(value || "").replace(/^\p{Extended_Pictographic}+\s*/u, "").trim();
+}
+
 const state = {
   catalog: STICKERS,
   stickers: STICKERS,
@@ -1057,7 +1061,7 @@ function renderGroupedByGroupAndTeam(stickers) {
           return `
             <div class="team-subsection">
               <div class="team-header">
-                <div class="team-flag" style="--team-flag:${getTeamFlagStyle(teamCode, teamAccent)};--team-accent:${teamAccent}"></div>
+                <div class="team-flag" role="img" aria-label="Bandera de ${escapeHtml(teamKey)}">${escapeHtml(getTeamFlagEmoji(teamCode))}</div>
                 <div class="team-header__info">
                   ${teamCode ? `<span class="team-header__code">${escapeHtml(teamCode)}</span>` : ""}
                   <span class="team-header__label">${escapeHtml(teamKey)}${pageLabel}</span>
@@ -1116,7 +1120,7 @@ function renderCollectionView(stickers) {
       return `
         <section class="board-section">
           <div class="team-header">
-            <div class="team-flag" style="--team-flag:${getTeamFlagStyle(firstSticker?.equipoCodigo, teamAccent)};--team-accent:${teamAccent}"></div>
+            <div class="team-flag" role="img" aria-label="Bandera de ${escapeHtml(group.label)}">${escapeHtml(getTeamFlagEmoji(firstSticker?.equipoCodigo))}</div>
             <h3>${escapeHtml(group.label)}</h3>
             <span class="team-progress">${escapeHtml(obtained)} / ${escapeHtml(group.stickers.length)}</span>
           </div>
@@ -1157,24 +1161,6 @@ function renderStatsView(stats) {
         </div>
       </article>
       <article class="stats-panel">
-        <h3>Progreso por grupo</h3>
-        <div class="rank-list">
-          ${stats.byGroup
-            .map(
-              (group) => `
-                <div class="rank-row">
-                  <div>
-                    <strong>${escapeHtml(group.label)}</strong>
-                    <span>${escapeHtml(group.obtenidos)} de ${escapeHtml(group.total)}</span>
-                  </div>
-                  <div class="progress-bar progress-bar--tight"><span style="width:${group.progress.toFixed(1)}%;background:${group.color}"></span></div>
-                </div>
-              `,
-            )
-            .join("")}
-        </div>
-      </article>
-      <article class="stats-panel">
         <h3>Selecciones con más progreso</h3>
         <div class="rank-list">
           ${selectionProgress
@@ -1186,6 +1172,24 @@ function renderStatsView(stats) {
                     <span>Grupo ${escapeHtml(selection.group)} · Pág. ${escapeHtml(selection.page)}</span>
                   </div>
                   <div class="progress-bar progress-bar--tight"><span style="width:${selection.progress.toFixed(1)}%;background:${selection.color}"></span></div>
+                </div>
+              `,
+            )
+            .join("")}
+        </div>
+      </article>
+      <article class="stats-panel">
+        <h3>Progreso por grupo</h3>
+        <div class="rank-list">
+          ${stats.byGroup
+            .map(
+              (group) => `
+                <div class="rank-row">
+                  <div>
+                    <strong>${escapeHtml(group.label)}</strong>
+                    <span>${escapeHtml(group.obtenidos)} de ${escapeHtml(group.total)}</span>
+                  </div>
+                  <div class="progress-bar progress-bar--tight"><span style="width:${group.progress.toFixed(1)}%;background:${group.color}"></span></div>
                 </div>
               `,
             )
