@@ -518,7 +518,13 @@ async function ensureSupabaseClient() {
     return null;
   }
 
-  const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2.49.8");
+  let createClient;
+  try {
+    ({ createClient } = await import("https://esm.sh/@supabase/supabase-js@2.49.8"));
+  } catch {
+    console.warn("Could not load Supabase SDK — running in offline mode.");
+    return null;
+  }
   state.supabase = createClient(state.config.url, state.config.anonKey, {
     auth: {
       persistSession: true,
@@ -1196,9 +1202,18 @@ function renderApp() {
   renderStatus();
 
   document.querySelector("#query-input").value = state.query;
-  document.querySelector("#section-title").textContent = SECTION_LABELS[state.section];
-  document.querySelector("#results-count").textContent = `${filtered.length} stickers visibles`;
   document.querySelector("#view-mode").value = state.viewMode;
+
+  // Hide album chrome on home / stats pages
+  const isAlbumSection = !["inicio", "stats"].includes(state.section);
+  document.querySelector("#album-header").classList.toggle("is-hidden", !isAlbumSection);
+  document.querySelector("#read-only-banner").classList.toggle("is-hidden", !isAlbumSection);
+  document.querySelector("#controls-panel").classList.toggle("is-hidden", !isAlbumSection);
+
+  if (isAlbumSection) {
+    document.querySelector("#section-title").textContent = SECTION_LABELS[state.section];
+    document.querySelector("#results-count").textContent = `${filtered.length} stickers visibles`;
+  }
 
   if (state.section === "inicio") {
     renderHomeView(stats);
@@ -1477,9 +1492,13 @@ function bindEvents() {
 async function hydrateApp() {
   loadViewState();
   bindEvents();
-  await ensureSupabaseClient();
-  await loadRemoteProgress();
-  renderApp();
+  try {
+    await ensureSupabaseClient();
+    await loadRemoteProgress();
+  } catch (err) {
+    console.warn("Supabase not available:", err.message);
+  }
+  renderApp(); // always render, even without auth
 }
 
 if (typeof window !== "undefined") {

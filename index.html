@@ -74,16 +74,13 @@
     <script type="module" src="./app.js"></script>
   </head>
   <body class="bg-background text-on-background font-body antialiased min-h-screen flex flex-col">
-    <!-- TOP NAV -->
+    <!-- TOP BAR: logo + search + auth -->
     <nav
-      class="fixed top-0 left-0 right-0 z-40 bg-surface border-b border-outline-variant shadow-sm h-20 px-4 md:px-10 flex items-center justify-between"
+      class="fixed top-0 left-0 right-0 z-40 bg-surface border-b border-outline-variant shadow-sm h-14 px-4 md:px-8 flex items-center justify-between gap-4"
     >
-      <div class="flex items-center gap-8 min-w-0">
-        <span class="font-display text-2xl md:text-3xl font-black text-primary tracking-tight whitespace-nowrap">
-          WC2026 Collector
-        </span>
-        <div id="section-tabs" class="hidden lg:flex gap-6"></div>
-      </div>
+      <span class="font-display text-2xl md:text-3xl font-black text-primary tracking-tight whitespace-nowrap">
+        WC2026 Collector
+      </span>
 
       <div class="flex items-center gap-3">
         <div class="relative hidden sm:block">
@@ -91,7 +88,7 @@
             id="query-input"
             type="search"
             placeholder="Buscar país, jugador, número…"
-            class="pl-10 pr-4 py-2 bg-surface-container rounded-full border-none focus:ring-2 focus:ring-primary text-sm w-56 md:w-72"
+            class="pl-10 pr-4 py-2 bg-surface-container rounded-full border-none focus:ring-2 focus:ring-primary text-sm w-48 md:w-64"
           />
           <span class="material-symbols-outlined absolute left-3 top-2.5 text-outline text-[20px]">search</span>
         </div>
@@ -119,13 +116,20 @@
       </div>
     </nav>
 
+    <!-- SECTION TABS BAR: desktop-only, below the top bar -->
+    <nav
+      class="hidden lg:flex fixed top-14 left-0 right-0 z-30 bg-surface border-b border-outline-variant shadow-[0_2px_8px_rgba(0,0,0,0.05)] h-14 px-4 md:px-8 items-stretch overflow-x-auto"
+    >
+      <div id="section-tabs" class="flex items-stretch gap-1"></div>
+    </nav>
+
     <!-- LAYOUT -->
-    <div class="pt-20 pb-24 lg:pb-0 flex flex-1 min-h-0">
+    <div class="pt-14 lg:pt-28 pb-24 lg:pb-0 flex flex-1 min-h-0">
       <!-- MAIN -->
       <main class="flex-1 overflow-y-auto pitch-bg min-h-0">
         <div class="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-10 space-y-8">
           <!-- HEADER CARD -->
-          <header class="bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-sm p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <header id="album-header" class="bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-sm p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
               <p class="font-label text-xs text-on-surface-variant uppercase tracking-wider">Panini FIFA World Cup 2026</p>
               <h1 id="section-title" class="font-display text-3xl md:text-5xl font-black text-primary tracking-tight mt-1">
@@ -149,7 +153,7 @@
           <div id="read-only-banner" class="banner" data-tone="muted"></div>
 
           <!-- CONTROLS -->
-          <section class="bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-sm p-4 md:p-6 space-y-4">
+          <section id="controls-panel" class="bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-sm p-4 md:p-6 space-y-4">
             <div id="filter-chips" class="flex flex-wrap gap-2"></div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <label class="flex flex-col gap-1 text-xs font-label font-bold uppercase tracking-wider text-on-surface-variant">
