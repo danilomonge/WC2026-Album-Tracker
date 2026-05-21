@@ -1,4 +1,9 @@
-import { ALBUM_METADATA, GROUPS, SELECTIONS, STICKERS, TEAM_COLORS } from "./data.js";
+import { ALBUM_METADATA, GROUPS, SELECTIONS, STICKERS, TEAM_COLORS, TEAM_FLAG_STYLES } from "./data.js";
+
+function getTeamFlagStyle(teamCode, fallbackColor = "#c2c6d3") {
+  return TEAM_FLAG_STYLES[teamCode] || fallbackColor;
+}
+
 
 function getTeamFlagStyle(teamCode, fallbackColor = "#c2c6d3") {
   const flags = {
