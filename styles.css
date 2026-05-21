@@ -903,11 +903,11 @@
   color: rgba(255,255,255,0.65);
 }
 
-/* Home cards wrapper — tighter vertical rhythm */
+/* Home cards wrapper — tight vertical rhythm */
 #collection-content:has(.home-hero) {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
 
 /* Home card wrapper */

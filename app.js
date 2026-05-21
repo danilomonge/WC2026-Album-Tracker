@@ -572,7 +572,7 @@ export function computeStats(stickers) {
     const collected = groupStickers.filter((sticker) => sticker.obtenido).length;
 
     return {
-      label: `Grupo ${group.letter}`,
+      label: `${t("group_letter")} ${group.letter}`,
       key: group.letter,
       total: groupStickers.length,
       obtenidos: collected,
@@ -648,15 +648,15 @@ function groupStickers(stickers, mode) {
 
   sorted.forEach((sticker) => {
     let key = sticker.grupo;
-    let label = `Grupo ${sticker.grupo}`;
+    let label = `${t("group_letter")} ${sticker.grupo}`;
     let accent = sticker.colorGrupo;
 
     if (mode === "selection") {
       key = sticker.pais;
-      label = `${sticker.pais} · Pág. ${sticker.paginaInicioSeleccion}`;
+      label = `${sticker.pais} · ${t("page_abbr")} ${sticker.paginaInicioSeleccion}`;
     } else if (mode === "page") {
       key = `page-${sticker.pagina}`;
-      label = `Página ${sticker.pagina}`;
+      label = `${t("page_full")} ${sticker.pagina}`;
     }
 
     if (!groups.has(key)) {
@@ -1237,7 +1237,7 @@ function renderGroupedByGroupAndTeam(stickers) {
           const teamAccent = first?.colorPais || groupColor;
           const teamCode = first?.equipoCodigo || "";
           const teamPage = first?.paginaInicioSeleccion;
-          const pageLabel = teamPage ? ` · Pág. ${teamPage}` : "";
+          const pageLabel = teamPage ? ` · ${t("page_abbr")} ${teamPage}` : "";
 
           return `
             <div class="team-subsection">
@@ -1360,7 +1360,7 @@ function renderStatsView(stats) {
   const panelSelections = `
     <article class="stats-panel">
       <h3>${t("stats.top_selections")}</h3>
-      <div class="rank-list">
+      <div class="rank-list" style="max-height:340px;overflow-y:auto;">
         ${selectionProgress.map(selection => `
           <div class="rank-row">
             <div>
@@ -1717,6 +1717,21 @@ function bindEvents() {
   });
 
   document.querySelector("#auth-form").addEventListener("submit", handleAuthSubmit);
+
+  document.querySelector("#auth-google")?.addEventListener("click", async () => {
+    try {
+      const supabase = await ensureSupabaseClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin + window.location.pathname,
+        },
+      });
+      if (error) throw error;
+    } catch (err) {
+      console.error("Google OAuth error:", err.message);
+    }
+  });
 }
 
 async function hydrateApp() {
