@@ -1717,10 +1717,15 @@ async function handleAuthSubmit(event) {
     return;
   }
 
-  // Supabase returns no error but identities:[] when email enumeration prevention is on
-  if (state.authMode === "register" && data?.user?.identities?.length === 0) {
-    showAuthError(t("auth.error.already_registered"));
-    return;
+  // Supabase can signal "already registered" in two ways when email enumeration prevention is on:
+  // 1. identities:[] — email exists but fake-success returned
+  // 2. identities undefined / user null — some project configs return this
+  if (state.authMode === "register") {
+    const identities = data?.user?.identities;
+    if (!identities || identities.length === 0) {
+      showAuthError(t("auth.error.already_registered"));
+      return;
+    }
   }
 
   closeModal("#auth-modal");
