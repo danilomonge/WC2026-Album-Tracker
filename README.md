@@ -1,261 +1,261 @@
-# ⚽ WC2026 Collector — Edición Alemania
+# ⚽ WC2026 Collector — Germany Edition
 
-> Gestiona tu álbum Panini **FIFA World Cup 2026™** — edición exclusiva Alemania — desde el navegador, con sincronización en la nube y exportación de PDFs.
+> Track your **Panini FIFA World Cup 2026™** sticker album — Germany exclusive edition — in the browser, with cloud sync and PDF export.
 
-**WC2026 Collector** es una aplicación web estática que te permite marcar los cromos que tienes, llevar la cuenta de los repetidos, ver tu progreso por grupo y selección, y exportar listas de faltantes o repetidos en PDF. Funciona sin instalación: basta con abrir el archivo en un navegador o visitar la URL de GitHub Pages.
-
----
-
-## Índice
-
-1. [¿Para qué edición es?](#para-qué-edición-es)
-2. [Características](#características)
-3. [Estructura del catálogo](#estructura-del-catálogo)
-4. [Funcionalidades en detalle](#funcionalidades-en-detalle)
-5. [Uso sin cuenta](#uso-sin-cuenta)
-6. [Uso con cuenta — marcado y sincronización](#uso-con-cuenta--marcado-y-sincronización)
-7. [Cómo abrirla localmente](#cómo-abrirla-localmente)
-8. [Despliegue en GitHub Pages](#despliegue-en-github-pages)
-9. [Configuración de Supabase](#configuración-de-supabase)
-10. [Archivos del proyecto](#archivos-del-proyecto)
-11. [Pruebas](#pruebas)
+**WC2026 Collector** is a static web app that lets you mark the stickers you have, track duplicates, monitor your progress by group and team, and export missing/duplicate lists as PDFs. No installation needed — just open it in a browser or visit the GitHub Pages URL.
 
 ---
 
-## ¿Para qué edición es?
+## Table of Contents
 
-Este coleccionador está construido específicamente para la **edición alemana del álbum Panini FIFA World Cup 2026™**.
+1. [Which edition is this for?](#which-edition-is-this-for)
+2. [Features](#features)
+3. [Catalog structure](#catalog-structure)
+4. [Functionality in detail](#functionality-in-detail)
+5. [Without an account](#without-an-account)
+6. [With an account — marking and sync](#with-an-account--marking-and-sync)
+7. [Running locally](#running-locally)
+8. [Deploying to GitHub Pages](#deploying-to-github-pages)
+9. [Supabase setup](#supabase-setup)
+10. [Project files](#project-files)
+11. [Tests](#tests)
 
-La edición alemana se diferencia de otras en un punto concreto: incluye **12 stickers exclusivos Coca-Cola Germany** que no aparecen en el álbum internacional estándar. El catálogo de la app refleja exactamente este formato:
+---
 
-| Categoría | Cantidad |
+## Which edition is this for?
+
+This tracker is built specifically for the **German edition of the Panini FIFA World Cup 2026™ album**.
+
+The German edition differs from the international standard in one way: it includes **12 exclusive Coca-Cola Germany stickers** not found in the regular album. The app's catalog reflects this exactly:
+
+| Category | Count |
 |---|---|
-| Selecciones (48 × 20 cromos) | 960 |
-| Especiales FWC | 20 |
+| Teams (48 × 20 stickers) | 960 |
+| FWC Specials | 20 |
 | Coca-Cola Germany | 12 |
 | **Total** | **992** |
 
-> Si tienes la edición internacional (sin los 12 Coca-Cola Germany), simplemente ignora esa sección; el resto del álbum es idéntico.
+> If you have the international edition (without the 12 Coca-Cola Germany stickers), just ignore that section — the rest of the album is identical.
 
 ---
 
-## Características
+## Features
 
-- **Catálogo completo** de los 992 cromos de la edición alemana
-- **Marcado interactivo** — 1 clic para obtener, más clics para repetidos, botón `−` para corregir
-- **Sincronización en la nube** con Supabase — tu progreso se guarda y está disponible en cualquier dispositivo
-- **Modo lectura** sin cuenta — navega y busca sin registrarte
-- **Búsqueda global** — por nombre de jugador, país o número de sticker
-- **Filtros por tipo** — Todos, Obtenidos, Repetidos, Faltantes, Especiales, Coca-Cola, Escudos, Fotos de equipo, FWC
-- **Agrupación flexible** — por Grupo, Selección, Página o sin agrupar
-- **Filtros adicionales** — por grupo (A–L), selección y página del álbum
-- **Vista Home** — resumen de tu álbum, los 12 grupos, formato del torneo, estructura del álbum
-- **Estadísticas detalladas** — panorama general, progreso por categoría, selecciones con más avance, grupos, pendientes prioritarios y más
-- **Exportación PDF** — lista de faltantes y lista de repetidos con nombre de usuario y fecha
-- **Bilingüe** — interfaz completa en español e inglés con toggle de idioma
-- **Diseño oscuro** — tema navy oscuro con acentos azul acero, totalmente responsive
-- **Sin backend propio** — SPA 100 % estática + Supabase como BaaS
+- **Complete catalog** of all 992 stickers from the Germany edition
+- **Interactive marking** — 1 click to collect, more clicks to add duplicates, `−` button to correct
+- **Cloud sync** via Supabase — progress is saved and available on any device
+- **Read-only mode** without an account — browse and search without signing up
+- **Global search** — by player name, country, or sticker number
+- **Type filters** — All, Collected, Duplicates, Missing, Specials, Coca-Cola, Shields, Team Photos, FWC
+- **Flexible grouping** — by Group, Team, Page, or ungrouped
+- **Secondary filters** — by group (A–L), team, and album page
+- **Home view** — album progress summary, all 12 groups, tournament format, album structure
+- **Detailed stats** — overview, progress by category, top teams, groups, priority missing, and more
+- **PDF export** — missing list and duplicates list with username and generation date
+- **Bilingual** — full UI in Spanish and English with a language toggle
+- **Dark theme** — dark navy design with steel-blue accents, fully responsive
+- **No custom backend** — 100% static SPA + Supabase as BaaS
 
 ---
 
-## Estructura del catálogo
+## Catalog structure
 
-### Selecciones
+### Teams
 
-48 selecciones organizadas en 12 grupos (A–L), 4 equipos por grupo. Cada selección ocupa 2 páginas del álbum con 20 cromos:
+48 teams organized into 12 groups (A–L), 4 teams per group. Each team spans 2 album pages with 20 stickers:
 
-- 1 escudo
-- 1 foto de equipo
-- 18 cromos de jugadores
+- 1 shield
+- 1 team photo
+- 18 player stickers
 
-### Especiales FWC (páginas 1–7 y 106–109)
+### FWC Specials (pages 1–7 and 106–109)
 
-20 cromos especiales del torneo:
+20 tournament special stickers:
 
-| ID | Descripción |
+| ID | Description |
 |---|---|
 | FWC0 | Panini Logo |
 | FWC1–FWC2 | Official Emblem |
 | FWC3 | Official Mascots |
 | FWC4 | Official Slogan |
 | FWC5 | Official Ball |
-| FWC6–FWC11 | Países sede (Canadá, México, USA ×3) |
-| FWC12–FWC19 | Especiales adicionales (FIFA Museums, Legends…) |
+| FWC6–FWC11 | Host nations (Canada, Mexico, USA ×3) |
+| FWC12–FWC19 | Additional specials (FIFA Museums, Legends…) |
 
-### Coca-Cola Germany (páginas 106–109)
+### Coca-Cola Germany (pages 106–109)
 
-12 cromos exclusivos de la edición alemana, identificados como CC1–CC12.
+12 stickers exclusive to the German edition, identified as CC1–CC12.
 
 ---
 
-## Funcionalidades en detalle
+## Functionality in detail
 
-### Marcado de cromos
+### Marking stickers
 
-| Acción | Resultado |
+| Action | Result |
 |---|---|
-| 1.er clic | Cromo marcado como **obtenido** |
-| 2.º clic | +1 **repetido** |
-| Clics siguientes | +1 repetido cada vez |
-| Clic en `−` | −1 repetido; al llegar a 0 pasa a **faltante** |
+| 1st click | Sticker marked as **collected** |
+| 2nd click | +1 **duplicate** |
+| Further clicks | +1 duplicate each time |
+| Click `−` | −1 duplicate; returns to **missing** when it reaches 0 |
 
-### Búsqueda
+### Search
 
-La barra de búsqueda superior filtra en tiempo real por nombre de jugador o sticker, código de selección (p. ej., `MEX`, `ARG`) y número de sticker (p. ej., `42`, `FWC3`, `CC7`). Al escribir, la app navega automáticamente a la vista Álbum y aplica el filtro.
+The top search bar filters in real time by player or sticker name, team code (e.g. `MEX`, `ARG`), and sticker number (e.g. `42`, `FWC3`, `CC7`). Typing automatically navigates to the Album view and applies the filter.
 
-### Filtros de tipo
+### Type filters
 
-Disponibles en la barra de chips debajo del encabezado:
+Available in the chip bar below the header:
 
-- **Todos** — todos los cromos visibles según el contexto
-- **Obtenidos** — solo los que ya tienes
-- **Repetidos** — solo los que tienes en exceso
-- **Faltantes** — los que aún no tienes
-- **Especiales** — todos los cromos de tipo especial (escudos, fotos, FWC, Coca-Cola…)
-- **Coca-Cola** — los 12 exclusivos alemanes
-- **Escudos** — solo escudos de selecciones
-- **Fotos de equipo** — solo fotos de equipo
-- **FWC** — los 20 especiales del torneo (FWC0–FWC19)
+- **All** — every sticker visible in the current context
+- **Collected** — only stickers you already have
+- **Duplicates** — only stickers you have more than once
+- **Missing** — stickers you don't have yet
+- **Specials** — all special-type stickers (shields, team photos, FWC, Coca-Cola…)
+- **Coca-Cola** — the 12 Germany exclusives
+- **Shields** — team shields only
+- **Team Photos** — team photos only
+- **FWC** — all 20 tournament specials (FWC0–FWC19)
 
-> En las secciones **Repetidos** y **Faltantes** los chips Obtenidos, Repetidos y Faltantes se ocultan automáticamente porque son redundantes.
+> In the **Duplicates** and **Missing** sections, the Collected/Duplicates/Missing chips are automatically hidden as they would be redundant.
 
-### Agrupación y filtros secundarios
+### Grouping and secondary filters
 
-- **Agrupar por**: Grupo · Selección · Página · Sin agrupar
-- **Filtro de grupo**: de A a L, o todos
-- **Filtro de selección**: país concreto, o todas
-- **Filtro de página**: página exacta del álbum, o todas
+- **Group by**: Group · Team · Page · Ungrouped
+- **Group filter**: A through L, or all
+- **Team filter**: specific country, or all
+- **Page filter**: exact album page, or all
 
-Cada cabecera de selección muestra las páginas del álbum que le corresponden (p. ej., `· Pág. 8, 9`).
+Each team header shows its album pages (e.g. `· Pg. 8, 9`).
 
-### Secciones principales
+### Main sections
 
-| Sección | Descripción |
+| Section | Description |
 |---|---|
-| **Inicio** | Dashboard con progreso de tu álbum, resumen de los 12 grupos, formato del torneo (fases, sedes) y estructura del álbum |
-| **Álbum** | Los 992 cromos con filtros y agrupación completos |
-| **Repetidos** | Solo los cromos con al menos 1 repetido |
-| **Faltan** | Solo los cromos que aún no tienes |
-| **Especiales** | Vista filtrada a todos los cromos especiales |
-| **Coca-Cola** | Los 12 exclusivos de la edición alemana |
-| **Stats** | Estadísticas completas del álbum |
+| **Home** | Dashboard with album progress, 12-group summary, tournament format (stages, venues) and album structure |
+| **Album** | All 992 stickers with full filters and grouping |
+| **Duplicates** | Only stickers with at least 1 duplicate |
+| **Missing** | Only stickers you don't have yet |
+| **Specials** | Filtered view of all special stickers |
+| **Coca-Cola** | The 12 Germany exclusive stickers |
+| **Stats** | Full album statistics |
 
-### Estadísticas
+### Statistics
 
-La pestaña Stats muestra:
+The Stats tab shows:
 
-- **Panorama general** — % completado, conteo de obtenidos / faltantes / repetidos / Coca-Cola, desglose por categoría
-- **Selecciones con más progreso** — ranking de países con barra de progreso y scroll
-- **Progreso por grupo** — avance porcentual de cada grupo A–L
-- **Pendientes prioritarios** — selecciones con menos cromos restantes (más cerca de completar)
-- **Selecciones al 100 %** — países completamente llenos
-- **Grupos al 100 %** — grupos completamente llenos
-- **Especiales pendientes** — FWC aún sin obtener
-- **Coca-Cola pendientes** — exclusivos alemanes sin obtener
-- **Selecciones más rezagadas** — países con menos progreso
+- **Overview** — % completed, collected / missing / duplicates / Coca-Cola counts, breakdown by category
+- **Top teams by progress** — ranked list of countries with progress bars and scroll
+- **Progress by group** — percentage progress for each group A–L
+- **Priority missing** — teams with fewest stickers left (closest to completing)
+- **Teams at 100%** — fully completed countries
+- **Groups at 100%** — fully completed groups
+- **Pending specials** — FWC stickers not yet collected
+- **Pending Coca-Cola** — German exclusives not yet collected
+- **Lagging teams** — countries with the least progress
 
-### Exportación PDF
+### PDF export
 
-Desde el panel lateral (escritorio):
+From the sidebar (desktop):
 
-- **PDF de faltantes** — lista de todos los cromos que aún no tienes, con ID, nombre y página
-- **PDF de repetidos** — lista de todos los cromos con más de 1 copia, con cantidad
+- **Missing PDF** — list of all stickers you don't have, with ID, name and page
+- **Duplicates PDF** — list of all stickers you have more than once, with count
 
-Ambos PDFs incluyen tu nombre de usuario y la fecha de generación.
+Both PDFs include your username and the generation date.
 
-### Idioma
+### Language
 
-El toggle de idioma (🇪🇸 / 🇬🇧) en el panel lateral cambia toda la interfaz entre **español** e **inglés**, incluyendo etiquetas, filtros, mensajes y estadísticas. La preferencia se guarda entre sesiones.
-
----
-
-## Uso sin cuenta
-
-Sin registrarte puedes:
-
-- Navegar por todos los grupos, selecciones, páginas y especiales
-- Usar todos los filtros y la búsqueda
-- Ver la vista Home y explorar la estructura del álbum
-
-No puedes: marcar cromos, guardar progreso ni exportar PDFs personalizados.
+The language toggle (🇪🇸 / 🇬🇧) in the sidebar switches the entire interface between **Spanish** and **English**, including labels, filters, messages and stats. The preference is saved between sessions.
 
 ---
 
-## Uso con cuenta — marcado y sincronización
+## Without an account
 
-1. Pulsa **Iniciar sesión / registro** en el panel lateral.
-2. Crea una cuenta con email y contraseña, o inicia sesión si ya tienes una.
-3. Marca tus cromos haciendo clic sobre ellos.
-4. El progreso se guarda automáticamente en Supabase y se sincroniza entre todos tus dispositivos.
-5. Para reiniciar el álbum, usa el botón **Reiniciar progreso** (requiere confirmación).
+Without signing up you can:
 
-> El login y la sincronización requieren abrir la app desde `http://localhost` o una URL HTTPS (como GitHub Pages). No funcionan en `file://` por restricciones de seguridad del navegador.
+- Browse all groups, teams, pages and specials
+- Use all filters and search
+- View the Home dashboard and explore the album structure
+
+You cannot: mark stickers, save progress, or export personalized PDFs.
 
 ---
 
-## Cómo abrirla localmente
+## With an account — marking and sync
 
-### Opción recomendada — servidor Node incluido
+1. Click **Sign in / Register** in the sidebar.
+2. Create an account with email and password, or sign in if you already have one.
+3. Click stickers to mark them.
+4. Progress is automatically saved to Supabase and synced across all your devices.
+5. To reset the album, use the **Reset progress** button (requires confirmation).
+
+> Login and sync require opening the app from `http://localhost` or an HTTPS URL (such as GitHub Pages). They do not work over `file://` due to browser security restrictions.
+
+---
+
+## Running locally
+
+### Recommended — included Node server
 
 ```bash
 node serve.mjs
 ```
 
-Abre `http://localhost:5500` en tu navegador.
+Open `http://localhost:5500` in your browser.
 
-### Alternativa — Python
+### Alternative — Python
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Abre `http://localhost:8000`.
+Open `http://localhost:8000`.
 
-### Solo lectura — sin servidor
+### Read-only — no server
 
-Abre `index.html` directamente en el navegador. Funciona en modo lectura (sin login ni sincronización).
-
----
-
-## Despliegue en GitHub Pages
-
-1. Crea un repositorio en GitHub y sube: `index.html`, `styles.css`, `app.js`, `data.js` (y opcionalmente `README.md`, `package.json`, `tests/`).
-2. Ve a **Settings → Pages**.
-3. En *Build and deployment*, elige `Deploy from a branch`.
-4. Selecciona `main` / `/ (root)` y guarda.
-5. Tu app estará disponible en:
-   ```
-   https://TU-USUARIO.github.io/TU-REPO/
-   ```
-6. Añade esa URL a las redirect URLs de tu proyecto Supabase.
+Open `index.html` directly in the browser. Works in read-only mode (no login or sync).
 
 ---
 
-## Configuración de Supabase
+## Deploying to GitHub Pages
 
-La app no tiene backend propio. El progreso se almacena en **Supabase** con Row Level Security (cada usuario solo ve y edita sus propios datos).
+1. Create a GitHub repository and upload: `index.html`, `styles.css`, `app.js`, `data.js` (and optionally `README.md`, `package.json`, `tests/`).
+2. Go to **Settings → Pages**.
+3. Under *Build and deployment*, choose `Deploy from a branch`.
+4. Select `main` / `/ (root)` and save.
+5. Your app will be available at:
+   ```
+   https://YOUR-USERNAME.github.io/YOUR-REPO/
+   ```
+6. Add that URL to the redirect URLs in your Supabase project.
 
-### 1. Crear proyecto Supabase
+---
 
-1. Ve a [supabase.com](https://supabase.com) y crea un proyecto.
-2. Copia el **Project URL** y la **anon/public key** desde *Settings → API*.
+## Supabase setup
 
-### 2. Configurar autenticación
+The app has no custom backend. Progress is stored in **Supabase** with Row Level Security (each user can only see and edit their own data).
 
-En *Authentication → URL Configuration*, añade las redirect URLs:
+### 1. Create a Supabase project
+
+1. Go to [supabase.com](https://supabase.com) and create a project.
+2. Copy the **Project URL** and **anon/public key** from *Settings → API*.
+
+### 2. Configure authentication
+
+Under *Authentication → URL Configuration*, add your redirect URLs:
 
 ```
 http://localhost:5500
 http://localhost:8000
 http://127.0.0.1:5500
-https://TU-USUARIO.github.io/TU-REPO/
+https://YOUR-USERNAME.github.io/YOUR-REPO/
 ```
 
-Activa *Email + Password* en *Authentication → Providers*.
+Enable *Email + Password* under *Authentication → Providers*.
 
-### 3. Crear tablas y políticas RLS
+### 3. Create tables and RLS policies
 
-Ejecuta este SQL en el *SQL Editor* de Supabase:
+Run this SQL in the Supabase *SQL Editor*:
 
 ```sql
 create table if not exists public.profiles (
@@ -279,7 +279,7 @@ create table if not exists public.user_sticker_progress (
   unique (user_id, sticker_id)
 );
 
--- Trigger: crear perfil al registrarse
+-- Trigger: create profile on sign-up
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
@@ -294,7 +294,7 @@ create trigger on_auth_user_created
 after insert on auth.users
 for each row execute procedure public.handle_new_user();
 
--- Trigger: actualizar updated_at
+-- Trigger: update updated_at
 create or replace function public.touch_updated_at()
 returns trigger language plpgsql as $$
 begin new.updated_at = now(); return new; end;
@@ -319,37 +319,37 @@ create policy "progress_update_own" on public.user_sticker_progress for update u
 create policy "progress_delete_own" on public.user_sticker_progress for delete using (auth.uid() = user_id);
 ```
 
-### 4. Conectar la app
+### 4. Connect the app
 
-Las credenciales de Supabase ya están preconfiguradas en `app.js`. Si quieres usar tu propio proyecto, edita las constantes `url` y `anonKey` en `DEFAULT_SUPABASE_CONFIG` al principio de `app.js`.
+Supabase credentials are pre-configured in `app.js`. To use your own project, edit the `url` and `anonKey` constants in `DEFAULT_SUPABASE_CONFIG` at the top of `app.js`.
 
 ---
 
-## Archivos del proyecto
+## Project files
 
-| Archivo | Descripción |
+| File | Description |
 |---|---|
-| `index.html` | Shell de la SPA: estructura HTML, nav, modales de autenticación, toast |
-| `app.js` | Toda la lógica: UI, autenticación Supabase, sincronización, filtros, búsqueda, estadísticas, exportación PDF, i18n |
-| `styles.css` | Diseño visual completo: tema oscuro navy, gradientes, componentes (chips, cards, headers, stats), responsive |
-| `data.js` | Catálogo congelado de los 992 cromos de la edición Alemania: stickers, grupos, selecciones, colores de equipo, emojis de bandera |
-| `serve.mjs` | Servidor de desarrollo Node.js para `localhost:5500` |
-| `tests/app.test.js` | Suite de pruebas unitarias del catálogo y la lógica de negocio |
-| `package.json` | Dependencias de desarrollo y script `npm test` |
+| `index.html` | SPA shell: HTML structure, nav, auth modal, toast |
+| `app.js` | All logic: UI, Supabase auth, sync, filters, search, stats, PDF export, i18n |
+| `styles.css` | Full visual design: dark navy theme, gradients, components (chips, cards, headers, stats), responsive |
+| `data.js` | Frozen catalog of all 992 Germany-edition stickers: stickers, groups, teams, team colors, flag emojis |
+| `serve.mjs` | Minimal Node.js dev server for `localhost:5500` |
+| `tests/app.test.js` | Unit test suite for catalog integrity and business logic |
+| `package.json` | Dev dependencies and `npm test` script |
 
 ---
 
-## Pruebas
+## Tests
 
 ```bash
 npm test
 ```
 
-La suite cubre:
+The suite covers:
 
-- Integridad del catálogo (edición Alemania, total 992 stickers, 12 Coca-Cola, 20 FWC)
-- Páginas correctas por selección
-- Lógica de clic: obtener → repetidos → corrección con `−`
-- Merge del progreso remoto con estado local
-- Filtros: Coca-Cola, repetidos, faltantes, especiales
-- Cálculo de estadísticas globales y por categoría
+- Catalog integrity (Germany edition, 992 total stickers, 12 Coca-Cola, 20 FWC)
+- Correct page mapping per team
+- Click logic: collect → duplicates → correction with `−`
+- Remote progress merge with local state
+- Filters: Coca-Cola, duplicates, missing, specials
+- Global and per-category stats computation
