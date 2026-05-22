@@ -105,6 +105,7 @@ const TRANSLATIONS = {
     "empty.desc":"Prueba con otro filtro, cambia la agrupación o limpia la búsqueda.",
     // Auth
     "auth.account":"Cuenta","auth.title.login":"Iniciar sesión","auth.title.register":"Crear cuenta",
+    "auth.google":"Continuar con Google","auth.or_email":"o con email",
     "auth.email":"Email","auth.password":"Contraseña",
     "auth.submit.login":"Entrar","auth.submit.register":"Registrarme",
     "auth.toggle.to_register":"¿No tienes cuenta? Regístrate",
@@ -177,6 +178,7 @@ const TRANSLATIONS = {
     "empty.title":"No stickers for this view",
     "empty.desc":"Try a different filter, change the grouping, or clear the search.",
     "auth.account":"Account","auth.title.login":"Sign in","auth.title.register":"Create account",
+    "auth.google":"Continue with Google","auth.or_email":"or with email",
     "auth.email":"Email","auth.password":"Password",
     "auth.submit.login":"Sign in","auth.submit.register":"Register",
     "auth.toggle.to_register":"Don't have an account? Register",
@@ -281,6 +283,13 @@ function applyStaticTranslations() {
       else el.textContent = t(key);
     }
   });
+  // Auth modal dynamic labels (title/submit/toggle depend on current authMode)
+  const authTitle = document.querySelector("#auth-title");
+  if (authTitle) authTitle.textContent = t(state.authMode === "login" ? "auth.title.login" : "auth.title.register");
+  const authSubmit = document.querySelector("#auth-submit");
+  if (authSubmit) authSubmit.textContent = t(state.authMode === "login" ? "auth.submit.login" : "auth.submit.register");
+  const authToggle = document.querySelector("#toggle-auth-mode");
+  if (authToggle) authToggle.textContent = t(state.authMode === "login" ? "auth.toggle.to_register" : "auth.toggle.to_login");
   // Language toggle button flags
   const fromFlag = document.querySelector("#lang-from-flag");
   const toFlag   = document.querySelector("#lang-to-flag");
