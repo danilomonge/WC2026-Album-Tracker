@@ -441,7 +441,7 @@ function loadViewState() {
   try {
     const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEYS.view));
     if (saved) {
-      state.section = saved.section || state.section;
+      state.section = "inicio";
       state.filter = saved.filter || state.filter;
       state.viewMode = saved.viewMode || state.viewMode;
       state.selectedGroup = saved.selectedGroup || state.selectedGroup;
@@ -1286,16 +1286,16 @@ function renderHomeView(stats) {
         <div class="home-album-metric home-album-metric--missing">
           <strong>${escapeHtml(stats.faltantes)}</strong><span>${t("home.missing")}</span>
         </div>
-        <div class="home-album-metric">
+        <div class="home-album-metric home-album-metric--duplicates">
           <strong>${escapeHtml(stats.repetidos)}</strong><span>${t("home.duplicates")}</span>
         </div>
         <div class="home-album-metric home-album-metric--coke">
           <strong>${escapeHtml(stats.cocaCola.obtenidos)}/${escapeHtml(stats.cocaCola.total)}</strong><span>Coca-Cola</span>
         </div>
-        <div class="home-album-metric">
+        <div class="home-album-metric home-album-metric--specials">
           <strong>${escapeHtml(stats.especiales.obtenidos)}/${escapeHtml(stats.especiales.total)}</strong><span>${t("home.specials")}</span>
         </div>
-        <div class="home-album-metric">
+        <div class="home-album-metric home-album-metric--total">
           <strong>${escapeHtml(stats.total)}</strong><span>${t("home.total")}</span>
         </div>
       </div>
@@ -1349,7 +1349,7 @@ function renderHomeView(stats) {
     <section class="home-card home-card--dark">
       <h2 class="home-card__title">${t("home.album_structure")}</h2>
       <div class="home-album-structure">
-        <div class="home-structure-item">
+        <div class="home-structure-item home-structure-item--total">
           <span class="home-structure-item__num">992</span>
           <span class="home-structure-item__label">${t("home.album.total")}</span>
         </div>
@@ -1357,7 +1357,7 @@ function renderHomeView(stats) {
           <span class="home-structure-item__num">48 × 20</span>
           <span class="home-structure-item__label">${t("home.album.selections")}</span>
         </div>
-        <div class="home-structure-item">
+        <div class="home-structure-item home-structure-item--specials">
           <span class="home-structure-item__num">20</span>
           <span class="home-structure-item__label">${t("home.album.specials")}</span>
         </div>
@@ -1383,6 +1383,7 @@ function renderGroupedByGroupAndTeam(stickers) {
     teamMap.get(teamKey).push(sticker);
   });
 
+  // Returns an array of section HTML strings (one per group) for progressive rendering
   return [...groupMap.entries()]
     .map(([groupKey, teamMap]) => {
       const groupInfo = GROUPS.find((g) => g.letter === groupKey);
@@ -1442,12 +1443,16 @@ function renderGroupedByGroupAndTeam(stickers) {
           ${teamSections}
         </section>
       `;
-    })
-    .join("");
+    });
 }
+
+// Token used to cancel in-flight progressive renders when a new render starts
+let _renderToken = 0;
 
 function renderCollectionView(stickers) {
   const content = document.querySelector("#collection-content");
+  // Invalidate any previous in-flight render
+  const token = ++_renderToken;
 
   if (!stickers.length) {
     content.innerHTML = `
@@ -1459,18 +1464,15 @@ function renderCollectionView(stickers) {
     return;
   }
 
+  // Build the array of section HTML strings
+  let sections;
   if (state.viewMode === "group") {
-    content.innerHTML = renderGroupedByGroupAndTeam(stickers);
-    return;
-  }
-
-  const groups = groupStickers(stickers, state.viewMode);
-  content.innerHTML = groups
-    .map((group) => {
+    sections = renderGroupedByGroupAndTeam(stickers);
+  } else {
+    const groups = groupStickers(stickers, state.viewMode);
+    sections = groups.map((group) => {
       const obtained = group.stickers.filter((sticker) => sticker.obtenido).length;
       const firstSticker = group.stickers[0];
-      const teamAccent = firstSticker?.colorPais || firstSticker?.colorGrupo || "#003e7a";
-
       return `
         <section class="board-section">
           <div class="team-header">
@@ -1483,8 +1485,28 @@ function renderCollectionView(stickers) {
           </div>
         </section>
       `;
-    })
-    .join("");
+    });
+  }
+
+  if (!sections.length) { content.innerHTML = ""; return; }
+
+  // Paint the first section immediately so the user sees content right away
+  content.innerHTML = sections[0];
+
+  if (sections.length === 1) return;
+
+  // Append remaining sections progressively, yielding between each one
+  // so the browser stays responsive. Cancel if a newer render started.
+  let idx = 1;
+  const scheduleNext = () => {
+    setTimeout(() => {
+      if (token !== _renderToken) return; // stale render — abort
+      content.insertAdjacentHTML("beforeend", sections[idx]);
+      idx++;
+      if (idx < sections.length) scheduleNext();
+    }, 0);
+  };
+  scheduleNext();
 }
 
 function renderStatsView(stats) {

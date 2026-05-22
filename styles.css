@@ -240,9 +240,15 @@
 }
 
 /* ---------- Team sub-section ---------- */
+.board-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 400px;
+}
 .team-subsection {
   padding: 16px 0 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
 }
 .team-subsection:last-child {
   border-bottom: none;
@@ -730,13 +736,28 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  contain: size;
+}
+@media (min-width: 768px) {
+  .stats-panel--groups,
+  .stats-panel--selections {
+    contain: size;
+  }
 }
 .stats-panel--groups .rank-list,
 .stats-panel--selections .rank-list {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+}
+/* Mobile: let rank-list size to its content — remove flex-collapse tricks */
+@media (max-width: 767px) {
+  .stats-panel--groups .rank-list,
+  .stats-panel--selections .rank-list {
+    flex: none;
+    min-height: unset;
+    overflow-y: visible;
+    max-height: none;
+  }
 }
 .stats-note {
   margin-top: 12px;
@@ -999,33 +1020,197 @@
 .home-card--dark .home-group-card__bar { background: rgba(232, 244, 255, 0.2); }
 /* Structure items inside dark card */
 .home-card--dark .home-structure-item {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+              background 0.22s,
+              border-color 0.22s,
+              box-shadow 0.22s;
 }
-.home-card--dark .home-structure-item--accent {
-  background: rgba(0, 100, 220, 0.25);
-  border-color: rgba(60, 150, 255, 0.4);
+.home-card--dark .home-structure-item:hover {
+  transform: translateY(-2px);
 }
-.home-card--dark .home-structure-item--coke {
-  background: rgba(180, 20, 15, 0.25);
-  border-color: rgba(220, 80, 70, 0.4);
+.home-card--dark .home-structure-item__num {
+  color: #e8f4ff;
+  transition: color 0.22s;
 }
-.home-card--dark .home-structure-item__num { color: #e8f4ff; }
-.home-card--dark .home-structure-item--coke .home-structure-item__num { color: #ff8880; }
-.home-card--dark .home-structure-item__label { color: rgba(180, 210, 255, 0.75); }
+.home-card--dark .home-structure-item__label {
+  color: rgba(180, 210, 255, 0.75);
+}
 
-/* My album — dark overrides */
+/* 1. Stickers Totales (Electric Cyan) */
+.home-card--dark .home-structure-item--total {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.14) 0%, rgba(8, 145, 178, 0.04) 100%);
+  border-color: rgba(6, 182, 212, 0.25);
+}
+.home-card--dark .home-structure-item--total:hover {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(8, 145, 178, 0.07) 100%);
+  border-color: rgba(6, 182, 212, 0.45);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
+}
+.home-card--dark .home-structure-item--total .home-structure-item__num {
+  color: #67e8f9;
+  text-shadow: 0 0 8px rgba(6, 182, 212, 0.2);
+}
+
+/* 2. Selecciones Accent (Electric Blue) */
+.home-card--dark .home-structure-item--accent {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.14) 0%, rgba(29, 78, 216, 0.04) 100%);
+  border-color: rgba(59, 130, 246, 0.25);
+}
+.home-card--dark .home-structure-item--accent:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(29, 78, 216, 0.07) 100%);
+  border-color: rgba(59, 130, 246, 0.45);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+.home-card--dark .home-structure-item--accent .home-structure-item__num {
+  color: #93c5fd;
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.2);
+}
+
+/* 3. Especiales (Amber Gold) */
+.home-card--dark .home-structure-item--specials {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.14) 0%, rgba(217, 119, 6, 0.04) 100%);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+.home-card--dark .home-structure-item--specials:hover {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.07) 100%);
+  border-color: rgba(245, 158, 11, 0.45);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+}
+.home-card--dark .home-structure-item--specials .home-structure-item__num {
+  color: #fde047;
+  text-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
+}
+
+/* 4. Coca-Cola (Coke Red) */
+.home-card--dark .home-structure-item--coke {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.16) 0%, rgba(185, 28, 28, 0.05) 100%);
+  border-color: rgba(239, 68, 68, 0.28);
+}
+.home-card--dark .home-structure-item--coke:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.22) 0%, rgba(185, 28, 28, 0.08) 100%);
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.18);
+}
+.home-card--dark .home-structure-item--coke .home-structure-item__num {
+  color: #fca5a5;
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
+}
+
+
+/* My album — dark overrides for KPIs */
 .home-card--dark .home-album-bar__track { background: rgba(255,255,255,0.1); }
 .home-card--dark .home-album-bar__pct { color: #7dc4ff; }
-.home-card--dark .home-album-metric { background: rgba(255,255,255,0.07); }
-.home-card--dark .home-album-metric strong { color: #e8f4ff; }
-.home-card--dark .home-album-metric span { color: rgba(180,210,255,0.6); }
-.home-card--dark .home-album-metric--owned { background: rgba(0,120,60,0.25); border: 1px solid rgba(0,180,90,0.3); }
-.home-card--dark .home-album-metric--owned strong { color: #5de89a; }
-.home-card--dark .home-album-metric--missing { background: rgba(180,20,15,0.22); border: 1px solid rgba(220,80,70,0.3); }
-.home-card--dark .home-album-metric--missing strong { color: #ff8880; }
-.home-card--dark .home-album-metric--coke { background: rgba(180,20,15,0.22); border: 1px solid rgba(220,80,70,0.3); }
-.home-card--dark .home-album-metric--coke strong { color: #ff8880; }
+
+.home-card--dark .home-album-metric {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+              background 0.22s,
+              border-color 0.22s,
+              box-shadow 0.22s;
+}
+.home-card--dark .home-album-metric:hover {
+  transform: translateY(-2px);
+}
+.home-card--dark .home-album-metric strong {
+  color: #e8f4ff;
+  transition: color 0.22s;
+}
+.home-card--dark .home-album-metric span {
+  color: rgba(180, 210, 255, 0.6);
+}
+
+/* 1. Obtenidos (Emerald Green) */
+.home-card--dark .home-album-metric--owned {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(5, 150, 105, 0.04) 100%);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+.home-card--dark .home-album-metric--owned:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.07) 100%);
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+.home-card--dark .home-album-metric--owned strong {
+  color: #5de89a;
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+}
+
+/* 2. Faltantes (Tangerine Orange) */
+.home-card--dark .home-album-metric--missing {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.14) 0%, rgba(217, 119, 6, 0.04) 100%);
+  border-color: rgba(249, 115, 22, 0.25);
+}
+.home-card--dark .home-album-metric--missing:hover {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.2) 0%, rgba(217, 119, 6, 0.07) 100%);
+  border-color: rgba(249, 115, 22, 0.45);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);
+}
+.home-card--dark .home-album-metric--missing strong {
+  color: #ff9e66;
+  text-shadow: 0 0 8px rgba(249, 115, 22, 0.2);
+}
+
+/* 3. Repetidos (Amethyst Purple) */
+.home-card--dark .home-album-metric--duplicates {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.14) 0%, rgba(109, 40, 217, 0.04) 100%);
+  border-color: rgba(139, 92, 246, 0.25);
+}
+.home-card--dark .home-album-metric--duplicates:hover {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(109, 40, 217, 0.07) 100%);
+  border-color: rgba(139, 92, 246, 0.45);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+}
+.home-card--dark .home-album-metric--duplicates strong {
+  color: #c084fc;
+  text-shadow: 0 0 8px rgba(139, 92, 246, 0.2);
+}
+
+/* 4. Coca-Cola (Coke Red) */
+.home-card--dark .home-album-metric--coke {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.16) 0%, rgba(185, 28, 28, 0.05) 100%);
+  border-color: rgba(239, 68, 68, 0.28);
+}
+.home-card--dark .home-album-metric--coke:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.22) 0%, rgba(185, 28, 28, 0.08) 100%);
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.18);
+}
+.home-card--dark .home-album-metric--coke strong {
+  color: #fca5a5;
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
+}
+
+/* 5. Especiales (Amber Gold) */
+.home-card--dark .home-album-metric--specials {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.14) 0%, rgba(217, 119, 6, 0.04) 100%);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+.home-card--dark .home-album-metric--specials:hover {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.07) 100%);
+  border-color: rgba(245, 158, 11, 0.45);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+}
+.home-card--dark .home-album-metric--specials strong {
+  color: #fde047;
+  text-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
+}
+
+/* 6. Stickers Totales (Electric Cyan) */
+.home-card--dark .home-album-metric--total {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.14) 0%, rgba(8, 145, 178, 0.04) 100%);
+  border-color: rgba(6, 182, 212, 0.25);
+}
+.home-card--dark .home-album-metric--total:hover {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(8, 145, 178, 0.07) 100%);
+  border-color: rgba(6, 182, 212, 0.45);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
+}
+.home-card--dark .home-album-metric--total strong {
+  color: #67e8f9;
+  text-shadow: 0 0 8px rgba(6, 182, 212, 0.2);
+}
 
 /* Tournament format — dark overrides */
 .home-card--dark .home-format-list li { border-bottom-color: rgba(255,255,255,0.08); }
@@ -1741,10 +1926,12 @@ aside::-webkit-scrollbar-thumb {
   opacity: 0.5;
   transition: opacity 0.2s;
 }
-#lang-label span[data-lang="es"] {
-  font-size: 0.86rem;
-}
+#lang-label span[data-lang="es"],
 #lang-label span[data-lang="en"] {
-  font-size: 0.98rem;
+  font-size: 1.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
 }
 
