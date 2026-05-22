@@ -114,6 +114,11 @@ const TRANSLATIONS = {
     "auth.toggle.back_to_login":"← Volver a iniciar sesión",
     "auth.title.reset":"Restablecer contraseña",
     "auth.reset_hint":"Ingresa tu email y te enviaremos un enlace para crear una nueva contraseña.",
+    "auth.title.update":"Nueva contraseña",
+    "auth.submit.update":"Guardar contraseña",
+    "auth.update_hint":"Elige una nueva contraseña para tu cuenta.",
+    "toast.password_updated":"Contraseña actualizada correctamente.",
+    "toast.password_update_error":"No se pudo actualizar la contraseña.",
     "toast.reset_email_sent":"Si existe una cuenta con ese email, recibirás un enlace en tu bandeja de entrada.",
     "toast.reset_email_error":"No pudimos enviar el correo. Verifica el email e inténtalo de nuevo.",
     "auth.error.already_registered":"Este email ya está registrado. Inicia sesión o restablece tu contraseña.",
@@ -199,6 +204,11 @@ const TRANSLATIONS = {
     "auth.toggle.back_to_login":"← Back to sign in",
     "auth.title.reset":"Reset password",
     "auth.reset_hint":"Enter your email and we'll send you a link to create a new password.",
+    "auth.title.update":"New password",
+    "auth.submit.update":"Save password",
+    "auth.update_hint":"Choose a new password for your account.",
+    "toast.password_updated":"Password updated successfully.",
+    "toast.password_update_error":"Could not update password.",
     "toast.reset_email_sent":"If an account exists with that email, you'll receive a reset link in your inbox.",
     "toast.reset_email_error":"Could not send the email. Check the address and try again.",
     "auth.error.already_registered":"This email is already registered. Sign in or reset your password.",
@@ -344,6 +354,7 @@ export const state = {
   isSyncing: false,
   config: loadConfig(),
   authSubscription: null,
+  isRecovering: false,
   lang: (typeof localStorage !== "undefined" && localStorage.getItem("panini-lang")) || "es",
 };
 
@@ -823,6 +834,15 @@ async function ensureSupabaseClient() {
     return null;
   }
 
+  // Detect password recovery in URL parameters
+  if (typeof window !== "undefined") {
+    const hash = window.location.hash || "";
+    const search = window.location.search || "";
+    if (hash.includes("type=recovery") || search.includes("type=recovery")) {
+      state.isRecovering = true;
+    }
+  }
+
   let createClient;
   try {
     ({ createClient } = await import("https://esm.sh/@supabase/supabase-js@2.49.8"));
@@ -842,10 +862,29 @@ async function ensureSupabaseClient() {
     state.authSubscription.unsubscribe();
   }
 
-  const { data: authListener } = state.supabase.auth.onAuthStateChange(async (_event, session) => {
+  const { data: authListener } = state.supabase.auth.onAuthStateChange(async (event, session) => {
     state.session = session;
+
+    const isRecovery = event === "PASSWORD_RECOVERY" || state.isRecovering;
+    if (isRecovery) {
+      state.isRecovering = false;
+      if (typeof window !== "undefined" && window.history && window.history.replaceState) {
+        // Strip all Supabase auth params from both hash and search string
+        const params = new URLSearchParams(window.location.search);
+        ["access_token", "refresh_token", "token_hash", "type", "error", "error_description"].forEach(k => params.delete(k));
+        const qs = params.toString();
+        const cleanUrl = window.location.pathname + (qs ? "?" + qs : "");
+        window.history.replaceState(null, document.title, cleanUrl);
+      }
+    }
+
     await loadRemoteProgress();
     renderApp();
+
+    if (isRecovery) {
+      switchAuthMode("update");
+      openModal("#auth-modal");
+    }
   });
   state.authSubscription = authListener.subscription;
 
@@ -1710,7 +1749,7 @@ function renderApp() {
   }
 }
 
-function mapAuthError(message) {
+export function mapAuthError(message) {
   const m = (message || "").toLowerCase();
   if (m.includes("already registered") || m.includes("already exists") || m.includes("user already")) return t("auth.error.already_registered");
   if (m.includes("invalid login") || m.includes("invalid credentials") || m.includes("wrong password")) return t("auth.error.invalid_credentials");
@@ -1738,7 +1777,7 @@ async function handleAuthSubmit(event) {
   clearAuthError();
 
   const email = document.querySelector("#auth-email").value.trim();
-  if (!email) {
+  if (state.authMode !== "update" && !email) {
     showAuthError(t("auth.error.invalid_email"));
     return;
   }
@@ -1760,6 +1799,23 @@ async function handleAuthSubmit(event) {
   submitBtn.textContent = "…";
 
   try {
+    // Update password mode
+    if (state.authMode === "update") {
+      const password = document.querySelector("#auth-password").value.trim();
+      if (!password || password.length < 6) {
+        showAuthError(t("auth.error.weak_password"));
+        return;
+      }
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) {
+        showAuthError(mapAuthError(error.message) || t("toast.password_update_error"));
+        return;
+      }
+      closeAuthModal();
+      showToast(t("toast.password_updated"));
+      return;
+    }
+
     // Reset password mode
     if (state.authMode === "reset") {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -1815,23 +1871,45 @@ function switchAuthMode(mode) {
   clearAuthError();
   const isReset = mode === "reset";
   const isLogin = mode === "login";
+  const isUpdate = mode === "update";
 
   document.querySelector("#auth-title").textContent =
-    t(mode === "login" ? "auth.title.login" : mode === "register" ? "auth.title.register" : "auth.title.reset");
+    t(mode === "login" ? "auth.title.login" : mode === "register" ? "auth.title.register" : mode === "reset" ? "auth.title.reset" : "auth.title.update");
   document.querySelector("#auth-submit").textContent =
-    t(mode === "login" ? "auth.submit.login" : mode === "register" ? "auth.submit.register" : "auth.submit.reset");
-  document.querySelector("#toggle-auth-mode").textContent =
-    t(isReset ? "auth.toggle.back_to_login" : isLogin ? "auth.toggle.to_register" : "auth.toggle.to_login");
+    t(mode === "login" ? "auth.submit.login" : mode === "register" ? "auth.submit.register" : mode === "reset" ? "auth.submit.reset" : "auth.submit.update");
+  
+  const toggleBtn = document.querySelector("#toggle-auth-mode");
+  if (toggleBtn) {
+    toggleBtn.textContent = t(isReset ? "auth.toggle.back_to_login" : isLogin ? "auth.toggle.to_register" : "auth.toggle.to_login");
+    toggleBtn.classList.toggle("hidden", isUpdate);
+  }
 
-  // Show/hide reset hint
+  // Dynamic required toggle to prevent HTML5 validation errors on hidden fields
+  const emailInput = document.querySelector("#auth-email");
+  if (emailInput) {
+    if (isUpdate) {
+      emailInput.removeAttribute("required");
+    } else {
+      emailInput.setAttribute("required", "required");
+    }
+  }
+
+  // Show/hide reset or update hint
   const hint = document.querySelector("#auth-reset-hint");
-  if (hint) { hint.textContent = isReset ? t("auth.reset_hint") : ""; hint.classList.toggle("hidden", !isReset); }
+  if (hint) {
+    hint.textContent = isReset ? t("auth.reset_hint") : isUpdate ? t("auth.update_hint") : "";
+    hint.classList.toggle("hidden", !isReset && !isUpdate);
+  }
 
-  // Show/hide OAuth + divider (hidden in reset mode)
+  // Show/hide OAuth + divider (hidden in reset or update mode)
   const oauth = document.querySelector("#auth-oauth");
   const divider = document.querySelector("#auth-divider");
-  if (oauth) oauth.classList.toggle("hidden", isReset);
-  if (divider) divider.classList.toggle("hidden", isReset);
+  if (oauth) oauth.classList.toggle("hidden", isReset || isUpdate);
+  if (divider) divider.classList.toggle("hidden", isReset || isUpdate);
+
+  // Show/hide email label (hidden in update mode)
+  const emailLabel = document.querySelector("#auth-email")?.closest("label");
+  if (emailLabel) emailLabel.classList.toggle("hidden", isUpdate);
 
   // Show/hide password field + forgot button (hidden in reset mode)
   const pwLabel = document.querySelector("#auth-password")?.closest("label");

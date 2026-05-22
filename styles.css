@@ -718,12 +718,18 @@
 }
 /* Two-column stats layout — independent flex columns, no shared row heights */
 .stats-cols {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
+}
+@media (max-width: 767px) {
+  .stats-cols > .stats-panel {
+    grid-area: auto !important;
+  }
 }
 @media (min-width: 768px) {
   .stats-cols {
+    display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto min-content;
     grid-template-areas:

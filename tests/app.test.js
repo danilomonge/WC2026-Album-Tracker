@@ -12,6 +12,7 @@ import {
   sanitizeDuplicates,
   validateSupabaseConfig,
   validateStickerId,
+  mapAuthError,
   state,
 } from "../app.js";
 
@@ -228,3 +229,23 @@ test("busqueda de paises por idioma (ingles/espanol)", () => {
   // Restaurar idioma original
   state.lang = originalLang;
 });
+
+test("mapAuthError traduce correctamente los mensajes de error de Supabase", () => {
+  const originalLang = state.lang;
+  state.lang = "es";
+
+  assert.equal(mapAuthError("User already registered"), "Este email ya está registrado. Inicia sesión o restablece tu contraseña.");
+  assert.equal(mapAuthError("Invalid login credentials"), "Email o contraseña incorrectos.");
+  assert.equal(mapAuthError("Email not confirmed"), "Debes confirmar tu email antes de iniciar sesión. Revisa tu bandeja de entrada.");
+  assert.equal(mapAuthError("Password should be at least 6 characters"), "La contraseña debe tener al menos 6 caracteres.");
+  assert.equal(mapAuthError("Email rate limit exceeded"), "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.");
+  assert.equal(mapAuthError("Invalid email format"), "El formato del email no es válido.");
+  assert.equal(mapAuthError("Unknown random error message"), "Unknown random error message");
+
+  state.lang = "en";
+  assert.equal(mapAuthError("User already registered"), "This email is already registered. Sign in or reset your password.");
+  assert.equal(mapAuthError("Invalid login credentials"), "Incorrect email or password.");
+
+  state.lang = originalLang;
+});
+
