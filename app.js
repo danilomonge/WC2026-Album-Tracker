@@ -892,6 +892,29 @@ async function ensureSupabaseClient() {
     data: { session },
   } = await state.supabase.auth.getSession();
   state.session = session;
+
+  // Fallback: with Supabase PKCE flow, detectSessionInUrl may process the recovery
+  // token during createClient() — before onAuthStateChange is registered — so the
+  // PASSWORD_RECOVERY event is never delivered to the listener.  If isRecovering is
+  // still true here (no callback consumed it) but we now have a valid session, show
+  // the "New password" modal directly.
+  if (state.isRecovering && session) {
+    state.isRecovering = false;
+    if (typeof window !== "undefined" && window.history?.replaceState) {
+      const params = new URLSearchParams(window.location.search);
+      ["access_token", "refresh_token", "token_hash", "type", "error", "error_description"]
+        .forEach(k => params.delete(k));
+      const qs = params.toString();
+      window.history.replaceState(null, document.title,
+        window.location.pathname + (qs ? "?" + qs : ""));
+    }
+    // Defer until hydrateApp's final renderApp() has finished
+    setTimeout(() => {
+      switchAuthMode("update");
+      openModal("#auth-modal");
+    }, 0);
+  }
+
   return state.supabase;
 }
 
