@@ -4,6 +4,8 @@
 
 **WC2026 Collector** is a static web app that lets you mark the stickers you have, track duplicates, monitor your progress by group and team, and export missing/duplicate lists as PDFs. No installation needed — just open it in a browser or visit the GitHub Pages URL.
 
+🌐 **Live app:** [danilomonge.github.io/WC2026-Album-Tracker](https://danilomonge.github.io/WC2026-Album-Tracker/)
+
 ---
 
 ## Table of Contents
@@ -14,11 +16,12 @@
 4. [Functionality in detail](#functionality-in-detail)
 5. [Without an account](#without-an-account)
 6. [With an account — marking and sync](#with-an-account--marking-and-sync)
-7. [Running locally](#running-locally)
-8. [Deploying to GitHub Pages](#deploying-to-github-pages)
-9. [Supabase setup](#supabase-setup)
-10. [Project files](#project-files)
-11. [Tests](#tests)
+7. [Authentication](#authentication)
+8. [Running locally](#running-locally)
+9. [Deploying to GitHub Pages](#deploying-to-github-pages)
+10. [Supabase setup](#supabase-setup)
+11. [Project files](#project-files)
+12. [Tests](#tests)
 
 ---
 
@@ -50,11 +53,15 @@ The German edition differs from the international standard in one way: it includ
 - **Flexible grouping** — by Group, Team, Page, or ungrouped
 - **Secondary filters** — by group (A–L), team, and album page
 - **Home view** — album progress summary, all 12 groups, tournament format, album structure
-- **Detailed stats** — overview, progress by category, top teams, groups, priority missing, and more
+- **Detailed stats** — overview, progress by category, top teams, groups, priority missing, and more — responsive layout on mobile and desktop
 - **PDF export** — missing list and duplicates list with username and generation date
-- **Bilingual** — full UI in Spanish and English with a language toggle
+- **Bilingual** — full UI in Spanish and English with a language toggle, including all error messages
 - **Dark theme** — dark navy design with steel-blue accents, fully responsive
 - **No custom backend** — 100% static SPA + Supabase as BaaS
+- **Instant first paint** — home screen appears immediately on load; Supabase sync runs in the background
+- **Progressive rendering** — large sections render section-by-section so the first content appears immediately and scrolling stays smooth even with hundreds of cards
+- **Google sign-in** — one-click OAuth login with Google in addition to email/password
+- **Password recovery** — full forgot-password and reset-password flow entirely in-app, including a "New password" modal triggered automatically when the user follows the recovery link
 
 ---
 
@@ -154,6 +161,8 @@ The Stats tab shows:
 - **Pending Coca-Cola** — German exclusives not yet collected
 - **Lagging teams** — countries with the least progress
 
+On mobile all stat panels stack vertically for readability; on desktop they arrange in a two-column grid.
+
 ### PDF export
 
 From the sidebar (desktop):
@@ -165,7 +174,7 @@ Both PDFs include your username and the generation date.
 
 ### Language
 
-The language toggle (🇪🇸 / 🇬🇧) in the sidebar switches the entire interface between **Spanish** and **English**, including labels, filters, messages and stats. The preference is saved between sessions.
+The language toggle (🇪🇸 / 🇬🇧) in the sidebar switches the entire interface between **Spanish** and **English**, including labels, filters, messages, auth errors and stats. The preference is saved between sessions.
 
 ---
 
@@ -184,12 +193,45 @@ You cannot: mark stickers, save progress, or export personalized PDFs.
 ## With an account — marking and sync
 
 1. Click **Sign in / Register** in the sidebar.
-2. Create an account with email and password, or sign in if you already have one.
+2. Create an account with email and password (or use **Continue with Google**), or sign in if you already have one.
 3. Click stickers to mark them.
 4. Progress is automatically saved to Supabase and synced across all your devices.
 5. To reset the album, use the **Reset progress** button (requires confirmation).
 
 > Login and sync require opening the app from `http://localhost` or an HTTPS URL (such as GitHub Pages). They do not work over `file://` due to browser security restrictions.
+
+---
+
+## Authentication
+
+The app supports four auth flows, all handled inside the same modal:
+
+| Mode | Description |
+|---|---|
+| **Sign in** | Email + password login, or Google OAuth |
+| **Register** | Create a new account with email + password |
+| **Forgot password** | Sends a recovery link to the given email. The response is always the same regardless of whether the account exists (email enumeration protection). |
+| **New password** | Triggered automatically when the user clicks a recovery link. The modal opens pre-filled in password-update mode; on save, the new password is stored and the session is cleaned up. |
+
+### Password recovery flow
+
+1. Click **Forgot your password?** in the sign-in modal.
+2. Enter your email and click **Send link**.
+3. Open the link in the email — the app detects the `type=recovery` URL parameter, establishes the Supabase session, and immediately shows the **New password** modal.
+4. Enter your new password (minimum 6 characters) and click **Save password**.
+5. Done — you are logged in with the new password.
+
+Recovery links expire after a limited time. If the link has expired, the modal shows a clear error message instead of hanging.
+
+### Error messages
+
+All Supabase auth errors are mapped to user-friendly messages in both Spanish and English:
+
+- Email already registered
+- Incorrect credentials
+- Weak password (< 6 characters)
+- Invalid email format
+- Network or timeout errors
 
 ---
 
@@ -251,7 +293,9 @@ http://127.0.0.1:5500
 https://YOUR-USERNAME.github.io/YOUR-REPO/
 ```
 
-Enable *Email + Password* under *Authentication → Providers*.
+Enable **Email + Password** under *Authentication → Providers*.
+
+To enable Google sign-in, enable **Google** under *Authentication → Providers* and configure your OAuth credentials from the [Google Cloud Console](https://console.cloud.google.com/).
 
 ### 3. Create tables and RLS policies
 
@@ -330,7 +374,7 @@ Supabase credentials are pre-configured in `app.js`. To use your own project, ed
 | File | Description |
 |---|---|
 | `index.html` | SPA shell: HTML structure, nav, auth modal, toast |
-| `app.js` | All logic: UI, Supabase auth, sync, filters, search, stats, PDF export, i18n |
+| `app.js` | All logic: UI, Supabase auth, sync, filters, search, stats, PDF export, i18n, progressive rendering |
 | `styles.css` | Full visual design: dark navy theme, gradients, components (chips, cards, headers, stats), responsive |
 | `data.js` | Frozen catalog of all 992 Germany-edition stickers: stickers, groups, teams, team colors, flag emojis |
 | `serve.mjs` | Minimal Node.js dev server for `localhost:5500` |
@@ -345,11 +389,18 @@ Supabase credentials are pre-configured in `app.js`. To use your own project, ed
 npm test
 ```
 
-The suite covers:
+The suite (14 tests) covers:
 
 - Catalog integrity (Germany edition, 992 total stickers, 12 Coca-Cola, 20 FWC)
 - Correct page mapping per team
 - Click logic: collect → duplicates → correction with `−`
 - Remote progress merge with local state
+- Sanitation of invalid duplicate values from the server
 - Filters: Coca-Cola, duplicates, missing, specials
 - Global and per-category stats computation
+- `sanitizeDuplicates` — rejects negatives and non-numeric values
+- `validateSupabaseConfig` — enforces HTTPS, valid host and anon key format
+- `escapeHtml` — neutralises dangerous characters
+- `validateStickerId` — accepts valid IDs and rejects arbitrary strings
+- Country search in Spanish and English
+- `mapAuthError` — maps all Supabase error strings to localised user-friendly messages
