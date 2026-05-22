@@ -1635,17 +1635,35 @@ function renderApp() {
   }
 }
 
+function showAuthError(msg) {
+  const el = document.querySelector("#auth-error");
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.remove("hidden");
+}
+
+function clearAuthError() {
+  const el = document.querySelector("#auth-error");
+  if (el) el.classList.add("hidden");
+}
+
 async function handleAuthSubmit(event) {
   event.preventDefault();
+  clearAuthError();
   const email = document.querySelector("#auth-email").value.trim();
   const password = document.querySelector("#auth-password").value.trim();
 
   if (!isAuthRuntimeAvailable()) {
-    showToast(t("toast.login_server"));
+    showAuthError(t("toast.login_server"));
     return;
   }
 
   const supabase = await ensureSupabaseClient();
+  if (!supabase) {
+    showAuthError(t("toast.login_server"));
+    return;
+  }
+
   const action =
     state.authMode === "register"
       ? supabase.auth.signUp({
@@ -1657,7 +1675,7 @@ async function handleAuthSubmit(event) {
 
   const { error } = await action;
   if (error) {
-    showToast(error.message);
+    showAuthError(error.message);
     return;
   }
 
@@ -1842,6 +1860,7 @@ function bindEvents() {
 
     if (event.target.closest("#toggle-auth-mode")) {
       state.authMode = state.authMode === "login" ? "register" : "login";
+      clearAuthError();
       document.querySelector("#auth-title").textContent =
         t(state.authMode === "login" ? "auth.title.login" : "auth.title.register");
       document.querySelector("#auth-submit").textContent =

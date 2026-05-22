@@ -259,7 +259,7 @@
           data-modal-close
           data-modal-close-target="#auth-modal"
         >
-          ×
+          <span class="material-symbols-outlined text-[20px] leading-none">close</span>
         </button>
         <p id="auth-eyebrow" class="font-label text-xs uppercase tracking-wider text-on-surface-variant mb-1">Cuenta</p>
         <h3 id="auth-title" class="font-display text-2xl font-bold text-primary mb-4">Iniciar sesión</h3>
@@ -300,6 +300,7 @@
               class="bg-surface-container border border-outline-variant rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary"
             />
           </label>
+          <p id="auth-error" class="hidden -mt-2 text-sm text-error bg-error-container/30 border border-error/30 rounded-lg px-3 py-2"></p>
           <button
             id="auth-submit"
             type="submit"
