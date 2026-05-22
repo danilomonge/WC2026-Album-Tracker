@@ -948,6 +948,7 @@ async function ensureSupabaseClient() {
 
 async function loadRemoteProgress() {
   if (!state.session || !state.supabase) {
+    state.isSyncing = false;
     state.stickers = state.catalog;
     return;
   }
@@ -955,32 +956,25 @@ async function loadRemoteProgress() {
   state.isSyncing = true;
   renderStatus();
 
-  let data = null, error = null;
   try {
-    const result = await Promise.race([
-      state.supabase
-        .from("user_sticker_progress")
-        .select("sticker_id, obtained, duplicates")
-        .eq("user_id", state.session.user.id),
-      new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 15_000)),
-    ]);
-    data = result.data;
-    error = result.error;
+    const { data, error } = await state.supabase
+      .from("user_sticker_progress")
+      .select("sticker_id, obtained, duplicates")
+      .eq("user_id", state.session.user.id);
+
+    if (error) {
+      setBannerMessage(t("toast.sync_error"), "warning");
+      state.stickers = state.catalog;
+    } else {
+      state.stickers = mergeCatalogWithProgress(state.catalog, data || []);
+    }
   } catch (e) {
-    error = e;
-  }
-
-  state.isSyncing = false;
-
-  if (error) {
     setBannerMessage(t("toast.sync_error"), "warning");
     state.stickers = state.catalog;
+  } finally {
+    state.isSyncing = false;
     renderStatus();
-    return;
   }
-
-  state.stickers = mergeCatalogWithProgress(state.catalog, data || []);
-  renderStatus();
 }
 
 async function persistSticker(sticker) {
@@ -1004,28 +998,33 @@ async function persistSticker(sticker) {
   state.isSyncing = true;
   renderStatus();
 
-  let error = null;
-  if (!sticker.obtenido && sticker.repetidos === 0) {
-    ({ error } = await state.supabase
-      .from("user_sticker_progress")
-      .delete()
-      .eq("user_id", state.session.user.id)
-      .eq("sticker_id", sticker.id));
-  } else {
-    ({ error } = await state.supabase
-      .from("user_sticker_progress")
-      .upsert(payload, { onConflict: "user_id,sticker_id" }));
-  }
-
-  state.isSyncing = false;
-  renderStatus();
-
-  if (error) {
+  let success = false;
+  try {
+    let error = null;
+    if (!sticker.obtenido && sticker.repetidos === 0) {
+      ({ error } = await state.supabase
+        .from("user_sticker_progress")
+        .delete()
+        .eq("user_id", state.session.user.id)
+        .eq("sticker_id", sticker.id));
+    } else {
+      ({ error } = await state.supabase
+        .from("user_sticker_progress")
+        .upsert(payload, { onConflict: "user_id,sticker_id" }));
+    }
+    if (error) {
+      showToast(t("toast.save_error"));
+    } else {
+      success = true;
+    }
+  } catch (e) {
     showToast(t("toast.save_error"));
-    return false;
+  } finally {
+    state.isSyncing = false;
+    renderStatus();
   }
 
-  return true;
+  return success;
 }
 
 function patchStickerCard(stickerId, sticker) {
