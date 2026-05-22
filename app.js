@@ -113,6 +113,12 @@ const TRANSLATIONS = {
     "auth.toggle.to_login":"¿Ya tienes cuenta? Inicia sesión",
     "toast.reset_email_sent":"Te enviamos un enlace para restablecer tu contraseña.",
     "toast.reset_email_error":"No pudimos enviar el correo. Verifica el email e inténtalo de nuevo.",
+    "auth.error.already_registered":"Este email ya está registrado. Inicia sesión o restablece tu contraseña.",
+    "auth.error.invalid_credentials":"Email o contraseña incorrectos.",
+    "auth.error.email_not_confirmed":"Debes confirmar tu email antes de iniciar sesión. Revisa tu bandeja de entrada.",
+    "auth.error.weak_password":"La contraseña debe tener al menos 6 caracteres.",
+    "auth.error.rate_limit":"Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
+    "auth.error.invalid_email":"El formato del email no es válido.",
     // Home
     "home.album_title":"Mi álbum","home.groups":"Los 12 grupos","home.tournament":"Formato del torneo",
     "home.venues_title":"Sedes","home.album_structure":"Estructura del álbum",
@@ -189,6 +195,12 @@ const TRANSLATIONS = {
     "auth.toggle.to_login":"Already have an account? Sign in",
     "toast.reset_email_sent":"We sent you a link to reset your password.",
     "toast.reset_email_error":"Could not send the email. Check the address and try again.",
+    "auth.error.already_registered":"This email is already registered. Sign in or reset your password.",
+    "auth.error.invalid_credentials":"Incorrect email or password.",
+    "auth.error.email_not_confirmed":"Please confirm your email before signing in. Check your inbox.",
+    "auth.error.weak_password":"Password must be at least 6 characters.",
+    "auth.error.rate_limit":"Too many attempts. Please wait a few minutes and try again.",
+    "auth.error.invalid_email":"The email format is not valid.",
     "home.album_title":"My album","home.groups":"The 12 groups","home.tournament":"Tournament format",
     "home.venues_title":"Venues","home.album_structure":"Album structure",
     "home.selections":"selections","home.groups_count":"groups","home.matches":"matches","home.venues":"venues",
@@ -1650,6 +1662,17 @@ function renderApp() {
   }
 }
 
+function mapAuthError(message) {
+  const m = (message || "").toLowerCase();
+  if (m.includes("already registered") || m.includes("already exists") || m.includes("user already")) return t("auth.error.already_registered");
+  if (m.includes("invalid login") || m.includes("invalid credentials") || m.includes("wrong password")) return t("auth.error.invalid_credentials");
+  if (m.includes("email not confirmed") || m.includes("not confirmed")) return t("auth.error.email_not_confirmed");
+  if (m.includes("password") && (m.includes("least") || m.includes("short") || m.includes("weak"))) return t("auth.error.weak_password");
+  if (m.includes("rate limit") || m.includes("too many") || m.includes("429")) return t("auth.error.rate_limit");
+  if (m.includes("invalid email") || m.includes("email format") || m.includes("valid email")) return t("auth.error.invalid_email");
+  return message;
+}
+
 function showAuthError(msg) {
   const el = document.querySelector("#auth-error");
   if (!el) return;
@@ -1688,9 +1711,15 @@ async function handleAuthSubmit(event) {
         })
       : supabase.auth.signInWithPassword({ email, password });
 
-  const { error } = await action;
+  const { data, error } = await action;
   if (error) {
-    showAuthError(error.message);
+    showAuthError(mapAuthError(error.message));
+    return;
+  }
+
+  // Supabase returns no error but identities:[] when email enumeration prevention is on
+  if (state.authMode === "register" && data?.user?.identities?.length === 0) {
+    showAuthError(t("auth.error.already_registered"));
     return;
   }
 
@@ -1715,7 +1744,7 @@ async function handleForgotPassword() {
     redirectTo: window.location.origin + window.location.pathname,
   });
   if (error) {
-    showAuthError(t("toast.reset_email_error"));
+    showAuthError(mapAuthError(error.message) || t("toast.reset_email_error"));
     return;
   }
   closeModal("#auth-modal");
