@@ -850,11 +850,18 @@ async function ensureSupabaseClient() {
     console.warn("Could not load Supabase SDK — running in offline mode.");
     return null;
   }
+  // Supabase project sends password-recovery emails with the implicit flow
+  // (tokens in the URL hash: #access_token=...&type=recovery).
+  // flowType:'implicit' tells detectSessionInUrl to parse the hash fragment;
+  // without it the default PKCE client ignores hash tokens and getSession()
+  // returns null, so the recovery modal never appears.
+  const hashHasToken = (window.location.hash || "").includes("access_token=");
   state.supabase = createClient(state.config.url, state.config.anonKey, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
+      ...(hashHasToken ? { flowType: "implicit" } : {}),
     },
   });
 
