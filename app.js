@@ -778,11 +778,21 @@ function showToast(message) {
 }
 
 function openModal(modalId) {
-  document.querySelector(modalId).removeAttribute("hidden");
+  const el = document.querySelector(modalId);
+  if (el) {
+    el.removeAttribute("hidden");
+    el.classList.remove("hidden");
+    el.classList.add("flex");
+  }
 }
 
 function closeModal(modalId) {
-  document.querySelector(modalId).setAttribute("hidden", "hidden");
+  const el = document.querySelector(modalId);
+  if (el) {
+    el.setAttribute("hidden", "hidden");
+    el.classList.add("hidden");
+    el.classList.remove("flex");
+  }
 }
 
 function openAuthModal() {
@@ -790,7 +800,7 @@ function openAuthModal() {
   document.querySelector("#auth-email").value = "";
   document.querySelector("#auth-password").value = "";
   clearAuthError();
-  openAuthModal();
+  openModal("#auth-modal");
 }
 
 function closeAuthModal() {
@@ -2097,15 +2107,17 @@ function bindEvents() {
 }
 
 async function hydrateApp() {
-  loadViewState();
+  loadViewState();   // always resets section to "inicio"
   bindEvents();
+  renderApp();       // instant first paint — home page, no flash of stale HTML
+
   try {
     await ensureSupabaseClient();
     await loadRemoteProgress();
   } catch (err) {
     console.warn("Supabase not available:", err.message);
   }
-  renderApp(); // always render, even without auth
+  renderApp();       // re-render with remote progress (or catalog if not logged in)
 }
 
 if (typeof window !== "undefined") {

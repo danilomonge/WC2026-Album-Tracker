@@ -1596,6 +1596,19 @@ aside::-webkit-scrollbar-thumb {
   background: rgba(255,255,255,0.07) !important;
   border-color: rgba(255,255,255,0.15) !important;
   color: #e8f4ff !important;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+#controls-panel select:hover {
+  background: rgba(255,255,255,0.12) !important;
+  border-color: rgba(0, 130, 230, 0.55) !important;
+  box-shadow: 0 0 10px rgba(0, 130, 230, 0.25) !important;
+}
+#controls-panel select:focus {
+  background: rgba(255,255,255,0.1) !important;
+  border-color: #3d8ef0 !important;
+  box-shadow: 0 0 0 2px rgba(61, 142, 240, 0.4) !important;
+  outline: none !important;
 }
 
 /* --- Sidebar --- */
@@ -1910,8 +1923,8 @@ aside::-webkit-scrollbar-thumb {
 #lang-label {
   display: inline-flex;
   align-items: center;
-  /* Optical centering correction for emoji alignment with sans-serif text */
-  transform: translateY(-0.5px);
+  /* Optical centering correction to align flag emojis with baseline of sans-serif text */
+  transform: translateY(1.5px);
 }
 #lang-label span {
   display: inline-flex;
@@ -1928,7 +1941,7 @@ aside::-webkit-scrollbar-thumb {
 }
 #lang-label span[data-lang="es"],
 #lang-label span[data-lang="en"] {
-  font-size: 1.15rem;
+  font-size: 0.95rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
