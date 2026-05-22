@@ -955,10 +955,20 @@ async function loadRemoteProgress() {
   state.isSyncing = true;
   renderStatus();
 
-  const { data, error } = await state.supabase
-    .from("user_sticker_progress")
-    .select("sticker_id, obtained, duplicates")
-    .eq("user_id", state.session.user.id);
+  let data = null, error = null;
+  try {
+    const result = await Promise.race([
+      state.supabase
+        .from("user_sticker_progress")
+        .select("sticker_id, obtained, duplicates")
+        .eq("user_id", state.session.user.id),
+      new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 15_000)),
+    ]);
+    data = result.data;
+    error = result.error;
+  } catch (e) {
+    error = e;
+  }
 
   state.isSyncing = false;
 
@@ -2009,12 +2019,16 @@ async function handleForgotPassword() {
 async function handleSignOut() {
   if (state.supabase) {
     try {
-      await state.supabase.auth.signOut();
+      await Promise.race([
+        state.supabase.auth.signOut(),
+        new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5_000)),
+      ]);
     } catch (err) {
       console.warn("Supabase signOut error, proceeding with local sign out:", err);
     }
   }
   state.session = null;
+  state.isSyncing = false;
   state.stickers = state.catalog;
   renderApp();
 }
