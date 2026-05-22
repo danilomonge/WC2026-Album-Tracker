@@ -150,7 +150,7 @@ const TRANSLATIONS = {
     "toast.no_stickers":"No hay stickers para exportar.",
     "toast.reset_session":"Necesitas una sesión activa para reiniciar el álbum.",
     "toast.account_created":"Cuenta creada. Revisa tu correo si te pide confirmar.",
-    "toast.signed_in":"Sesión iniciada.","toast.init_error":"No pudimos inicializar la aplicación.",
+    "toast.signed_in":"Sesión iniciada.","toast.connected_as":"Conectado como","toast.init_error":"No pudimos inicializar la aplicación.",
     "toast.use_server":"Usa localhost o GitHub Pages para iniciar sesión.",
     "toast.login_server":"El login requiere abrir la app desde localhost o GitHub Pages.",
     "toast.export_server":"La exportación autenticada requiere localhost o GitHub Pages.",
@@ -233,7 +233,7 @@ const TRANSLATIONS = {
     "toast.no_stickers":"No stickers to export.",
     "toast.reset_session":"You need an active session to reset the album.",
     "toast.account_created":"Account created. Check your email if asked to confirm.",
-    "toast.signed_in":"Signed in.","toast.init_error":"Could not initialize the application.",
+    "toast.signed_in":"Signed in.","toast.connected_as":"Signed in as","toast.init_error":"Could not initialize the application.",
     "toast.use_server":"Use localhost or GitHub Pages to sign in.",
     "toast.login_server":"Login requires opening the app from localhost or GitHub Pages.",
     "toast.export_server":"Authenticated export requires localhost or GitHub Pages.",
@@ -785,6 +785,21 @@ function closeModal(modalId) {
   document.querySelector(modalId).setAttribute("hidden", "hidden");
 }
 
+function openAuthModal() {
+  switchAuthMode("login");
+  document.querySelector("#auth-email").value = "";
+  document.querySelector("#auth-password").value = "";
+  clearAuthError();
+  openAuthModal();
+}
+
+function closeAuthModal() {
+  closeModal("#auth-modal");
+  switchAuthMode("login");
+  document.querySelector("#auth-email").value = "";
+  document.querySelector("#auth-password").value = "";
+}
+
 async function ensureSupabaseClient() {
   if (state.supabase) {
     return state.supabase;
@@ -935,7 +950,7 @@ async function updateSticker(stickerId, updater) {
   }
 
   if (!state.session) {
-    openModal("#auth-modal");
+    openAuthModal();
     return;
   }
 
@@ -1689,7 +1704,12 @@ function clearAuthError() {
 async function handleAuthSubmit(event) {
   event.preventDefault();
   clearAuthError();
+
   const email = document.querySelector("#auth-email").value.trim();
+  if (!email) {
+    showAuthError(t("auth.error.invalid_email"));
+    return;
+  }
 
   if (!isAuthRuntimeAvailable()) {
     showAuthError(t("toast.login_server"));
@@ -1702,51 +1722,60 @@ async function handleAuthSubmit(event) {
     return;
   }
 
-  // Reset password mode
-  if (state.authMode === "reset") {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + window.location.pathname,
-    });
+  const submitBtn = document.querySelector("#auth-submit");
+  const originalText = submitBtn.textContent;
+  submitBtn.disabled = true;
+  submitBtn.textContent = "…";
+
+  try {
+    // Reset password mode
+    if (state.authMode === "reset") {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + window.location.pathname,
+      });
+      if (error) {
+        showAuthError(mapAuthError(error.message) || t("toast.reset_email_error"));
+        return;
+      }
+      closeAuthModal();
+      showToast(t("toast.reset_email_sent"));
+      return;
+    }
+
+    const password = document.querySelector("#auth-password").value.trim();
+
+    const action =
+      state.authMode === "register"
+        ? supabase.auth.signUp({
+            email,
+            password,
+            options: { emailRedirectTo: window.location.origin + window.location.pathname },
+          })
+        : supabase.auth.signInWithPassword({ email, password });
+
+    const { data, error } = await action;
     if (error) {
-      showAuthError(mapAuthError(error.message) || t("toast.reset_email_error"));
+      showAuthError(mapAuthError(error.message));
       return;
     }
-    closeModal("#auth-modal");
-    switchAuthMode("login");
-    showToast(t("toast.reset_email_sent"));
-    return;
-  }
 
-  const password = document.querySelector("#auth-password").value.trim();
-
-  const action =
-    state.authMode === "register"
-      ? supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: window.location.origin + window.location.pathname },
-        })
-      : supabase.auth.signInWithPassword({ email, password });
-
-  const { data, error } = await action;
-  if (error) {
-    showAuthError(mapAuthError(error.message));
-    return;
-  }
-
-  // Supabase can signal "already registered" in two ways when email enumeration prevention is on:
-  // 1. identities:[] — email exists but fake-success returned
-  // 2. identities undefined / user null — some project configs return this
-  if (state.authMode === "register") {
-    const identities = data?.user?.identities;
-    if (!identities || identities.length === 0) {
-      showAuthError(t("auth.error.already_registered"));
-      return;
+    // Supabase can signal "already registered" in two ways when email enumeration prevention is on:
+    // 1. identities:[] — email exists but fake-success returned
+    // 2. identities undefined / user null — some project configs return this
+    if (state.authMode === "register") {
+      const identities = data?.user?.identities;
+      if (!identities || identities.length === 0) {
+        showAuthError(t("auth.error.already_registered"));
+        return;
+      }
     }
-  }
 
-  closeModal("#auth-modal");
-  showToast(state.authMode === "register" ? t("toast.account_created") : t("toast.signed_in"));
+    closeAuthModal();
+    showToast(state.authMode === "register" ? t("toast.account_created") : t("toast.signed_in"));
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
+  }
 }
 
 function switchAuthMode(mode) {
@@ -1833,7 +1862,7 @@ async function exportPdf(mode) {
   }
 
   if (!state.session) {
-    openModal("#auth-modal");
+    openAuthModal();
     return;
   }
 
@@ -1937,9 +1966,9 @@ function bindEvents() {
       if (!isAuthRuntimeAvailable()) {
         showToast(t("toast.use_server"));
       } else if (state.session) {
-        showToast(`Conectado como ${state.session.user.email}`);
+        showToast(`${t("toast.connected_as")} ${state.session.user.email}`);
       } else {
-        openModal("#auth-modal");
+        openAuthModal();
       }
       return;
     }
@@ -1950,7 +1979,9 @@ function bindEvents() {
     }
 
     if (event.target.closest("[data-modal-close]")) {
-      closeModal(event.target.closest("[data-modal-close]").dataset.modalCloseTarget);
+      const target = event.target.closest("[data-modal-close]").dataset.modalCloseTarget;
+      if (target === "#auth-modal") closeAuthModal();
+      else closeModal(target);
       return;
     }
 
@@ -1958,14 +1989,14 @@ function bindEvents() {
       if (!isAuthRuntimeAvailable()) {
         showToast(t("toast.login_server"));
       } else {
-        openModal("#auth-modal");
+        openAuthModal();
       }
       return;
     }
 
     if (event.target.closest("#toggle-auth-mode")) {
       const next = state.authMode === "login" ? "register" : "login";
-      switchAuthMode(next);
+      switchAuthMode(next); // reset→login, register→login, login→register
       return;
     }
 
