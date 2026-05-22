@@ -327,10 +327,9 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
   gap: 10px;
-  /* Padding gives edge-column badges (remove / repeat) room to render
-     without being clipped by the scroll container's overflow boundary. */
+  /* 8 px lateral padding keeps edge-column badges (remove / repeat) 1 px
+     inside the grid's border-box so they are never clipped by ancestors. */
   padding: 8px 8px 2px;
-  margin-inline: -8px; /* cancel the padding so cards still align with content edges */
 }
 @media (min-width: 640px) {
   .sticker-grid {
