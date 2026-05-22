@@ -290,7 +290,14 @@
             />
           </label>
           <label class="flex flex-col gap-1.5">
-            <span data-i18n="auth.password" class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Contraseña</span>
+            <div class="flex items-center justify-between">
+              <span data-i18n="auth.password" class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Contraseña</span>
+              <button
+                id="forgot-password"
+                type="button"
+                class="font-label text-xs text-primary hover:underline"
+              ><span data-i18n="auth.forgot_password">¿Olvidaste tu contraseña?</span></button>
+            </div>
             <input
               id="auth-password"
               type="password"

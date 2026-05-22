@@ -107,9 +107,12 @@ const TRANSLATIONS = {
     "auth.account":"Cuenta","auth.title.login":"Iniciar sesión","auth.title.register":"Crear cuenta",
     "auth.google":"Continuar con Google","auth.or_email":"o con email",
     "auth.email":"Email","auth.password":"Contraseña",
+    "auth.forgot_password":"¿Olvidaste tu contraseña?",
     "auth.submit.login":"Entrar","auth.submit.register":"Registrarme",
     "auth.toggle.to_register":"¿No tienes cuenta? Regístrate",
     "auth.toggle.to_login":"¿Ya tienes cuenta? Inicia sesión",
+    "toast.reset_email_sent":"Te enviamos un enlace para restablecer tu contraseña.",
+    "toast.reset_email_error":"No pudimos enviar el correo. Verifica el email e inténtalo de nuevo.",
     // Home
     "home.album_title":"Mi álbum","home.groups":"Los 12 grupos","home.tournament":"Formato del torneo",
     "home.venues_title":"Sedes","home.album_structure":"Estructura del álbum",
@@ -180,9 +183,12 @@ const TRANSLATIONS = {
     "auth.account":"Account","auth.title.login":"Sign in","auth.title.register":"Create account",
     "auth.google":"Continue with Google","auth.or_email":"or with email",
     "auth.email":"Email","auth.password":"Password",
+    "auth.forgot_password":"Forgot your password?",
     "auth.submit.login":"Sign in","auth.submit.register":"Register",
     "auth.toggle.to_register":"Don't have an account? Register",
     "auth.toggle.to_login":"Already have an account? Sign in",
+    "toast.reset_email_sent":"We sent you a link to reset your password.",
+    "toast.reset_email_error":"Could not send the email. Check the address and try again.",
     "home.album_title":"My album","home.groups":"The 12 groups","home.tournament":"Tournament format",
     "home.venues_title":"Venues","home.album_structure":"Album structure",
     "home.selections":"selections","home.groups_count":"groups","home.matches":"matches","home.venues":"venues",
@@ -1692,6 +1698,30 @@ async function handleAuthSubmit(event) {
   showToast(state.authMode === "register" ? t("toast.account_created") : t("toast.signed_in"));
 }
 
+async function handleForgotPassword() {
+  const email = document.querySelector("#auth-email").value.trim();
+  if (!email) {
+    showAuthError(t("auth.email") + " requerido");
+    document.querySelector("#auth-email").focus();
+    return;
+  }
+  const supabase = await ensureSupabaseClient();
+  if (!supabase) {
+    showAuthError(t("toast.login_server"));
+    return;
+  }
+  clearAuthError();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname,
+  });
+  if (error) {
+    showAuthError(t("toast.reset_email_error"));
+    return;
+  }
+  closeModal("#auth-modal");
+  showToast(t("toast.reset_email_sent"));
+}
+
 async function handleSignOut() {
   if (state.supabase) {
     try {
@@ -1876,6 +1906,8 @@ function bindEvents() {
         t(state.authMode === "login" ? "auth.submit.login" : "auth.submit.register");
       document.querySelector("#toggle-auth-mode").textContent =
         t(state.authMode === "login" ? "auth.toggle.to_register" : "auth.toggle.to_login");
+      const forgotBtn = document.querySelector("#forgot-password");
+      if (forgotBtn) forgotBtn.style.display = state.authMode === "login" ? "" : "none";
       return;
     }
 
@@ -1935,6 +1967,7 @@ function bindEvents() {
   });
 
   document.querySelector("#auth-form").addEventListener("submit", handleAuthSubmit);
+  document.querySelector("#forgot-password")?.addEventListener("click", handleForgotPassword);
 
   document.querySelector("#auth-google")?.addEventListener("click", async () => {
     try {
