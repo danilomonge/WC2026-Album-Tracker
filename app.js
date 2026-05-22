@@ -1668,7 +1668,7 @@ function mapAuthError(message) {
   if (m.includes("invalid login") || m.includes("invalid credentials") || m.includes("wrong password")) return t("auth.error.invalid_credentials");
   if (m.includes("email not confirmed") || m.includes("not confirmed")) return t("auth.error.email_not_confirmed");
   if (m.includes("password") && (m.includes("least") || m.includes("short") || m.includes("weak"))) return t("auth.error.weak_password");
-  if (m.includes("rate limit") || m.includes("too many") || m.includes("429")) return t("auth.error.rate_limit");
+  if (m.includes("rate limit") || m.includes("rate_limit") || m.includes("too many") || m.includes("429") || m.includes("exceeded") || m.includes("over_email")) return t("auth.error.rate_limit");
   if (m.includes("invalid email") || m.includes("email format") || m.includes("valid email")) return t("auth.error.invalid_email");
   return message;
 }
