@@ -127,7 +127,7 @@ const TRANSLATIONS = {
     "auth.error.weak_password":"La contraseña debe tener al menos 6 caracteres.",
     "auth.error.rate_limit":"Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
     "auth.error.invalid_email":"El formato del email no es válido.",
-    // Home
+    "auth.error.link_expired":"Este link ha expirado. Solicita uno nuevo desde el formulario.",
     "home.album_title":"Mi álbum","home.groups":"Los 12 grupos","home.tournament":"Formato del torneo",
     "home.venues_title":"Sedes","home.album_structure":"Estructura del álbum",
     "home.selections":"selecciones","home.groups_count":"grupos","home.matches":"partidos","home.venues":"sedes",
@@ -217,6 +217,7 @@ const TRANSLATIONS = {
     "auth.error.weak_password":"Password must be at least 6 characters.",
     "auth.error.rate_limit":"Too many attempts. Please wait a few minutes and try again.",
     "auth.error.invalid_email":"The email format is not valid.",
+    "auth.error.link_expired":"This link has expired. Please request a new one from the form.",
     "home.album_title":"My album","home.groups":"The 12 groups","home.tournament":"Tournament format",
     "home.venues_title":"Venues","home.album_structure":"Album structure",
     "home.selections":"selections","home.groups_count":"groups","home.matches":"matches","home.venues":"venues",
@@ -355,6 +356,7 @@ export const state = {
   config: loadConfig(),
   authSubscription: null,
   isRecovering: false,
+  pendingLinkError: false,
   lang: (typeof localStorage !== "undefined" && localStorage.getItem("panini-lang")) || "es",
 };
 
@@ -841,6 +843,13 @@ async function ensureSupabaseClient() {
     if (hash.includes("type=recovery") || search.includes("type=recovery")) {
       state.isRecovering = true;
     }
+
+    // Supabase error redirect (e.g. expired/used recovery link):
+    // #error=access_denied&error_code=otp_expired&error_description=...
+    if (hash.includes("error=") && (hash.includes("otp_expired") || hash.includes("access_denied"))) {
+      state.pendingLinkError = true;
+      window.history.replaceState(null, document.title, window.location.pathname);
+    }
   }
 
   let createClient;
@@ -919,6 +928,18 @@ async function ensureSupabaseClient() {
     setTimeout(() => {
       switchAuthMode("update");
       openModal("#auth-modal");
+    }, 0);
+  }
+
+  // Supabase redirected with an error hash (e.g. expired recovery link).
+  // Open the reset-password form so the user can request a fresh link,
+  // and show a clear message explaining what happened.
+  if (state.pendingLinkError) {
+    state.pendingLinkError = false;
+    setTimeout(() => {
+      switchAuthMode("reset");
+      openModal("#auth-modal");
+      showAuthError(t("auth.error.link_expired"));
     }, 0);
   }
 
