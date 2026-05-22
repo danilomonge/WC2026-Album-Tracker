@@ -1806,7 +1806,24 @@ async function handleAuthSubmit(event) {
         showAuthError(t("auth.error.weak_password"));
         return;
       }
-      const { error } = await supabase.auth.updateUser({ password });
+      // Verify the recovery session is still valid before calling updateUser
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      if (!currentSession) {
+        showAuthError(t("toast.password_update_error"));
+        return;
+      }
+      // Race against a 15-second timeout so the button never hangs forever
+      let updateResult;
+      try {
+        updateResult = await Promise.race([
+          supabase.auth.updateUser({ password }),
+          new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 15_000)),
+        ]);
+      } catch (e) {
+        showAuthError(t("toast.password_update_error"));
+        return;
+      }
+      const { error } = updateResult;
       if (error) {
         showAuthError(mapAuthError(error.message) || t("toast.password_update_error"));
         return;
@@ -1860,6 +1877,9 @@ async function handleAuthSubmit(event) {
 
     closeAuthModal();
     showToast(state.authMode === "register" ? t("toast.account_created") : t("toast.signed_in"));
+  } catch (err) {
+    console.error("Auth submission error:", err);
+    showAuthError(mapAuthError(err?.message || err || "Error de conexión. Inténtalo de nuevo."));
   } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = originalText;
@@ -1917,9 +1937,17 @@ function switchAuthMode(mode) {
   const forgotWrap = document.querySelector("#forgot-password")?.closest("div");
   if (forgotWrap) forgotWrap.classList.toggle("hidden", isReset || !isLogin);
 
-  // Update password required attribute
+  // Update password required and minlength attributes dynamically to prevent HTML5 validation errors on hidden fields
   const pwInput = document.querySelector("#auth-password");
-  if (pwInput) pwInput.required = !isReset;
+  if (pwInput) {
+    if (isReset) {
+      pwInput.removeAttribute("required");
+      pwInput.removeAttribute("minlength");
+    } else {
+      pwInput.setAttribute("required", "required");
+      pwInput.setAttribute("minlength", "6");
+    }
+  }
 }
 
 async function handleForgotPassword() {
