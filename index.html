@@ -291,14 +291,7 @@
             />
           </label>
           <label class="flex flex-col gap-1.5">
-            <div class="flex items-center justify-between">
-              <span data-i18n="auth.password" class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Contraseña</span>
-              <button
-                id="forgot-password"
-                type="button"
-                class="font-label text-xs text-primary hover:underline"
-              ><span data-i18n="auth.forgot_password">¿Olvidaste tu contraseña?</span></button>
-            </div>
+            <span data-i18n="auth.password" class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Contraseña</span>
             <input
               id="auth-password"
               type="password"
@@ -308,6 +301,13 @@
               class="bg-surface-container border border-outline-variant rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary"
             />
           </label>
+          <div class="flex justify-end -mt-2">
+            <button
+              id="forgot-password"
+              type="button"
+              class="font-label text-xs text-on-surface-variant hover:text-primary transition-colors"
+            ><span data-i18n="auth.forgot_password">¿Olvidaste tu contraseña?</span></button>
+          </div>
           <button
             id="auth-submit"
             type="submit"
