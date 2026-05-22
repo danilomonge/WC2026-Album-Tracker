@@ -108,10 +108,13 @@ const TRANSLATIONS = {
     "auth.google":"Continuar con Google","auth.or_email":"o con email",
     "auth.email":"Email","auth.password":"Contraseña",
     "auth.forgot_password":"¿Olvidaste tu contraseña?",
-    "auth.submit.login":"Entrar","auth.submit.register":"Registrarme",
+    "auth.submit.login":"Entrar","auth.submit.register":"Registrarme","auth.submit.reset":"Enviar enlace",
     "auth.toggle.to_register":"¿No tienes cuenta? Regístrate",
     "auth.toggle.to_login":"¿Ya tienes cuenta? Inicia sesión",
-    "toast.reset_email_sent":"Te enviamos un enlace para restablecer tu contraseña.",
+    "auth.toggle.back_to_login":"← Volver a iniciar sesión",
+    "auth.title.reset":"Restablecer contraseña",
+    "auth.reset_hint":"Ingresa tu email y te enviaremos un enlace para crear una nueva contraseña.",
+    "toast.reset_email_sent":"¡Listo! Revisa tu bandeja de entrada y sigue el enlace.",
     "toast.reset_email_error":"No pudimos enviar el correo. Verifica el email e inténtalo de nuevo.",
     "auth.error.already_registered":"Este email ya está registrado. Inicia sesión o restablece tu contraseña.",
     "auth.error.invalid_credentials":"Email o contraseña incorrectos.",
@@ -190,10 +193,13 @@ const TRANSLATIONS = {
     "auth.google":"Continue with Google","auth.or_email":"or with email",
     "auth.email":"Email","auth.password":"Password",
     "auth.forgot_password":"Forgot your password?",
-    "auth.submit.login":"Sign in","auth.submit.register":"Register",
+    "auth.submit.login":"Sign in","auth.submit.register":"Register","auth.submit.reset":"Send link",
     "auth.toggle.to_register":"Don't have an account? Register",
     "auth.toggle.to_login":"Already have an account? Sign in",
-    "toast.reset_email_sent":"We sent you a link to reset your password.",
+    "auth.toggle.back_to_login":"← Back to sign in",
+    "auth.title.reset":"Reset password",
+    "auth.reset_hint":"Enter your email and we'll send you a link to create a new password.",
+    "toast.reset_email_sent":"Done! Check your inbox and follow the link.",
     "toast.reset_email_error":"Could not send the email. Check the address and try again.",
     "auth.error.already_registered":"This email is already registered. Sign in or reset your password.",
     "auth.error.invalid_credentials":"Incorrect email or password.",
@@ -301,13 +307,8 @@ function applyStaticTranslations() {
       else el.textContent = t(key);
     }
   });
-  // Auth modal dynamic labels (title/submit/toggle depend on current authMode)
-  const authTitle = document.querySelector("#auth-title");
-  if (authTitle) authTitle.textContent = t(state.authMode === "login" ? "auth.title.login" : "auth.title.register");
-  const authSubmit = document.querySelector("#auth-submit");
-  if (authSubmit) authSubmit.textContent = t(state.authMode === "login" ? "auth.submit.login" : "auth.submit.register");
-  const authToggle = document.querySelector("#toggle-auth-mode");
-  if (authToggle) authToggle.textContent = t(state.authMode === "login" ? "auth.toggle.to_register" : "auth.toggle.to_login");
+  // Auth modal dynamic labels — re-apply current mode translations
+  if (document.querySelector("#auth-title")) switchAuthMode(state.authMode);
   // Language toggle button flags
   const fromFlag = document.querySelector("#lang-from-flag");
   const toFlag   = document.querySelector("#lang-to-flag");
@@ -1689,7 +1690,6 @@ async function handleAuthSubmit(event) {
   event.preventDefault();
   clearAuthError();
   const email = document.querySelector("#auth-email").value.trim();
-  const password = document.querySelector("#auth-password").value.trim();
 
   if (!isAuthRuntimeAvailable()) {
     showAuthError(t("toast.login_server"));
@@ -1701,6 +1701,23 @@ async function handleAuthSubmit(event) {
     showAuthError(t("toast.login_server"));
     return;
   }
+
+  // Reset password mode
+  if (state.authMode === "reset") {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + window.location.pathname,
+    });
+    if (error) {
+      showAuthError(mapAuthError(error.message) || t("toast.reset_email_error"));
+      return;
+    }
+    closeModal("#auth-modal");
+    switchAuthMode("login");
+    showToast(t("toast.reset_email_sent"));
+    return;
+  }
+
+  const password = document.querySelector("#auth-password").value.trim();
 
   const action =
     state.authMode === "register"
@@ -1732,28 +1749,43 @@ async function handleAuthSubmit(event) {
   showToast(state.authMode === "register" ? t("toast.account_created") : t("toast.signed_in"));
 }
 
-async function handleForgotPassword() {
-  const email = document.querySelector("#auth-email").value.trim();
-  if (!email) {
-    showAuthError(t("auth.email") + " requerido");
-    document.querySelector("#auth-email").focus();
-    return;
-  }
-  const supabase = await ensureSupabaseClient();
-  if (!supabase) {
-    showAuthError(t("toast.login_server"));
-    return;
-  }
+function switchAuthMode(mode) {
+  state.authMode = mode;
   clearAuthError();
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + window.location.pathname,
-  });
-  if (error) {
-    showAuthError(mapAuthError(error.message) || t("toast.reset_email_error"));
-    return;
-  }
-  closeModal("#auth-modal");
-  showToast(t("toast.reset_email_sent"));
+  const isReset = mode === "reset";
+  const isLogin = mode === "login";
+
+  document.querySelector("#auth-title").textContent =
+    t(mode === "login" ? "auth.title.login" : mode === "register" ? "auth.title.register" : "auth.title.reset");
+  document.querySelector("#auth-submit").textContent =
+    t(mode === "login" ? "auth.submit.login" : mode === "register" ? "auth.submit.register" : "auth.submit.reset");
+  document.querySelector("#toggle-auth-mode").textContent =
+    t(isReset ? "auth.toggle.back_to_login" : isLogin ? "auth.toggle.to_register" : "auth.toggle.to_login");
+
+  // Show/hide reset hint
+  const hint = document.querySelector("#auth-reset-hint");
+  if (hint) { hint.textContent = isReset ? t("auth.reset_hint") : ""; hint.classList.toggle("hidden", !isReset); }
+
+  // Show/hide OAuth + divider (hidden in reset mode)
+  const oauth = document.querySelector("#auth-oauth");
+  const divider = document.querySelector("#auth-divider");
+  if (oauth) oauth.classList.toggle("hidden", isReset);
+  if (divider) divider.classList.toggle("hidden", isReset);
+
+  // Show/hide password field + forgot button (hidden in reset mode)
+  const pwLabel = document.querySelector("#auth-password")?.closest("label");
+  if (pwLabel) pwLabel.classList.toggle("hidden", isReset);
+  const forgotWrap = document.querySelector("#forgot-password")?.closest("div");
+  if (forgotWrap) forgotWrap.classList.toggle("hidden", isReset || !isLogin);
+
+  // Update password required attribute
+  const pwInput = document.querySelector("#auth-password");
+  if (pwInput) pwInput.required = !isReset;
+}
+
+async function handleForgotPassword() {
+  switchAuthMode("reset");
+  document.querySelector("#auth-email").focus();
 }
 
 async function handleSignOut() {
@@ -1932,16 +1964,8 @@ function bindEvents() {
     }
 
     if (event.target.closest("#toggle-auth-mode")) {
-      state.authMode = state.authMode === "login" ? "register" : "login";
-      clearAuthError();
-      document.querySelector("#auth-title").textContent =
-        t(state.authMode === "login" ? "auth.title.login" : "auth.title.register");
-      document.querySelector("#auth-submit").textContent =
-        t(state.authMode === "login" ? "auth.submit.login" : "auth.submit.register");
-      document.querySelector("#toggle-auth-mode").textContent =
-        t(state.authMode === "login" ? "auth.toggle.to_register" : "auth.toggle.to_login");
-      const forgotBtn = document.querySelector("#forgot-password");
-      if (forgotBtn) forgotBtn.style.display = state.authMode === "login" ? "" : "none";
+      const next = state.authMode === "login" ? "register" : "login";
+      switchAuthMode(next);
       return;
     }
 
