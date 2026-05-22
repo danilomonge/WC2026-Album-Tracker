@@ -6,8 +6,37 @@
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }
 
-/* Force-hide elements regardless of display class */
 .is-hidden { display: none !important; }
+
+/* Prevent margin-top on collection-content when preceding header card is hidden */
+#album-header.is-hidden ~ #collection-content,
+#album-header[hidden] ~ #collection-content {
+  margin-top: 0 !important;
+}
+
+/* Bulletproof layout spacing: ensure 100% identical top margins across all sections */
+.pitch-bg > div {
+  padding-top: 32px !important;
+  padding-bottom: 32px !important;
+}
+@media (max-width: 767px) {
+  .pitch-bg > div {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+  }
+}
+
+
+.pitch-bg > div > #album-header {
+  margin-top: 0 !important;
+}
+
+#collection-content > .home-hero,
+#collection-content > .stats-cols,
+#collection-content > .empty-state {
+  margin-top: 0 !important;
+}
+
 
 /* Pitch background grid for main canvas */
 .pitch-bg {
@@ -158,12 +187,8 @@
 
 /* ---------- Group section header ---------- */
 .group-header {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.9),
-    rgba(234, 231, 231, 0.5)
-  );
-  border: 1px solid #c2c6d3;
+  background: linear-gradient(140deg, #081628 0%, #0c2040 50%, #071220 100%);
+  border: 1px solid rgba(0, 130, 230, 0.3);
   border-radius: 14px;
   padding: 16px 20px;
   display: flex;
@@ -193,7 +218,7 @@
   font-family: "Anybody", sans-serif;
   font-weight: 900;
   font-size: 28px;
-  color: #003e7a;
+  color: #e8f4ff;
   letter-spacing: -0.01em;
   margin: 0;
 }
@@ -206,9 +231,9 @@
   font-family: "Space Grotesk", sans-serif;
   font-weight: 700;
   font-size: 11px;
-  background: #ffffff;
-  color: #424751;
-  border: 1px solid #c2c6d3;
+  background: rgba(255, 255, 255, 0.18);
+  color: #e8f4ff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
   padding: 3px 10px;
   border-radius: 4px;
   letter-spacing: 0.05em;
@@ -271,6 +296,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+.team-header__pages {
+  opacity: 0.5;
+  font-weight: 600;
 }
 .team-header .team-progress,
 .group-header .team-progress {
@@ -683,28 +712,31 @@
 }
 /* Two-column stats layout — independent flex columns, no shared row heights */
 .stats-cols {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 14px;
-}
-.stats-col {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  align-self: flex-start; /* never stretch to match sibling height */
-  width: 100%;
 }
 @media (min-width: 768px) {
   .stats-cols {
-    flex-direction: row;
-    align-items: flex-start; /* prevent cross-axis stretch on children */
-    gap: 14px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto min-content;
+    grid-template-areas:
+      "overview  selections"
+      "groups    priority";
   }
-  .stats-col {
-    flex: 1 1 0;
-    min-width: 0;
-    width: auto;
-  }
+}
+.stats-panel--groups,
+.stats-panel--selections {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  contain: size;
+}
+.stats-panel--groups .rank-list,
+.stats-panel--selections .rank-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 .stats-note {
   margin-top: 12px;
@@ -712,6 +744,19 @@
   background: #f5f8ff;
   border: 1px solid #d5e3ff;
   border-radius: 10px;
+}
+.stats-category {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #e8eaf0;
+}
+.stats-category h4 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7a8499;
+  margin: 0 0 10px;
 }
 .stats-note strong {
   display: block;
@@ -784,8 +829,8 @@
 
 /* ---------- Empty state ---------- */
 .empty-state {
-  background: #ffffff;
-  border: 1px dashed #c2c6d3;
+  background: linear-gradient(140deg, #081628 0%, #0c2040 50%, #071220 100%);
+  border: 1px dashed rgba(0, 130, 230, 0.4);
   border-radius: 16px;
   padding: 48px 24px;
   text-align: center;
@@ -793,11 +838,11 @@
 .empty-state h3 {
   font-family: "Anybody", sans-serif;
   font-size: 18px;
-  color: #003e7a;
+  color: #b8d8ff;
   margin: 0 0 8px;
 }
 .empty-state p {
-  color: #424751;
+  color: rgba(180, 210, 255, 0.65);
   margin: 0;
   font-size: 14px;
 }
@@ -907,7 +952,12 @@
 #collection-content:has(.home-hero) {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
+  margin-inline: -10px;
+}
+/* Anula el space-y-10 de Tailwind para las cards del home */
+#collection-content:has(.home-hero) > * + * {
+  margin-top: 0 !important;
 }
 
 /* Home card wrapper */
@@ -925,6 +975,68 @@
   margin: 0 0 20px;
   letter-spacing: -0.01em;
 }
+
+/* Dark-themed home cards (groups + album structure) */
+.home-card--dark {
+  background: linear-gradient(140deg, #081628 0%, #0c2040 50%, #071220 100%);
+  border-color: rgba(0, 130, 230, 0.3);
+}
+.home-card--dark .home-card__title {
+  color: #b8d8ff;
+}
+/* Group cards inside dark card */
+.home-card--dark .home-group-card {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.home-card--dark .home-group-card__letter { color: #e8f4ff; }
+.home-card--dark .home-group-card__pct { color: rgba(200, 220, 255, 0.6); }
+.home-card--dark .home-team-pill {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #c8e0ff;
+}
+.home-card--dark .home-group-card__bar { background: rgba(232, 244, 255, 0.2); }
+/* Structure items inside dark card */
+.home-card--dark .home-structure-item {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.home-card--dark .home-structure-item--accent {
+  background: rgba(0, 100, 220, 0.25);
+  border-color: rgba(60, 150, 255, 0.4);
+}
+.home-card--dark .home-structure-item--coke {
+  background: rgba(180, 20, 15, 0.25);
+  border-color: rgba(220, 80, 70, 0.4);
+}
+.home-card--dark .home-structure-item__num { color: #e8f4ff; }
+.home-card--dark .home-structure-item--coke .home-structure-item__num { color: #ff8880; }
+.home-card--dark .home-structure-item__label { color: rgba(180, 210, 255, 0.75); }
+
+/* My album — dark overrides */
+.home-card--dark .home-album-bar__track { background: rgba(255,255,255,0.1); }
+.home-card--dark .home-album-bar__pct { color: #7dc4ff; }
+.home-card--dark .home-album-metric { background: rgba(255,255,255,0.07); }
+.home-card--dark .home-album-metric strong { color: #e8f4ff; }
+.home-card--dark .home-album-metric span { color: rgba(180,210,255,0.6); }
+.home-card--dark .home-album-metric--owned { background: rgba(0,120,60,0.25); border: 1px solid rgba(0,180,90,0.3); }
+.home-card--dark .home-album-metric--owned strong { color: #5de89a; }
+.home-card--dark .home-album-metric--missing { background: rgba(180,20,15,0.22); border: 1px solid rgba(220,80,70,0.3); }
+.home-card--dark .home-album-metric--missing strong { color: #ff8880; }
+.home-card--dark .home-album-metric--coke { background: rgba(180,20,15,0.22); border: 1px solid rgba(220,80,70,0.3); }
+.home-card--dark .home-album-metric--coke strong { color: #ff8880; }
+
+/* Tournament format — dark overrides */
+.home-card--dark .home-format-list li { border-bottom-color: rgba(255,255,255,0.08); }
+.home-card--dark .home-format-list__label { color: #e8f4ff; }
+.home-card--dark .home-format-list__desc { color: rgba(180,210,255,0.6); }
+
+/* Venues — dark overrides */
+.home-card--dark .home-venue-row { border-bottom-color: rgba(255,255,255,0.08); }
+.home-card--dark .home-venue-row__city { color: #e8f4ff; }
+.home-card--dark .home-venue-row__cap { color: rgba(180,210,255,0.6); }
+.home-card--dark .home-venue-row__country { background: rgba(255,255,255,0.15); }
 
 /* Album progress bar */
 .home-album-bar {
@@ -1257,3 +1369,382 @@ aside::-webkit-scrollbar-thumb {
   background: #c2c6d3;
   border-radius: 999px;
 }
+
+/* ============================================================
+   Global dark theme — album header, controls, sidebar, stats
+   ============================================================ */
+
+/* Shared dark background used across all site cards */
+#album-header,
+#controls-panel,
+#app-sidebar {
+  background: linear-gradient(140deg, #081628 0%, #0c2040 50%, #071220 100%) !important;
+  border-color: rgba(0, 130, 230, 0.3) !important;
+}
+
+/* --- Album header text --- */
+#album-header #section-title { color: #ffffff !important; }
+#album-header p,
+#album-header .font-label { color: rgba(200, 225, 255, 0.75) !important; }
+#album-header #progress-percent { color: #a8d4ff !important; }
+#album-header #progress-detail { color: rgba(200, 225, 255, 0.65) !important; }
+#album-header .bg-surface-variant { background: rgba(255,255,255,0.15) !important; }
+#album-header [data-i18n="global_progress"] { color: rgba(200, 225, 255, 0.75) !important; }
+
+/* --- Filter chips --- */
+#controls-panel .chip {
+  background: rgba(255,255,255,0.09);
+  color: #b8d8ff;
+  border-color: rgba(255,255,255,0.12);
+}
+#controls-panel .chip:hover { background: rgba(255,255,255,0.15); }
+#controls-panel .chip.is-active {
+  background: #1a5fb4;
+  border-color: #3d8ef0;
+  color: #ffffff;
+}
+
+/* --- Dropdowns + labels in controls --- */
+#controls-panel label,
+#controls-panel .text-on-surface-variant { color: rgba(180, 210, 255, 0.7) !important; }
+#controls-panel select {
+  background: rgba(255,255,255,0.07) !important;
+  border-color: rgba(255,255,255,0.15) !important;
+  color: #e8f4ff !important;
+}
+
+/* --- Sidebar --- */
+#app-sidebar h3 { color: #e8f4ff !important; }
+#app-sidebar h4 { color: rgba(180, 210, 255, 0.6) !important; }
+#app-sidebar .border-t { border-color: rgba(255,255,255,0.1) !important; }
+#app-sidebar p { color: rgba(180, 210, 255, 0.45) !important; }
+/* Sidebar action buttons */
+#app-sidebar button {
+  color: #b8d8ff !important;
+  background: transparent !important;
+}
+#app-sidebar #download-missing-pdf,
+#app-sidebar #download-repeated-pdf {
+  background: rgba(255,255,255,0.07) !important;
+  border: 1px solid rgba(0, 130, 230, 0.3) !important;
+  border-radius: 12px !important;
+}
+#app-sidebar #download-missing-pdf:hover,
+#app-sidebar #download-repeated-pdf:hover {
+  background: rgba(255,255,255,0.13) !important;
+}
+#app-sidebar button:hover { background: rgba(255,255,255,0.07) !important; }
+#app-sidebar #reset-album { color: #ff8880 !important; }
+#app-sidebar #open-auth { color: #7dc4ff !important; }
+/* Metric cards in sidebar — vibrant & interactive glassmorphism */
+.metric-card {
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.22s,
+              border-color 0.22s,
+              box-shadow 0.22s;
+  cursor: default;
+}
+.metric-card:hover {
+  transform: translateY(-2px);
+}
+.metric-card span { color: rgba(180, 210, 255, 0.7); }
+.metric-card strong { color: #e8f4ff; }
+.metric-card small { color: rgba(180, 210, 255, 0.5); }
+
+/* 1. Obtained (Success): Emerald Mint Glow */
+.metric-card.tone-success {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.12) 0%, rgba(39, 174, 96, 0.04) 100%);
+  border: 1px solid rgba(46, 204, 113, 0.24);
+}
+.metric-card.tone-success:hover {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.18) 0%, rgba(39, 174, 96, 0.08) 100%);
+  border-color: rgba(46, 204, 113, 0.45);
+  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.15);
+}
+.metric-card.tone-success span { color: rgba(163, 240, 193, 0.85); }
+.metric-card.tone-success strong { color: #a3f0c1; text-shadow: 0 0 8px rgba(46, 204, 113, 0.2); }
+.metric-card.tone-success small { color: rgba(163, 240, 193, 0.55); }
+
+/* 2. Missing (Error): Tangerine Orange Glow */
+.metric-card.tone-error {
+  background: linear-gradient(135deg, rgba(230, 126, 34, 0.12) 0%, rgba(211, 84, 0, 0.04) 100%);
+  border: 1px solid rgba(230, 126, 34, 0.24);
+}
+.metric-card.tone-error:hover {
+  background: linear-gradient(135deg, rgba(230, 126, 34, 0.18) 0%, rgba(211, 84, 0, 0.08) 100%);
+  border-color: rgba(230, 126, 34, 0.45);
+  box-shadow: 0 4px 12px rgba(230, 126, 34, 0.15);
+}
+.metric-card.tone-error span { color: rgba(255, 209, 163, 0.85); }
+.metric-card.tone-error strong { color: #ffd1a3; text-shadow: 0 0 8px rgba(230, 126, 34, 0.2); }
+.metric-card.tone-error small { color: rgba(255, 209, 163, 0.55); }
+
+/* 3. Duplicates: Majestic Lavender/Amethyst */
+.metric-card.tone-duplicates {
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.12) 0%, rgba(142, 68, 173, 0.04) 100%);
+  border: 1px solid rgba(155, 89, 182, 0.24);
+}
+.metric-card.tone-duplicates:hover {
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.18) 0%, rgba(142, 68, 173, 0.08) 100%);
+  border-color: rgba(155, 89, 182, 0.45);
+  box-shadow: 0 4px 12px rgba(155, 89, 182, 0.15);
+}
+.metric-card.tone-duplicates span { color: rgba(232, 196, 247, 0.85); }
+.metric-card.tone-duplicates strong { color: #e8c4f7; text-shadow: 0 0 8px rgba(155, 89, 182, 0.2); }
+.metric-card.tone-duplicates small { color: rgba(232, 196, 247, 0.55); }
+
+/* 4. Coca-Cola: Dynamic Crimson/Red Glow */
+.metric-card.tone-coke {
+  background: linear-gradient(135deg, rgba(220, 20, 15, 0.14) 0%, rgba(180, 10, 5, 0.05) 100%);
+  border: 1px solid rgba(220, 20, 15, 0.26);
+}
+.metric-card.tone-coke:hover {
+  background: linear-gradient(135deg, rgba(220, 20, 15, 0.2) 0%, rgba(180, 10, 5, 0.08) 100%);
+  border-color: rgba(220, 20, 15, 0.48);
+  box-shadow: 0 4px 12px rgba(220, 20, 15, 0.15);
+}
+.metric-card.tone-coke span { color: rgba(255, 170, 165, 0.85); }
+.metric-card.tone-coke strong { color: #ffa198; text-shadow: 0 0 8px rgba(220, 20, 15, 0.2); }
+.metric-card.tone-coke small { color: rgba(255, 170, 165, 0.55); }
+
+
+/* --- Stats panels (Stats view) --- */
+.stats-panel {
+  background: linear-gradient(140deg, #081628 0%, #0c2040 50%, #071220 100%);
+  border-color: rgba(0, 130, 230, 0.3);
+}
+.stats-panel h3 { color: #b8d8ff; }
+.stats-panel .rank-row { border-bottom-color: rgba(255,255,255,0.08); }
+.stats-panel .rank-row strong { color: #e8f4ff; }
+.stats-panel .rank-row span { color: rgba(180,210,255,0.6); }
+.stats-panel .progress-bar { background: rgba(255,255,255,0.1); }
+.stats-panel .progress-bar span { background: linear-gradient(90deg, #1a5fb4, #3d8ef0); }
+
+/* --- Overviews and KPIs by tone (vibrant, cohesive dark mode styles) --- */
+
+/* Base transition for premium feel */
+.stats-panel .stats-pill,
+.stats-panel .stats-kpi {
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.22s,
+              border-color 0.22s,
+              box-shadow 0.22s;
+  cursor: default;
+}
+
+.stats-panel .stats-pill:hover,
+.stats-panel .stats-kpi:hover {
+  transform: translateY(-2px);
+}
+
+/* 1a. Obtained / Success (General): Emerald Mint Glow */
+.stats-panel .stats-pill--obtained {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.12) 0%, rgba(39, 174, 96, 0.04) 100%);
+  border: 1px solid rgba(46, 204, 113, 0.24);
+}
+.stats-panel .stats-pill--obtained:hover {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.18) 0%, rgba(39, 174, 96, 0.08) 100%);
+  border-color: rgba(46, 204, 113, 0.45);
+  box-shadow: 0 4px 15px rgba(46, 204, 113, 0.15);
+}
+.stats-panel .stats-pill--obtained span {
+  color: rgba(163, 240, 193, 0.75);
+}
+.stats-panel .stats-pill--obtained strong {
+  color: #a3f0c1;
+  text-shadow: 0 0 8px rgba(46, 204, 113, 0.2);
+}
+
+/* 1b. Selections at 100%: Electric Cyan Glow */
+.stats-panel .stats-kpi--selections {
+  background: linear-gradient(135deg, rgba(0, 210, 255, 0.14) 0%, rgba(0, 160, 200, 0.04) 100%);
+  border: 1px solid rgba(0, 210, 255, 0.26);
+}
+.stats-panel .stats-kpi--selections:hover {
+  background: linear-gradient(135deg, rgba(0, 210, 255, 0.2) 0%, rgba(0, 160, 200, 0.08) 100%);
+  border-color: rgba(0, 210, 255, 0.48);
+  box-shadow: 0 4px 15px rgba(0, 210, 255, 0.15);
+}
+.stats-panel .stats-kpi--selections span {
+  color: rgba(161, 244, 255, 0.75);
+}
+.stats-panel .stats-kpi--selections strong {
+  color: #a1f4ff;
+  text-shadow: 0 0 8px rgba(0, 210, 255, 0.2);
+}
+
+/* 1c. Groups at 100%: Royal Blue Glow */
+.stats-panel .stats-kpi--groups {
+  background: linear-gradient(135deg, rgba(54, 98, 230, 0.14) 0%, rgba(30, 70, 200, 0.04) 100%);
+  border: 1px solid rgba(54, 98, 230, 0.26);
+}
+.stats-panel .stats-kpi--groups:hover {
+  background: linear-gradient(135deg, rgba(54, 98, 230, 0.2) 0%, rgba(30, 70, 200, 0.08) 100%);
+  border-color: rgba(54, 98, 230, 0.48);
+  box-shadow: 0 4px 15px rgba(54, 98, 230, 0.15);
+}
+.stats-panel .stats-kpi--groups span {
+  color: rgba(204, 213, 255, 0.75);
+}
+.stats-panel .stats-kpi--groups strong {
+  color: #ccd5ff;
+  text-shadow: 0 0 8px rgba(54, 98, 230, 0.2);
+}
+
+/* 2. Missing / Pending: Tangerine Orange Glow */
+.stats-panel .stats-pill--missing {
+  background: linear-gradient(135deg, rgba(230, 126, 34, 0.12) 0%, rgba(211, 84, 0, 0.04) 100%);
+  border: 1px solid rgba(230, 126, 34, 0.24);
+}
+.stats-panel .stats-pill--missing:hover {
+  background: linear-gradient(135deg, rgba(230, 126, 34, 0.18) 0%, rgba(211, 84, 0, 0.08) 100%);
+  border-color: rgba(230, 126, 34, 0.45);
+  box-shadow: 0 4px 15px rgba(230, 126, 34, 0.15);
+}
+.stats-panel .stats-pill--missing span {
+  color: rgba(255, 209, 163, 0.75);
+}
+.stats-panel .stats-pill--missing strong {
+  color: #ffd1a3;
+  text-shadow: 0 0 8px rgba(230, 126, 34, 0.2);
+}
+
+/* 3. Duplicates: Majestic Lavender/Amethyst */
+.stats-panel .stats-pill--duplicates {
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.12) 0%, rgba(142, 68, 173, 0.04) 100%);
+  border: 1px solid rgba(155, 89, 182, 0.24);
+}
+.stats-panel .stats-pill--duplicates:hover {
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.18) 0%, rgba(142, 68, 173, 0.08) 100%);
+  border-color: rgba(155, 89, 182, 0.45);
+  box-shadow: 0 4px 15px rgba(155, 89, 182, 0.15);
+}
+.stats-panel .stats-pill--duplicates span {
+  color: rgba(232, 196, 247, 0.75);
+}
+.stats-panel .stats-pill--duplicates strong {
+  color: #e8c4f7;
+  text-shadow: 0 0 8px rgba(155, 89, 182, 0.2);
+}
+
+/* 4. Specials / Specials Pending: Brilliant Amber Gold Glow */
+.stats-panel .stats-pill--specials,
+.stats-panel .stats-kpi--specials {
+  background: linear-gradient(135deg, rgba(241, 196, 15, 0.12) 0%, rgba(243, 156, 18, 0.04) 100%);
+  border: 1px solid rgba(241, 196, 15, 0.24);
+}
+.stats-panel .stats-pill--specials:hover,
+.stats-panel .stats-kpi--specials:hover {
+  background: linear-gradient(135deg, rgba(241, 196, 15, 0.18) 0%, rgba(243, 156, 18, 0.08) 100%);
+  border-color: rgba(241, 196, 15, 0.45);
+  box-shadow: 0 4px 15px rgba(241, 196, 15, 0.15);
+}
+.stats-panel .stats-pill--specials span,
+.stats-panel .stats-kpi--specials span {
+  color: rgba(255, 232, 133, 0.75);
+}
+.stats-panel .stats-pill--specials strong,
+.stats-panel .stats-kpi--specials strong {
+  color: #ffe885;
+  text-shadow: 0 0 8px rgba(241, 196, 15, 0.2);
+}
+
+/* 5. Coca-Cola / Coca-Cola Pending: Dynamic Crimson/Red Glow */
+.stats-panel .stats-pill--coke,
+.stats-panel .stats-kpi--coke {
+  background: linear-gradient(135deg, rgba(220, 20, 15, 0.14) 0%, rgba(180, 10, 5, 0.05) 100%);
+  border: 1px solid rgba(220, 20, 15, 0.26);
+}
+.stats-panel .stats-pill--coke:hover,
+.stats-panel .stats-kpi--coke:hover {
+  background: linear-gradient(135deg, rgba(220, 20, 15, 0.2) 0%, rgba(180, 10, 5, 0.08) 100%);
+  border-color: rgba(220, 20, 15, 0.48);
+  box-shadow: 0 4px 15px rgba(220, 20, 15, 0.15);
+}
+.stats-panel .stats-pill--coke span,
+.stats-panel .stats-kpi--coke span {
+  color: rgba(255, 170, 165, 0.75);
+}
+.stats-panel .stats-pill--coke strong,
+.stats-panel .stats-kpi--coke strong {
+  color: #ffa198;
+  text-shadow: 0 0 8px rgba(220, 20, 15, 0.2);
+}
+
+/* 6. Edition: Platinum Silver/White Glow */
+.stats-panel .stats-pill--edition {
+  background: linear-gradient(135deg, rgba(220, 225, 235, 0.12) 0%, rgba(200, 205, 215, 0.04) 100%);
+  border: 1px solid rgba(220, 225, 235, 0.24);
+}
+.stats-panel .stats-pill--edition:hover {
+  background: linear-gradient(135deg, rgba(220, 225, 235, 0.18) 0%, rgba(200, 205, 215, 0.08) 100%);
+  border-color: rgba(220, 225, 235, 0.45);
+  box-shadow: 0 4px 15px rgba(220, 225, 235, 0.15);
+}
+.stats-panel .stats-pill--edition span {
+  color: rgba(220, 225, 235, 0.75);
+}
+.stats-panel .stats-pill--edition strong {
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(220, 225, 235, 0.2);
+}
+
+/* Overrides para listas secundarias en panel oscuro */
+.stats-panel .mini-list {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+.stats-panel .mini-list h4 {
+  color: rgba(180, 210, 255, 0.65);
+}
+.stats-panel .mini-row {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+.stats-panel .mini-row strong {
+  color: #e8f4ff;
+}
+.stats-panel .mini-row span {
+  color: rgba(180, 210, 255, 0.6);
+}
+.stats-panel .mini-row em {
+  color: #b8d8ff;
+}
+.stats-note {
+  background: rgba(0,80,180,0.2);
+  border-color: rgba(60,140,255,0.3);
+}
+.stats-note strong { color: #7dc4ff; }
+.stats-note span { color: rgba(180,210,255,0.75); }
+.stats-category h4 { color: rgba(180,210,255,0.55); }
+.stats-category { border-top-color: rgba(255,255,255,0.08); }
+
+/* Language toggle flags: active language slightly larger, other language subtler */
+#lang-toggle {
+  display: flex !important;
+  align-items: center !important;
+}
+#lang-label {
+  display: inline-flex;
+  align-items: center;
+  /* Optical centering correction for emoji alignment with sans-serif text */
+  transform: translateY(-0.5px);
+}
+#lang-label span {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+#lang-from-flag {
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+#lang-to-flag {
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+#lang-label span[data-lang="es"] {
+  font-size: 0.86rem;
+}
+#lang-label span[data-lang="en"] {
+  font-size: 0.98rem;
+}
+

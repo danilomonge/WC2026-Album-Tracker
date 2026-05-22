@@ -58,7 +58,6 @@ const FILTER_LABELS = {
   especiales: "Especiales",
   "coca-cola": "Coca-Cola",
   escudos: "Escudos",
-  estadios: "Estadios",
   "team-photos": "Team Photos",
   logos: "Logos",
 };
@@ -74,7 +73,7 @@ const TRANSLATIONS = {
     // Filters
     "filter.todos":"Todos","filter.obtenidos":"Obtenidos","filter.repetidos":"Repetidos",
     "filter.faltantes":"Faltantes","filter.especiales":"Especiales","filter.coca-cola":"Coca-Cola",
-    "filter.escudos":"Escudos","filter.estadios":"Estadios","filter.team-photos":"Team Photos","filter.logos":"Logos",
+    "filter.escudos":"Escudos","filter.estadios":"Estadios","filter.team-photos":"Fotos de equipo","filter.logos":"FWC",
     // Controls
     group_by:"Agrupar por", group:"Grupo", selection:"Selección", page:"Página",
     all_groups:"Todos los grupos", group_letter:"Grupo", all_selections:"Todas las selecciones",
@@ -95,11 +94,12 @@ const TRANSLATIONS = {
     language_label:"Idioma", language:"Idioma",
     // Stats view
     "stats.overview":"Panorama general","stats.completed":"Completado",
+    "stats.by_category":"Por categoría","stats.team":"Selecciones",
     "stats.top_selections":"Selecciones con más progreso","stats.by_group":"Progreso por grupo",
     "stats.priority":"Pendientes prioritarios","stats.selections_100":"Selecciones al 100%",
     "stats.groups_100":"Grupos al 100%","stats.especiales_pending":"Especiales pendientes",
     "stats.coke_pending":"Coca-Cola pendientes","stats.lagging":"Selecciones más rezagadas",
-    "stats.of":"de","stats.edition":"Alemania",
+    "stats.of":"de","stats.edition":"Alemania","stats.edition_label":"Versión",
     // Empty state
     "empty.title":"No hay stickers para esta vista",
     "empty.desc":"Prueba con otro filtro, cambia la agrupación o limpia la búsqueda.",
@@ -152,7 +152,7 @@ const TRANSLATIONS = {
     "short.faltantes":"Missing","short.especiales":"Specials","short.coca-cola":"Coke","short.stats":"Stats",
     "filter.todos":"All","filter.obtenidos":"Collected","filter.repetidos":"Duplicates",
     "filter.faltantes":"Missing","filter.especiales":"Specials","filter.coca-cola":"Coca-Cola",
-    "filter.escudos":"Shields","filter.estadios":"Stadiums","filter.team-photos":"Team Photos","filter.logos":"Logos",
+    "filter.escudos":"Shields","filter.estadios":"Stadiums","filter.team-photos":"Team Photos","filter.logos":"FWC",
     group_by:"Group by", group:"Group", selection:"Selection", page:"Page",
     all_groups:"All groups", group_letter:"Group", all_selections:"All selections",
     all_pages:"All pages", page_abbr:"Pg.", page_full:"Page",
@@ -168,11 +168,12 @@ const TRANSLATIONS = {
     sync_note:"Your progress syncs to the cloud when you sign in.",
     language_label:"Language", language:"Language",
     "stats.overview":"Overview","stats.completed":"Completed",
+    "stats.by_category":"By category","stats.team":"Selections",
     "stats.top_selections":"Top selections by progress","stats.by_group":"Progress by group",
     "stats.priority":"Priority pending","stats.selections_100":"Selections at 100%",
     "stats.groups_100":"Groups at 100%","stats.especiales_pending":"Specials pending",
     "stats.coke_pending":"Coca-Cola pending","stats.lagging":"Most lagging selections",
-    "stats.of":"of","stats.edition":"Germany",
+    "stats.of":"of","stats.edition":"Germany","stats.edition_label":"Version",
     "empty.title":"No stickers for this view",
     "empty.desc":"Try a different filter, change the grouping, or clear the search.",
     "auth.account":"Account","auth.title.login":"Sign in","auth.title.register":"Create account",
@@ -220,6 +221,41 @@ function t(key) {
   return (TRANSLATIONS[state?.lang ?? "es"] ?? TRANSLATIONS.es)[key] ?? TRANSLATIONS.es[key] ?? key;
 }
 
+const COUNTRY_NAMES_ES = {
+  MEX:"México", RSA:"Sudáfrica", KOR:"Corea del Sur", CZE:"República Checa",
+  CAN:"Canadá", BIH:"Bosnia-Herzegovina", QAT:"Catar", SUI:"Suiza",
+  BRA:"Brasil", MAR:"Marruecos", HAI:"Haití", SCO:"Escocia",
+  USA:"EE.UU.", PAR:"Paraguay", AUS:"Australia", TUR:"Türkiye",
+  GER:"Alemania", CUW:"Curazao", CIV:"Costa de Marfil", ECU:"Ecuador",
+  NED:"Países Bajos", JPN:"Japón", SWE:"Suecia", TUN:"Túnez",
+  BEL:"Bélgica", EGY:"Egipto", IRN:"Irán", NZL:"Nueva Zelanda",
+  ESP:"España", CPV:"Cabo Verde", KSA:"Arabia Saudita", URU:"Uruguay",
+  FRA:"Francia", SEN:"Senegal", IRQ:"Irak", NOR:"Noruega",
+  ARG:"Argentina", ALG:"Argelia", AUT:"Austria", JOR:"Jordania",
+  POR:"Portugal", COD:"Rep. Dem. Congo", UZB:"Uzbekistán", COL:"Colombia",
+  ENG:"Inglaterra", CRO:"Croacia", GHA:"Ghana", PAN:"Panamá",
+};
+
+const COUNTRY_NAMES_EN = {
+  MEX:"Mexico", RSA:"South Africa", KOR:"Korea Republic", CZE:"Czechia",
+  CAN:"Canada", BIH:"Bosnia-Herzegovina", QAT:"Qatar", SUI:"Switzerland",
+  BRA:"Brazil", MAR:"Morocco", HAI:"Haiti", SCO:"Scotland",
+  USA:"USA", PAR:"Paraguay", AUS:"Australia", TUR:"Türkiye",
+  GER:"Germany", CUW:"Curaçao", CIV:"Côte d'Ivoire", ECU:"Ecuador",
+  NED:"Netherlands", JPN:"Japan", SWE:"Sweden", TUN:"Tunisia",
+  BEL:"Belgium", EGY:"Egypt", IRN:"IR Iran", NZL:"New Zealand",
+  ESP:"Spain", CPV:"Cabo Verde", KSA:"Saudi Arabia", URU:"Uruguay",
+  FRA:"France", SEN:"Senegal", IRQ:"Iraq", NOR:"Norway",
+  ARG:"Argentina", ALG:"Algeria", AUT:"Austria", JOR:"Jordan",
+  POR:"Portugal", COD:"Congo DR", UZB:"Uzbekistan", COL:"Colombia",
+  ENG:"England", CRO:"Croatia", GHA:"Ghana", PAN:"Panama",
+};
+
+function tCountry(code) {
+  if (!code) return code;
+  return (state?.lang === "en" ? COUNTRY_NAMES_EN : COUNTRY_NAMES_ES)[code] ?? code;
+}
+
 function applyStaticTranslations() {
   // Inputs with placeholder
   const qInput = document.querySelector("#query-input");
@@ -248,8 +284,14 @@ function applyStaticTranslations() {
   // Language toggle button flags
   const fromFlag = document.querySelector("#lang-from-flag");
   const toFlag   = document.querySelector("#lang-to-flag");
-  if (fromFlag) fromFlag.textContent = state.lang === "es" ? "🇪🇸" : "🇬🇧";
-  if (toFlag)   toFlag.textContent   = state.lang === "es" ? "🇬🇧" : "🇪🇸";
+  if (fromFlag) {
+    fromFlag.textContent = state.lang === "es" ? "🇪🇸" : "🇬🇧";
+    fromFlag.setAttribute("data-lang", state.lang === "es" ? "es" : "en");
+  }
+  if (toFlag) {
+    toFlag.textContent   = state.lang === "es" ? "🇬🇧" : "🇪🇸";
+    toFlag.setAttribute("data-lang", state.lang === "es" ? "en" : "es");
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -258,7 +300,7 @@ function stripLeadingEmojiLabel(value) {
   return String(value || "").replace(/^\p{Extended_Pictographic}+\s*/u, "").trim();
 }
 
-const state = {
+export const state = {
   catalog: STICKERS,
   stickers: STICKERS,
   session: null,
@@ -502,9 +544,13 @@ export function filterStickers(stickers, options) {
     }
 
     if (normalizedQuery) {
+      const countryName = state?.lang === "es"
+        ? (COUNTRY_NAMES_ES[sticker.equipoCodigo] || sticker.pais)
+        : sticker.pais;
+
       const haystack = normalizeText(
         [
-          sticker.pais,
+          countryName,
           sticker.grupo,
           sticker.nombre,
           sticker.numero,
@@ -552,7 +598,7 @@ export function filterStickers(stickers, options) {
       case "team-photos":
         return sticker.tipo === "Team Photo";
       case "logos":
-        return sticker.tipo === "Logo";
+        return sticker.id.startsWith("FWC");
       default:
         return true;
     }
@@ -586,7 +632,7 @@ export function computeStats(stickers) {
     const collected = selectionStickers.filter((sticker) => sticker.obtenido).length;
 
     return {
-      label: selection.country,
+      label: tCountry(selection.code),
       key: selection.code,
       total: selectionStickers.length,
       obtenidos: collected,
@@ -653,7 +699,7 @@ function groupStickers(stickers, mode) {
 
     if (mode === "selection") {
       key = sticker.pais;
-      label = `${sticker.pais} · ${t("page_abbr")} ${sticker.paginaInicioSeleccion}`;
+      label = `${tCountry(sticker.equipoCodigo)} · ${t("page_abbr")} ${sticker.paginaInicioSeleccion}`;
     } else if (mode === "page") {
       key = `page-${sticker.pagina}`;
       label = `${t("page_full")} ${sticker.pagina}`;
@@ -829,6 +875,31 @@ async function persistSticker(sticker) {
   return true;
 }
 
+function patchStickerCard(stickerId, sticker) {
+  const article = document.querySelector(`article[data-sticker-id="${escapeHtml(stickerId)}"]`);
+  if (!article) return;
+
+  article.classList.toggle("is-owned", sticker.obtenido);
+  article.classList.toggle("is-missing", !sticker.obtenido);
+
+  const wrap = article.closest(".sticker-card-wrap");
+  if (wrap) {
+    let badge = wrap.querySelector(".sticker-card__badge");
+    if (sticker.repetidos > 0) {
+      if (badge) {
+        badge.textContent = `+${sticker.repetidos}`;
+      } else {
+        badge = document.createElement("span");
+        badge.className = "sticker-card__badge";
+        badge.textContent = `+${sticker.repetidos}`;
+        wrap.insertBefore(badge, wrap.querySelector(".sticker-card__remove"));
+      }
+    } else if (badge) {
+      badge.remove();
+    }
+  }
+}
+
 async function updateSticker(stickerId, updater) {
   if (!isAuthRuntimeAvailable()) {
     showToast(t("toast.file_protocol"));
@@ -847,7 +918,21 @@ async function updateSticker(stickerId, updater) {
   }
   const next = updater(current);
   state.stickers = state.stickers.map((item) => (item.id === stickerId ? next : item));
-  renderApp();
+
+  // Paint the card change in the current frame — zero DOM work beyond the one card.
+  patchStickerCard(stickerId, next);
+
+  // Defer everything else to after the browser paints the card change.
+  const needsFullRender = state.section === "faltantes" || state.section === "repetidos";
+  requestAnimationFrame(() => {
+    if (needsFullRender) {
+      renderApp();
+    } else {
+      const stats = computeStats(state.stickers);
+      renderOverview(stats);
+      renderStatus();
+    }
+  });
 
   const success = await persistSticker(next);
   if (!success) {
@@ -858,7 +943,13 @@ async function updateSticker(stickerId, updater) {
 
 function renderFilters() {
   const filterBar = document.querySelector("#filter-chips");
+  const hiddenInSection = {
+    repetidos: ["obtenidos", "repetidos", "faltantes"],
+    faltantes:  ["obtenidos", "repetidos", "faltantes"],
+  };
+  const hidden = hiddenInSection[state.section] || [];
   filterBar.innerHTML = Object.keys(FILTER_LABELS)
+    .filter(value => !hidden.includes(value))
     .map(value => `
       <button class="chip ${state.filter === value ? "is-active" : ""}" data-filter="${value}">
         ${escapeHtml(t("filter." + value))}
@@ -920,23 +1011,62 @@ function renderStatus() {
   const authButton = document.querySelector("#auth-trigger");
   const signOutButton = document.querySelector("#sign-out-button");
   const syncStatus = document.querySelector("#sync-status");
+  const pdfMissingBtn = document.querySelector("#download-missing-pdf");
+  const pdfDuplicatesBtn = document.querySelector("#download-repeated-pdf");
+  const resetBtn = document.querySelector("#reset-album");
+  const openAuthBtn = document.querySelector("#open-auth");
+
+  const loggedIn = !!state.session;
+  const disabledClasses = ["opacity-40", "cursor-not-allowed", "pointer-events-none"];
+
+  [pdfMissingBtn, pdfDuplicatesBtn, resetBtn].forEach(btn => {
+    if (!btn) return;
+    if (loggedIn) {
+      btn.disabled = false;
+      disabledClasses.forEach(c => btn.classList.remove(c));
+    } else {
+      btn.disabled = true;
+      disabledClasses.forEach(c => btn.classList.add(c));
+    }
+  });
+
+  if (openAuthBtn) {
+    if (loggedIn) {
+      openAuthBtn.disabled = true;
+      disabledClasses.forEach(c => openAuthBtn.classList.add(c));
+    } else {
+      openAuthBtn.disabled = false;
+      disabledClasses.forEach(c => openAuthBtn.classList.remove(c));
+    }
+  }
+
 
   if (!isAuthRuntimeAvailable()) {
     authButton.textContent = t("read_only");
+    authButton.disabled = true;
+    disabledClasses.forEach(c => authButton.classList.add(c));
     signOutButton.classList.add("opacity-30", "cursor-not-allowed", "pointer-events-none");
     signOutButton.classList.remove("hover:text-primary", "hover:bg-primary");
+    signOutButton.disabled = true;
     setBannerMessage(t("banner.file_protocol"), "warning");
   } else if (!state.session) {
     authButton.textContent = t("sign_in");
+    authButton.disabled = false;
+    disabledClasses.forEach(c => authButton.classList.remove(c));
     signOutButton.classList.add("opacity-30", "cursor-not-allowed", "pointer-events-none");
     signOutButton.classList.remove("hover:text-primary");
+    signOutButton.disabled = true;
     setBannerMessage(t("banner.not_signed_in"), "muted");
   } else {
     authButton.textContent = state.session.user.email.split("@")[0];
+    authButton.disabled = true;
+    disabledClasses.forEach(c => authButton.classList.add(c));
     signOutButton.classList.remove("opacity-30", "cursor-not-allowed", "pointer-events-none");
     signOutButton.classList.add("hover:text-primary");
+    signOutButton.disabled = false;
     setBannerMessage("", "success");
   }
+
 
   syncStatus.innerHTML = state.isSyncing
     ? `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> ${t("syncing")}`
@@ -964,7 +1094,7 @@ function renderOverview(stats) {
       <strong>${escapeHtml(stats.faltantes)}</strong>
       <small>${t("yet_to_paste")}</small>
     </article>
-    <article class="metric-card">
+    <article class="metric-card tone-duplicates">
       <span>${t("duplicates")}</span>
       <strong>${escapeHtml(stats.repetidos)}</strong>
       <small>${t("available_for_trade")}</small>
@@ -1098,7 +1228,7 @@ function renderHomeView(stats) {
     </section>
 
     <!-- ALBUM PROGRESS -->
-    <section class="home-card">
+    <section class="home-card home-card--dark">
       <h2 class="home-card__title">${t("home.album_title")}</h2>
       <div class="home-album-bar">
         <div class="home-album-bar__track">
@@ -1129,14 +1259,14 @@ function renderHomeView(stats) {
     </section>
 
     <!-- GROUPS GRID -->
-    <section class="home-card">
+    <section class="home-card home-card--dark">
       <h2 class="home-card__title">${t("home.groups")}</h2>
       <div class="home-groups-grid">${groupsGrid}</div>
     </section>
 
     <!-- TOURNAMENT FORMAT + VENUES -->
     <div class="home-two-col">
-      <section class="home-card">
+      <section class="home-card home-card--dark">
         <h2 class="home-card__title">${t("home.tournament")}</h2>
         <ol class="home-format-list">
           <li>
@@ -1166,14 +1296,14 @@ function renderHomeView(stats) {
         </ol>
       </section>
 
-      <section class="home-card">
+      <section class="home-card home-card--dark">
         <h2 class="home-card__title">${t("home.venues_title")} (${WC2026_VENUES.length})</h2>
         <div class="home-venues">${venueRows}</div>
       </section>
     </div>
 
     <!-- ALBUM STRUCTURE -->
-    <section class="home-card">
+    <section class="home-card home-card--dark">
       <h2 class="home-card__title">${t("home.album_structure")}</h2>
       <div class="home-album-structure">
         <div class="home-structure-item">
@@ -1216,10 +1346,10 @@ function renderGroupedByGroupAndTeam(stickers) {
       const groupColor = groupInfo?.color || "#003e7a";
       const groupLabel =
         groupKey === "Especiales"
-          ? "Especiales FWC"
+          ? `${t("especiales")} FWC`
           : groupKey === "Coca-Cola"
             ? "Coca-Cola Germany"
-            : `Grupo ${groupKey}`;
+            : `${t("group_letter")} ${groupKey}`;
 
       const allGroupStickers = [...teamMap.values()].flat();
       const groupObtained = allGroupStickers.filter((s) => s.obtenido).length;
@@ -1236,8 +1366,8 @@ function renderGroupedByGroupAndTeam(stickers) {
           const first = teamStickers[0];
           const teamAccent = first?.colorPais || groupColor;
           const teamCode = first?.equipoCodigo || "";
-          const teamPage = first?.paginaInicioSeleccion;
-          const pageLabel = teamPage ? ` · ${t("page_abbr")} ${teamPage}` : "";
+          const teamPages = [...new Set(teamStickers.map(s => s.pagina))].sort((a, b) => a - b);
+          const pageLabel = teamPages.length ? ` <span class="team-header__pages">· ${t("page_abbr")} ${teamPages.join(", ")}</span>` : "";
 
           return `
             <div class="team-subsection">
@@ -1245,7 +1375,7 @@ function renderGroupedByGroupAndTeam(stickers) {
                 <div class="team-flag" role="img" aria-label="Bandera de ${escapeHtml(teamKey)}">${getTeamFlagEmoji(teamCode)}</div>
                 <div class="team-header__info">
                   ${teamCode ? `<span class="team-header__code">${escapeHtml(teamCode)}</span>` : ""}
-                  <span class="team-header__label">${escapeHtml(teamKey)}${pageLabel}</span>
+                  <span class="team-header__label">${escapeHtml(tCountry(teamCode))}${pageLabel}</span>
                 </div>
                 <span class="team-progress">${obtained} / ${teamStickers.length}</span>
               </div>
@@ -1279,8 +1409,8 @@ function renderCollectionView(stickers) {
   if (!stickers.length) {
     content.innerHTML = `
       <section class="empty-state">
-        <h3>No hay stickers para esta vista</h3>
-        <p>Prueba con otro filtro, cambia la agrupación o limpia la búsqueda.</p>
+        <h3>${t("empty.title")}</h3>
+        <p>${t("empty.desc")}</p>
       </section>
     `;
     return;
@@ -1324,25 +1454,55 @@ function renderStatsView(stats) {
     .sort((left, right) => left.progress - right.progress || left.label.localeCompare(right.label))
     .slice(0, 3);
 
+  const teamTotal    = stats.total - stats.especiales.total - stats.cocaCola.total;
+  const teamObtained = stats.obtenidos - stats.especiales.obtenidos - stats.cocaCola.obtenidos;
+  const teamPct      = teamTotal ? (teamObtained / teamTotal * 100) : 0;
+  const espPct       = stats.especiales.total ? (stats.especiales.obtenidos / stats.especiales.total * 100) : 0;
+  const cokePct      = stats.cocaCola.total   ? (stats.cocaCola.obtenidos   / stats.cocaCola.total   * 100) : 0;
+
   const panelOverview = `
-    <article class="stats-panel">
+    <article class="stats-panel" style="grid-area:overview">
       <h3>${t("stats.overview")}</h3>
       <div class="stats-grid">
-        <div class="stats-pill"><span>${t("obtained")}</span><strong>${escapeHtml(stats.obtenidos)}</strong></div>
-        <div class="stats-pill"><span>${t("missing")}</span><strong>${escapeHtml(stats.faltantes)}</strong></div>
-        <div class="stats-pill"><span>${t("duplicates")}</span><strong>${escapeHtml(stats.repetidos)}</strong></div>
-        <div class="stats-pill"><span>${t("especiales")}</span><strong>${escapeHtml(stats.especiales.obtenidos)}/${escapeHtml(stats.especiales.total)}</strong></div>
-        <div class="stats-pill"><span>Coca-Cola</span><strong>${escapeHtml(stats.cocaCola.obtenidos)}/${escapeHtml(stats.cocaCola.total)}</strong></div>
-        <div class="stats-pill"><span>${t("stats.edition")}</span><strong>${t("stats.edition")}</strong></div>
+        <div class="stats-pill stats-pill--obtained"><span>${t("obtained")}</span><strong>${escapeHtml(stats.obtenidos)}</strong></div>
+        <div class="stats-pill stats-pill--missing"><span>${t("missing")}</span><strong>${escapeHtml(stats.faltantes)}</strong></div>
+        <div class="stats-pill stats-pill--duplicates"><span>${t("duplicates")}</span><strong>${escapeHtml(stats.repetidos)}</strong></div>
+        <div class="stats-pill stats-pill--specials"><span>${t("especiales")}</span><strong>${escapeHtml(stats.especiales.obtenidos)}/${escapeHtml(stats.especiales.total)}</strong></div>
+        <div class="stats-pill stats-pill--coke"><span>Coca-Cola</span><strong>${escapeHtml(stats.cocaCola.obtenidos)}/${escapeHtml(stats.cocaCola.total)}</strong></div>
+        <div class="stats-pill stats-pill--edition"><span>${t("stats.edition_label")}</span><strong>${t("stats.edition")}</strong></div>
       </div>
       <div class="stats-note">
         <strong>${t("stats.completed")}: ${escapeHtml(completionPct)}%</strong>
         <span>${escapeHtml(stats.obtenidos)} ${t("home.obtained")} · ${escapeHtml(stats.faltantes)} ${t("yet_to_paste")}</span>
       </div>
+      <div class="stats-category">
+        <h4>${t("stats.by_category")}</h4>
+        <div class="rank-row">
+          <div>
+            <strong>${t("stats.team")}</strong>
+            <span>${escapeHtml(teamObtained)} ${t("stats.of")} ${escapeHtml(teamTotal)}</span>
+          </div>
+          <div class="progress-bar"><span style="width:${teamPct.toFixed(1)}%;background:#003e7a"></span></div>
+        </div>
+        <div class="rank-row">
+          <div>
+            <strong>${t("especiales")} FWC</strong>
+            <span>${escapeHtml(stats.especiales.obtenidos)} ${t("stats.of")} ${escapeHtml(stats.especiales.total)}</span>
+          </div>
+          <div class="progress-bar"><span style="width:${espPct.toFixed(1)}%;background:#0f4c81"></span></div>
+        </div>
+        <div class="rank-row">
+          <div>
+            <strong>Coca-Cola</strong>
+            <span>${escapeHtml(stats.cocaCola.obtenidos)} ${t("stats.of")} ${escapeHtml(stats.cocaCola.total)}</span>
+          </div>
+          <div class="progress-bar"><span style="width:${cokePct.toFixed(1)}%;background:#cc2b24"></span></div>
+        </div>
+      </div>
     </article>`;
 
   const panelGroups = `
-    <article class="stats-panel">
+    <article class="stats-panel stats-panel--groups" style="grid-area:groups">
       <h3>${t("stats.by_group")}</h3>
       <div class="rank-list">
         ${stats.byGroup.map(group => `
@@ -1358,9 +1518,9 @@ function renderStatsView(stats) {
     </article>`;
 
   const panelSelections = `
-    <article class="stats-panel">
+    <article class="stats-panel stats-panel--selections" style="grid-area:selections">
       <h3>${t("stats.top_selections")}</h3>
-      <div class="rank-list" style="max-height:340px;overflow-y:auto;">
+      <div class="rank-list">
         ${selectionProgress.map(selection => `
           <div class="rank-row">
             <div>
@@ -1374,13 +1534,13 @@ function renderStatsView(stats) {
     </article>`;
 
   const panelPriority = `
-    <article class="stats-panel">
+    <article class="stats-panel" style="grid-area:priority">
       <h3>${t("stats.priority")}</h3>
       <div class="stats-kpis">
-        <div class="stats-kpi"><span>${t("stats.selections_100")}</span><strong>${escapeHtml(stats.bySelection.filter(s => s.progress === 100).length)}</strong></div>
-        <div class="stats-kpi"><span>${t("stats.groups_100")}</span><strong>${escapeHtml(stats.byGroup.filter(g => g.progress === 100).length)}</strong></div>
-        <div class="stats-kpi"><span>${t("stats.especiales_pending")}</span><strong>${escapeHtml(stats.especiales.faltantes)}</strong></div>
-        <div class="stats-kpi"><span>${t("stats.coke_pending")}</span><strong>${escapeHtml(stats.cocaCola.faltantes)}</strong></div>
+        <div class="stats-kpi stats-kpi--selections"><span>${t("stats.selections_100")}</span><strong>${escapeHtml(stats.bySelection.filter(s => s.progress === 100).length)}</strong></div>
+        <div class="stats-kpi stats-kpi--groups"><span>${t("stats.groups_100")}</span><strong>${escapeHtml(stats.byGroup.filter(g => g.progress === 100).length)}</strong></div>
+        <div class="stats-kpi stats-kpi--specials"><span>${t("stats.especiales_pending")}</span><strong>${escapeHtml(stats.especiales.faltantes)}</strong></div>
+        <div class="stats-kpi stats-kpi--coke"><span>${t("stats.coke_pending")}</span><strong>${escapeHtml(stats.cocaCola.faltantes)}</strong></div>
       </div>
       <div class="mini-list">
         <h4>${t("stats.lagging")}</h4>
@@ -1398,10 +1558,13 @@ function renderStatsView(stats) {
 
   content.innerHTML = `
     <div class="stats-cols">
-      <div class="stats-col">${panelOverview}${panelGroups}</div>
-      <div class="stats-col">${panelSelections}${panelPriority}</div>
+      ${panelOverview}
+      ${panelGroups}
+      ${panelSelections}
+      ${panelPriority}
     </div>
   `;
+
 }
 
 function renderApp() {
@@ -1424,16 +1587,35 @@ function renderApp() {
   renderOverview(stats);
   renderStatus();
 
+  const logoHome = document.querySelector("#logo-home");
+  if (logoHome) {
+    const isHome = state.section === "inicio";
+    logoHome.disabled = isHome;
+    logoHome.classList.toggle("pointer-events-none", isHome);
+    logoHome.classList.toggle("cursor-default", isHome);
+  }
+
   document.querySelector("#query-input").value = state.query;
+
   document.querySelector("#view-mode").value = state.viewMode;
 
   // Hide album chrome on home / stats pages
   const isAlbumSection = !["inicio", "stats", "coca-cola"].includes(state.section);
   const showHeader = !["inicio", "stats"].includes(state.section); // show for album sections + coca-cola
   const showBanner = !["inicio", "stats"].includes(state.section);
-  document.querySelector("#album-header").classList.toggle("is-hidden", !showHeader);
-  document.querySelector("#read-only-banner").classList.toggle("is-hidden", !showBanner);
-  document.querySelector("#controls-panel").classList.toggle("is-hidden", !isAlbumSection);
+  
+  const albumHeader = document.querySelector("#album-header");
+  const readOnlyBanner = document.querySelector("#read-only-banner");
+  const controlsPanel = document.querySelector("#controls-panel");
+  
+  albumHeader.classList.toggle("is-hidden", !showHeader);
+  albumHeader.toggleAttribute("hidden", !showHeader);
+  
+  readOnlyBanner.classList.toggle("is-hidden", !showBanner);
+  readOnlyBanner.toggleAttribute("hidden", !showBanner);
+  
+  controlsPanel.classList.toggle("is-hidden", !isAlbumSection);
+  controlsPanel.toggleAttribute("hidden", !isAlbumSection);
 
   if (showHeader) {
     document.querySelector("#section-title").textContent = t(state.section);
@@ -1484,11 +1666,13 @@ async function handleAuthSubmit(event) {
 }
 
 async function handleSignOut() {
-  if (!state.supabase) {
-    return;
+  if (state.supabase) {
+    try {
+      await state.supabase.auth.signOut();
+    } catch (err) {
+      console.warn("Supabase signOut error, proceeding with local sign out:", err);
+    }
   }
-
-  await state.supabase.auth.signOut();
   state.session = null;
   state.stickers = state.catalog;
   renderApp();
@@ -1596,6 +1780,8 @@ function bindEvents() {
       state.query = "";
       state.filter = "todos";
       renderApp();
+      const mainEl = document.querySelector("main");
+      if (mainEl) mainEl.scrollTop = 0;
       return;
     }
 
@@ -1684,6 +1870,8 @@ function bindEvents() {
   document.querySelector("#logo-home")?.addEventListener("click", () => {
     state.section = "inicio";
     renderApp();
+    const mainEl = document.querySelector("main");
+    if (mainEl) mainEl.scrollTop = 0;
   });
 
   document.querySelector("#query-input").addEventListener("input", (event) => {
@@ -1691,6 +1879,8 @@ function bindEvents() {
     // Auto-navigate to album when searching from home or stats
     if (state.query.trim() && ["inicio", "stats"].includes(state.section)) {
       state.section = "all";
+      const mainEl = document.querySelector("main");
+      if (mainEl) mainEl.scrollTop = 0;
     }
     renderApp();
   });

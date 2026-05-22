@@ -190,7 +190,7 @@ const GROUP_PAGE_MAP = {
 // Especiales de torneo: 21 stickers reales (FWC0–FWC19).
 // Páginas vacías (solo info): 4, 5, 6, 7, 56, 57, 110, 111.
 const TOURNAMENT_SPECIALS = [
-  ["FWC0",  "00",    "Panini Logo",              "Logo",     "Tournament Opener", 0],
+  ["FWC0",  "FWC0",  "Panini Logo",              "Logo",     "Tournament Opener", 0],
   ["FWC1",  "FWC1",  "Official Emblem",          "Logo",     "Tournament Opener", 1],
   ["FWC2",  "FWC2",  "Official Emblem",          "Logo",     "Tournament Opener", 1],
   ["FWC3",  "FWC3",  "Official Mascots",         "Mascota",  "Tournament Opener", 1],

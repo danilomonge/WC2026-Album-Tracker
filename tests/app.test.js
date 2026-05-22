@@ -12,6 +12,7 @@ import {
   sanitizeDuplicates,
   validateSupabaseConfig,
   validateStickerId,
+  state,
 } from "../app.js";
 
 test("el dataset usa la edicion Alemania con 12 Coca-Cola y 20 FWC", () => {
@@ -198,4 +199,32 @@ test("validateStickerId acepta ids validos y rechaza ids arbitrarios", () => {
   assert.equal(validateStickerId("MEX20"), true);
   assert.equal(validateStickerId("DROP_TABLE"), false);
   assert.equal(validateStickerId("MEX99"), false);
+});
+
+test("busqueda de paises por idioma (ingles/espanol)", () => {
+  const originalLang = state.lang;
+  const mockStickers = [
+    { id: "GER1", equipoCodigo: "GER", pais: "Germany", grupo: "B", nombre: "Manuel Neuer", numero: "GER1", tipo: "Normal", categoriaEspecial: "" },
+  ];
+
+  // Caso 1: Lenguaje en Español -> Buscar "Alemania" deberia retornar el cromo, pero "Germany" no
+  state.lang = "es";
+  const searchEsAlemania = filterStickers(mockStickers, { query: "Alemania" });
+  assert.equal(searchEsAlemania.length, 1);
+  assert.equal(searchEsAlemania[0].id, "GER1");
+
+  const searchEsGermany = filterStickers(mockStickers, { query: "Germany" });
+  assert.equal(searchEsGermany.length, 0);
+
+  // Caso 2: Lenguaje en Ingles -> Buscar "Germany" deberia retornar el cromo, pero "Alemania" no
+  state.lang = "en";
+  const searchEnGermany = filterStickers(mockStickers, { query: "Germany" });
+  assert.equal(searchEnGermany.length, 1);
+  assert.equal(searchEnGermany[0].id, "GER1");
+
+  const searchEnAlemania = filterStickers(mockStickers, { query: "Alemania" });
+  assert.equal(searchEnAlemania.length, 0);
+
+  // Restaurar idioma original
+  state.lang = originalLang;
 });
