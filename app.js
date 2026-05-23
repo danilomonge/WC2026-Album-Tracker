@@ -1921,12 +1921,7 @@ async function handleAuthSubmit(event) {
           })
         : supabase.auth.signInWithPassword({ email, password });
 
-    const { data, error } = await Promise.race([
-      action,
-      new Promise((_, rej) =>
-        setTimeout(() => rej(new Error("network_timeout")), 15_000)
-      ),
-    ]);
+    const { data, error } = await action;
     if (error) {
       showAuthError(mapAuthError(error.message));
       return;
