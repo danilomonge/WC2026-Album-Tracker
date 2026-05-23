@@ -299,6 +299,8 @@ function applyStaticTranslations() {
   // Inputs with placeholder
   const qInput = document.querySelector("#query-input");
   if (qInput) qInput.placeholder = t("search_placeholder");
+  const mobileQInput = document.querySelector("#mobile-query-input");
+  if (mobileQInput) mobileQInput.placeholder = t("search_placeholder");
   // View mode select options
   const viewMode = document.querySelector("#view-mode");
   if (viewMode) {
@@ -1772,6 +1774,8 @@ function renderApp() {
   }
 
   document.querySelector("#query-input").value = state.query;
+  const mobileInput = document.querySelector("#mobile-query-input");
+  if (mobileInput) mobileInput.value = state.query;
 
   document.querySelector("#view-mode").value = state.viewMode;
 
@@ -2231,6 +2235,30 @@ function bindEvents() {
   document.querySelector("#query-input").addEventListener("input", (event) => {
     state.query = event.target.value;
     // Auto-navigate to album when searching from home or stats
+    if (state.query.trim() && ["inicio", "stats"].includes(state.section)) {
+      state.section = "all";
+      const mainEl = document.querySelector("main");
+      if (mainEl) mainEl.scrollTop = 0;
+    }
+    renderApp();
+  });
+
+  // Mobile search panel
+  document.querySelector("#mobile-search-toggle")?.addEventListener("click", () => {
+    const panel = document.querySelector("#mobile-search-panel");
+    panel.classList.remove("hidden");
+    document.querySelector("#mobile-query-input").focus();
+  });
+
+  document.querySelector("#mobile-search-close")?.addEventListener("click", () => {
+    document.querySelector("#mobile-search-panel").classList.add("hidden");
+    state.query = "";
+    document.querySelector("#mobile-query-input").value = "";
+    renderApp();
+  });
+
+  document.querySelector("#mobile-query-input")?.addEventListener("input", (event) => {
+    state.query = event.target.value;
     if (state.query.trim() && ["inicio", "stats"].includes(state.section)) {
       state.section = "all";
       const mainEl = document.querySelector("main");
