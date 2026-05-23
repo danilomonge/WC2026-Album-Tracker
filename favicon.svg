@@ -1,39 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <defs>
-    <clipPath id="ball">
-      <circle cx="16" cy="16" r="14.5"/>
-    </clipPath>
-    <radialGradient id="shine" cx="42%" cy="35%" r="60%">
-      <stop offset="0%"  stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#d0d0d0"/>
-    </radialGradient>
-  </defs>
-
   <!-- Ball base -->
-  <circle cx="16" cy="16" r="14.5" fill="url(#shine)"/>
+  <circle cx="16" cy="16" r="15" fill="#f0f0f0" stroke="#111827" stroke-width="1"/>
 
-  <!-- Black patches, clipped to the ball circle -->
-  <g clip-path="url(#ball)" fill="#111827">
-    <!-- Centre pentagon (point up, radius 6) -->
-    <polygon points="16,10 21.7,14.1 19.5,20.9 12.5,20.9 10.3,14.1"/>
+  <!-- Centre pentagon (point up, radius 6) -->
+  <polygon points="16,10 21.7,14.1 19.5,20.9 12.5,20.9 10.3,14.1" fill="#111827"/>
 
-    <!-- 5 outer patches (one per edge of the centre pentagon, pushed to the rim) -->
-    <!-- Top-right patch: edge (16,10)–(21.7,14.1) → toward ~54° -->
-    <polygon points="16,10 21.7,14.1 30.0,11.2 25.5,1.5 16,1.5"/>
-
-    <!-- Right patch: edge (21.7,14.1)–(19.5,20.9) → toward ~342° -->
-    <polygon points="21.7,14.1 19.5,20.9 27.5,27.0 30.5,16.0"/>
-
-    <!-- Bottom patch: edge (19.5,20.9)–(12.5,20.9) → toward ~270° -->
-    <polygon points="19.5,20.9 12.5,20.9 10.0,30.5 16,30.5 22.0,30.5"/>
-
-    <!-- Left patch: edge (12.5,20.9)–(10.3,14.1) → toward ~198° -->
-    <polygon points="12.5,20.9 10.3,14.1 1.5,16.0 4.5,27.0"/>
-
-    <!-- Top-left patch: edge (10.3,14.1)–(16,10) → toward ~126° -->
-    <polygon points="10.3,14.1 16,10 16,1.5 6.5,1.5 2.0,11.2"/>
-  </g>
-
-  <!-- Ball outline -->
-  <circle cx="16" cy="16" r="14.5" fill="none" stroke="#111827" stroke-width="1.2"/>
+  <!-- 5 outer patches — kept inside the ball circle -->
+  <!-- Top-right -->
+  <polygon points="16,10 21.7,14.1 28.2,9.5 24,2.5 16,1.5" fill="#111827"/>
+  <!-- Right -->
+  <polygon points="21.7,14.1 19.5,20.9 28,23 30.5,16" fill="#111827"/>
+  <!-- Bottom -->
+  <polygon points="19.5,20.9 12.5,20.9 12,29.5 16,31 20,29.5" fill="#111827"/>
+  <!-- Left -->
+  <polygon points="12.5,20.9 10.3,14.1 1.5,16 4,23" fill="#111827"/>
+  <!-- Top-left -->
+  <polygon points="10.3,14.1 16,10 16,1.5 8,2.5 3.8,9.5" fill="#111827"/>
 </svg>
