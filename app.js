@@ -128,6 +128,7 @@ const TRANSLATIONS = {
     "auth.error.rate_limit":"Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
     "auth.error.invalid_email":"El formato del email no es válido.",
     "auth.error.link_expired":"Este link ha expirado. Solicita uno nuevo desde el formulario.",
+    "auth.error.network":"Error de conexión. Comprueba tu internet e inténtalo de nuevo.",
     "home.album_title":"Mi álbum","home.groups":"Los 12 grupos","home.tournament":"Formato del torneo",
     "home.venues_title":"Sedes","home.album_structure":"Estructura del álbum",
     "home.selections":"selecciones","home.groups_count":"grupos","home.matches":"partidos","home.venues":"sedes",
@@ -218,6 +219,7 @@ const TRANSLATIONS = {
     "auth.error.rate_limit":"Too many attempts. Please wait a few minutes and try again.",
     "auth.error.invalid_email":"The email format is not valid.",
     "auth.error.link_expired":"This link has expired. Please request a new one from the form.",
+    "auth.error.network":"Connection error. Check your internet and try again.",
     "home.album_title":"My album","home.groups":"The 12 groups","home.tournament":"Tournament format",
     "home.venues_title":"Venues","home.album_structure":"Album structure",
     "home.selections":"selections","home.groups_count":"groups","home.matches":"matches","home.venues":"venues",
@@ -1817,6 +1819,7 @@ export function mapAuthError(message) {
   if (m.includes("password") && (m.includes("least") || m.includes("short") || m.includes("weak"))) return t("auth.error.weak_password");
   if (m.includes("rate limit") || m.includes("rate_limit") || m.includes("too many") || m.includes("429") || m.includes("exceeded") || m.includes("over_email")) return t("auth.error.rate_limit");
   if (m.includes("invalid email") || m.includes("email format") || m.includes("valid email")) return t("auth.error.invalid_email");
+  if (m.includes("network_timeout") || m.includes("fetch") || m.includes("failed to fetch") || m.includes("networkerror")) return t("auth.error.network");
   return message;
 }
 
@@ -1918,7 +1921,12 @@ async function handleAuthSubmit(event) {
           })
         : supabase.auth.signInWithPassword({ email, password });
 
-    const { data, error } = await action;
+    const { data, error } = await Promise.race([
+      action,
+      new Promise((_, rej) =>
+        setTimeout(() => rej(new Error("network_timeout")), 15_000)
+      ),
+    ]);
     if (error) {
       showAuthError(mapAuthError(error.message));
       return;
