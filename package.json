@@ -4,6 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:css": "BROWSERSLIST_IGNORE_OLD_DATA=1 tailwindcss -i ./tailwind.input.css -o ./tailwind.css --minify",
     "test": "node --test tests/*.test.js"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
   }
 }

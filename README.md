@@ -75,7 +75,7 @@ The German edition differs from the international standard in one way: it includ
 - 1 team photo
 - 18 player stickers
 
-### FWC Specials (pages 1–7 and 106–109)
+### FWC Specials (pages 0–3 and 106–109)
 
 20 tournament special stickers:
 
@@ -89,7 +89,7 @@ The German edition differs from the international standard in one way: it includ
 | FWC6–FWC11 | Host nations (Canada, Mexico, USA ×3) |
 | FWC12–FWC19 | Additional specials (FIFA Museums, Legends…) |
 
-### Coca-Cola Germany (pages 106–109)
+### Coca-Cola Germany (pages 112–113)
 
 12 stickers exclusive to the German edition, identified as CC1–CC12.
 
@@ -253,6 +253,15 @@ python3 -m http.server 8000
 
 Open `http://localhost:8000`.
 
+### Rebuilding styles after UI changes
+
+Tailwind utilities are compiled into `tailwind.css` so production pages do not load the Tailwind runtime CDN:
+
+```bash
+npm install
+npm run build:css
+```
+
 ### Read-only — no server
 
 Open `index.html` directly in the browser. Works in read-only mode (no login or sync).
@@ -318,7 +327,7 @@ create table if not exists public.user_sticker_progress (
   updated_at timestamptz not null default now(),
   constraint user_sticker_progress_duplicates_non_negative check (duplicates >= 0),
   constraint user_sticker_progress_valid_sticker_id check (
-    sticker_id ~ '^(FWC([0-9]|1[0-9]|20)|CC([1-9]|1[0-2])|[A-Z]{3}([1-9]|1[0-9]|20))$'
+    sticker_id ~ '^(FWC([0-9]|1[0-9])|CC([1-9]|1[0-2])|(MEX|RSA|KOR|CZE|CAN|BIH|QAT|SUI|BRA|MAR|HAI|SCO|USA|PAR|AUS|TUR|GER|CUW|CIV|ECU|NED|JPN|SWE|TUN|BEL|EGY|IRN|NZL|ESP|CPV|KSA|URU|FRA|SEN|IRQ|NOR|ARG|ALG|AUT|JOR|POR|COD|UZB|COL|ENG|CRO|GHA|PAN)([1-9]|1[0-9]|20))$'
   ),
   unique (user_id, sticker_id)
 );
@@ -376,10 +385,11 @@ Supabase credentials are pre-configured in `app.js`. To use your own project, ed
 | `index.html` | SPA shell: HTML structure, nav, auth modal, toast |
 | `app.js` | All logic: UI, Supabase auth, sync, filters, search, stats, PDF export, i18n, progressive rendering |
 | `styles.css` | Full visual design: dark navy theme, gradients, components (chips, cards, headers, stats), responsive |
+| `tailwind.css` | Compiled utility CSS used in production; generated from `tailwind.input.css` |
 | `data.js` | Frozen catalog of all 992 Germany-edition stickers: stickers, groups, teams, team colors, flag emojis |
 | `serve.mjs` | Minimal Node.js dev server for `localhost:5500` |
 | `tests/app.test.js` | Unit test suite for catalog integrity and business logic |
-| `package.json` | Dev dependencies and `npm test` script |
+| `package.json` | Development scripts for CSS build and tests |
 
 ---
 

@@ -106,6 +106,7 @@ const TRANSLATIONS = {
     // Auth
     "auth.account":"Cuenta","auth.title.login":"Iniciar sesión","auth.title.register":"Crear cuenta",
     "auth.google":"Continuar con Google","auth.or_email":"o con email",
+    "auth.error.provider_disabled":"Este método de acceso no está habilitado.",
     "auth.email":"Email","auth.password":"Contraseña",
     "auth.forgot_password":"¿Olvidaste tu contraseña?",
     "auth.submit.login":"Entrar","auth.submit.register":"Registrarme","auth.submit.reset":"Enviar enlace",
@@ -199,6 +200,7 @@ const TRANSLATIONS = {
     "empty.desc":"Try a different filter, change the grouping, or clear the search.",
     "auth.account":"Account","auth.title.login":"Sign in","auth.title.register":"Create account",
     "auth.google":"Continue with Google","auth.or_email":"or with email",
+    "auth.error.provider_disabled":"This sign-in method is not enabled.",
     "auth.email":"Email","auth.password":"Password",
     "auth.forgot_password":"Forgot your password?",
     "auth.submit.login":"Sign in","auth.submit.register":"Register","auth.submit.reset":"Send link",
@@ -347,6 +349,8 @@ function stripLeadingEmojiLabel(value) {
   return String(value || "").replace(/^\p{Extended_Pictographic}+\s*/u, "").trim();
 }
 
+const VALID_STICKER_IDS = new Set(STICKERS.map((sticker) => sticker.id));
+
 export const state = {
   catalog: STICKERS,
   stickers: STICKERS,
@@ -363,6 +367,7 @@ export const state = {
   isSyncing: false,
   config: loadConfig(),
   authSubscription: null,
+  googleAuthEnabled: false,
   isRecovering: false,
   pendingLinkError: false,
   // Issue #8: wrap localStorage.getItem in try/catch — it throws in restricted
@@ -388,12 +393,7 @@ export function sanitizeDuplicates(value) {
 }
 
 export function validateStickerId(stickerId) {
-  // Issue #11: FWC numbers are 1-20. The old regex used [0-9] for the units
-  // digit which incorrectly allowed FWC0. Fixed to [1-9] so the valid range is
-  // FWC1-FWC20, CC1-CC12, and XXX1-XXX20 for team stickers.
-  return /^(FWC([1-9]|1[0-9]|20)|CC([1-9]|1[0-2])|[A-Z]{3}([1-9]|1[0-9]|20))$/.test(
-    String(stickerId || ""),
-  );
+  return VALID_STICKER_IDS.has(String(stickerId || ""));
 }
 
 function isFileProtocol() {
@@ -896,6 +896,27 @@ function closeAuthModal() {
   document.querySelector("#auth-password-confirm").value = "";
 }
 
+async function loadAuthProviderAvailability() {
+  try {
+    const response = await Promise.race([
+      fetch(`${state.config.url}/auth/v1/settings`, {
+        headers: { apikey: state.config.anonKey },
+      }),
+      new Promise((_, reject) => {
+        setTimeout(() => reject(new Error("auth settings timeout")), 5_000);
+      }),
+    ]);
+    if (response.ok) {
+      const settings = await response.json();
+      state.googleAuthEnabled = Boolean(settings.external?.google);
+    }
+  } catch (error) {
+    console.warn("Could not load Supabase auth providers:", error.message);
+  } finally {
+    switchAuthMode(state.authMode);
+  }
+}
+
 async function ensureSupabaseClient() {
   if (state.supabase) {
     return state.supabase;
@@ -946,6 +967,7 @@ async function ensureSupabaseClient() {
       ...(authRedirect.hasImplicitSession ? { flowType: "implicit" } : {}),
     },
   });
+  void loadAuthProviderAvailability();
 
   if (state.authSubscription) {
     state.authSubscription.unsubscribe();
@@ -2170,11 +2192,12 @@ function switchAuthMode(mode) {
     hint.classList.toggle("hidden", !isReset && !isUpdate);
   }
 
-  // Show/hide OAuth + divider (hidden in reset or update mode)
+  // Only advertise OAuth providers confirmed as enabled in Supabase.
   const oauth = document.querySelector("#auth-oauth");
   const divider = document.querySelector("#auth-divider");
-  if (oauth) oauth.classList.toggle("hidden", isReset || isUpdate);
-  if (divider) divider.classList.toggle("hidden", isReset || isUpdate);
+  const showGoogle = state.googleAuthEnabled && !isReset && !isUpdate;
+  if (oauth) oauth.classList.toggle("hidden", !showGoogle);
+  if (divider) divider.classList.toggle("hidden", !showGoogle);
 
   // Show/hide email label (hidden in update mode)
   const emailLabel = document.querySelector("#auth-email")?.closest("label");
@@ -2516,6 +2539,10 @@ function bindEvents() {
 
   document.querySelector("#auth-google")?.addEventListener("click", async () => {
     try {
+      if (!state.googleAuthEnabled) {
+        showAuthError(t("auth.error.provider_disabled"));
+        return;
+      }
       const supabase = await ensureSupabaseClient();
       // Missing null check: ensureSupabaseClient() returns null on file:// or
       // missing config. Guard before dereferencing to avoid TypeError.

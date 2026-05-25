@@ -197,7 +197,9 @@ test("escapeHtml neutraliza caracteres peligrosos", () => {
 });
 
 test("validateStickerId acepta ids validos y rechaza ids arbitrarios", () => {
-  assert.equal(validateStickerId("FWC20"), true);
+  assert.equal(validateStickerId("FWC0"), true);
+  assert.equal(validateStickerId("FWC19"), true);
+  assert.equal(validateStickerId("FWC20"), false);
   assert.equal(validateStickerId("CC12"), true);
   assert.equal(validateStickerId("MEX20"), true);
   assert.equal(validateStickerId("DROP_TABLE"), false);
