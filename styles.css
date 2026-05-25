@@ -244,8 +244,13 @@
   content-visibility: auto;
   contain-intrinsic-size: auto 400px;
 }
+/* Añadir padding de seguridad solo si board-section contiene la grilla directamente (vistas por selección o página) */
+.board-section:has(> .sticker-grid) {
+  padding-left: 8px;
+  padding-right: 8px;
+}
 .team-subsection {
-  padding: 16px 0 20px;
+  padding: 16px 8px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   content-visibility: auto;
   contain-intrinsic-size: auto 300px;
@@ -260,7 +265,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 4px 12px;
+  padding: 6px 0 12px;
   margin-bottom: 14px;
 }
 .team-header .team-flag {

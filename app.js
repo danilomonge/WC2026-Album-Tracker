@@ -950,6 +950,25 @@ async function ensureSupabaseClient() {
   return state.supabase;
 }
 
+function _handleSyncError(err) {
+  const msg = (err?.message || "").toLowerCase();
+  const isAuthError =
+    err?.status === 401 ||
+    err?.code === "PGRST301" ||
+    msg.includes("jwt") ||
+    msg.includes("expired") ||
+    msg.includes("invalid signature");
+  if (isAuthError) {
+    console.warn("Session expired or invalid, signing out locally.");
+    state.session = null;
+    state.stickers = state.catalog;
+    try { state.supabase?.auth.signOut(); } catch (_) {}
+  } else {
+    setBannerMessage(t("toast.sync_error"), "warning");
+    state.stickers = state.catalog;
+  }
+}
+
 async function loadRemoteProgress() {
   if (!state.session || !state.supabase) {
     state.isSyncing = false;
@@ -960,6 +979,18 @@ async function loadRemoteProgress() {
   state.isSyncing = true;
   renderStatus();
 
+  // Watchdog: if Supabase doesn't respond in 12 s (e.g. paused project, token
+  // refresh hanging), unstick the UI so the user isn't left in a frozen state.
+  const watchdog = setTimeout(() => {
+    if (state.isSyncing) {
+      console.warn("loadRemoteProgress: timed out after 12 s");
+      state.isSyncing = false;
+      state.stickers = state.catalog;
+      setBannerMessage(t("toast.sync_error"), "warning");
+      renderApp();
+    }
+  }, 12_000);
+
   try {
     const { data, error } = await state.supabase
       .from("user_sticker_progress")
@@ -967,15 +998,14 @@ async function loadRemoteProgress() {
       .eq("user_id", state.session.user.id);
 
     if (error) {
-      setBannerMessage(t("toast.sync_error"), "warning");
-      state.stickers = state.catalog;
+      _handleSyncError(error);
     } else {
       state.stickers = mergeCatalogWithProgress(state.catalog, data || []);
     }
   } catch (e) {
-    setBannerMessage(t("toast.sync_error"), "warning");
-    state.stickers = state.catalog;
+    _handleSyncError(e);
   } finally {
+    clearTimeout(watchdog);
     state.isSyncing = false;
     renderStatus();
   }
@@ -2318,7 +2348,7 @@ async function hydrateApp() {
   } catch (err) {
     console.warn("Supabase not available:", err.message);
   }
-  renderApp();       // re-render with remote progress (or catalog if not logged in)
+  renderApp();       // re-render with remote data (or catalog if offline/logged-out)
 }
 
 if (typeof window !== "undefined") {
