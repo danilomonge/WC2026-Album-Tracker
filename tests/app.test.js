@@ -13,6 +13,8 @@ import {
   validateSupabaseConfig,
   validateStickerId,
   mapAuthError,
+  parseAuthRedirectLocation,
+  isConfirmedRecoveryEvent,
   state,
 } from "../app.js";
 
@@ -249,3 +251,39 @@ test("mapAuthError traduce correctamente los mensajes de error de Supabase", () 
   state.lang = originalLang;
 });
 
+test("parseAuthRedirectLocation reconoce recovery implicito en el hash", () => {
+  const redirect = parseAuthRedirectLocation({
+    search: "",
+    hash: "#access_token=access&refresh_token=refresh&type=recovery",
+  });
+
+  assert.equal(redirect.isRecovery, true);
+  assert.equal(redirect.hasImplicitSession, true);
+  assert.equal(redirect.tokenHash, "");
+});
+
+test("parseAuthRedirectLocation reconoce recovery con token_hash y enlaces expirados", () => {
+  const tokenRedirect = parseAuthRedirectLocation({
+    search: "?token_hash=hashed-token&type=recovery",
+    hash: "",
+  });
+  const expiredRedirect = parseAuthRedirectLocation({
+    search: "",
+    hash: "#error=access_denied&error_code=otp_expired",
+  });
+
+  assert.equal(tokenRedirect.isRecovery, true);
+  assert.equal(tokenRedirect.tokenHash, "hashed-token");
+  assert.equal(tokenRedirect.hasImplicitSession, false);
+  assert.equal(expiredRedirect.error, "access_denied");
+  assert.equal(expiredRedirect.errorCode, "otp_expired");
+});
+
+test("INITIAL_SESSION no consume un enlace recovery antes de confirmar la sesion", () => {
+  const session = { user: { id: "recovering-user" } };
+
+  assert.equal(isConfirmedRecoveryEvent("INITIAL_SESSION", null, true), false);
+  assert.equal(isConfirmedRecoveryEvent("INITIAL_SESSION", session, true), false);
+  assert.equal(isConfirmedRecoveryEvent("SIGNED_IN", session, true), true);
+  assert.equal(isConfirmedRecoveryEvent("PASSWORD_RECOVERY", session, false), true);
+});
