@@ -117,6 +117,7 @@ const TRANSLATIONS = {
     "auth.title.update":"Nueva contraseña",
     "auth.submit.update":"Guardar contraseña",
     "auth.update_hint":"Elige una nueva contraseña para tu cuenta.",
+    "auth.confirm_password":"Confirmar contraseña",
     "toast.password_updated":"Contraseña actualizada correctamente.",
     "toast.password_update_error":"No se pudo actualizar la contraseña.",
     "toast.reset_email_sent":"Si existe una cuenta con ese email, recibirás un enlace en tu bandeja de entrada.",
@@ -128,6 +129,7 @@ const TRANSLATIONS = {
     "auth.error.rate_limit":"Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
     "auth.error.invalid_email":"El formato del email no es válido.",
     "auth.error.link_expired":"Este link ha expirado. Solicita uno nuevo desde el formulario.",
+    "auth.error.password_mismatch":"Las contraseñas no coinciden.",
     "auth.error.network":"Error de conexión. Comprueba tu internet e inténtalo de nuevo.",
     "home.album_title":"Mi álbum","home.groups":"Los 12 grupos","home.tournament":"Formato del torneo",
     "home.venues_title":"Sedes","home.album_structure":"Estructura del álbum",
@@ -208,6 +210,7 @@ const TRANSLATIONS = {
     "auth.title.update":"New password",
     "auth.submit.update":"Save password",
     "auth.update_hint":"Choose a new password for your account.",
+    "auth.confirm_password":"Confirm password",
     "toast.password_updated":"Password updated successfully.",
     "toast.password_update_error":"Could not update password.",
     "toast.reset_email_sent":"If an account exists with that email, you'll receive a reset link in your inbox.",
@@ -219,6 +222,7 @@ const TRANSLATIONS = {
     "auth.error.rate_limit":"Too many attempts. Please wait a few minutes and try again.",
     "auth.error.invalid_email":"The email format is not valid.",
     "auth.error.link_expired":"This link has expired. Please request a new one from the form.",
+    "auth.error.password_mismatch":"Passwords do not match.",
     "auth.error.network":"Connection error. Check your internet and try again.",
     "home.album_title":"My album","home.groups":"The 12 groups","home.tournament":"Tournament format",
     "home.venues_title":"Venues","home.album_structure":"Album structure",
@@ -361,7 +365,9 @@ export const state = {
   authSubscription: null,
   isRecovering: false,
   pendingLinkError: false,
-  lang: (typeof localStorage !== "undefined" && localStorage.getItem("panini-lang")) || "es",
+  // Issue #8: wrap localStorage.getItem in try/catch — it throws in restricted
+  // Safari private-browsing and certain iOS WebViews even when the global exists.
+  lang: (() => { try { return localStorage.getItem("panini-lang") || "es"; } catch (_) { return "es"; } })(),
 };
 
 export function escapeHtml(value) {
@@ -382,7 +388,10 @@ export function sanitizeDuplicates(value) {
 }
 
 export function validateStickerId(stickerId) {
-  return /^(FWC([0-9]|1[0-9]|20)|CC([1-9]|1[0-2])|[A-Z]{3}([1-9]|1[0-9]|20))$/.test(
+  // Issue #11: FWC numbers are 1-20. The old regex used [0-9] for the units
+  // digit which incorrectly allowed FWC0. Fixed to [1-9] so the valid range is
+  // FWC1-FWC20, CC1-CC12, and XXX1-XXX20 for team stickers.
+  return /^(FWC([1-9]|1[0-9]|20)|CC([1-9]|1[0-2])|[A-Z]{3}([1-9]|1[0-9]|20))$/.test(
     String(stickerId || ""),
   );
 }
@@ -393,6 +402,52 @@ function isFileProtocol() {
 
 function isAuthRuntimeAvailable() {
   return !isFileProtocol();
+}
+
+export function parseAuthRedirectLocation(locationLike = {}) {
+  const searchParams = new URLSearchParams(locationLike.search || "");
+  const hashParams = new URLSearchParams(String(locationLike.hash || "").replace(/^#/, ""));
+  const getParam = (key) => searchParams.get(key) || hashParams.get(key) || "";
+  const type = getParam("type");
+
+  return {
+    type,
+    tokenHash: getParam("token_hash"),
+    hasImplicitSession: Boolean(getParam("access_token") && getParam("refresh_token")),
+    error: getParam("error"),
+    errorCode: getParam("error_code"),
+    isRecovery: type === "recovery",
+  };
+}
+
+export function isConfirmedRecoveryEvent(event, session, recoveryPending) {
+  return event === "PASSWORD_RECOVERY" ||
+    (recoveryPending && event !== "INITIAL_SESSION" && Boolean(session));
+}
+
+function clearAuthRedirectLocation() {
+  if (typeof window === "undefined" || !window.history?.replaceState) {
+    return;
+  }
+
+  const authKeys = [
+    "access_token", "refresh_token", "expires_at", "expires_in", "provider_token",
+    "token_type", "token_hash", "type", "code", "error", "error_code",
+    "error_description",
+  ];
+  const cleanUrl = new URL(window.location.href);
+  authKeys.forEach((key) => cleanUrl.searchParams.delete(key));
+
+  const hashParams = new URLSearchParams(cleanUrl.hash.replace(/^#/, ""));
+  authKeys.forEach((key) => hashParams.delete(key));
+  const remainingHash = hashParams.toString();
+  cleanUrl.hash = remainingHash ? `#${remainingHash}` : "";
+
+  window.history.replaceState(
+    null,
+    document.title,
+    `${cleanUrl.pathname}${cleanUrl.search}${cleanUrl.hash}`,
+  );
 }
 
 export function validateSupabaseConfig(config) {
@@ -447,7 +502,13 @@ function loadConfig() {
 }
 
 function saveConfig(config) {
-  window.localStorage.setItem(STORAGE_KEYS.config, JSON.stringify(config));
+  // Issue #8: wrap in try/catch — localStorage throws in private browsing (Safari)
+  // and when the storage quota is exceeded.
+  try {
+    window.localStorage.setItem(STORAGE_KEYS.config, JSON.stringify(config));
+  } catch (e) {
+    console.warn("saveConfig: could not write to localStorage:", e);
+  }
 }
 
 function loadViewState() {
@@ -476,18 +537,24 @@ function saveViewState() {
     return;
   }
 
-  window.localStorage.setItem(
-    STORAGE_KEYS.view,
-    JSON.stringify({
-      section: state.section,
-      filter: state.filter,
-      viewMode: state.viewMode,
-      selectedGroup: state.selectedGroup,
-      selectedTeam: state.selectedTeam,
-      selectedPage: state.selectedPage,
-      // query is intentionally excluded — searches should not persist across page loads
-    }),
-  );
+  // Issue #8: guard against localStorage being unavailable (private browsing,
+  // quota exceeded, or security restrictions).
+  try {
+    window.localStorage.setItem(
+      STORAGE_KEYS.view,
+      JSON.stringify({
+        section: state.section,
+        filter: state.filter,
+        viewMode: state.viewMode,
+        selectedGroup: state.selectedGroup,
+        selectedTeam: state.selectedTeam,
+        selectedPage: state.selectedPage,
+        // query is intentionally excluded — searches should not persist across page loads
+      }),
+    );
+  } catch (e) {
+    console.warn("saveViewState: could not write to localStorage:", e);
+  }
 }
 
 function normalizeText(value) {
@@ -816,6 +883,7 @@ function openAuthModal() {
   switchAuthMode("login");
   document.querySelector("#auth-email").value = "";
   document.querySelector("#auth-password").value = "";
+  document.querySelector("#auth-password-confirm").value = "";
   clearAuthError();
   openModal("#auth-modal");
 }
@@ -825,6 +893,7 @@ function closeAuthModal() {
   switchAuthMode("login");
   document.querySelector("#auth-email").value = "";
   document.querySelector("#auth-password").value = "";
+  document.querySelector("#auth-password-confirm").value = "";
 }
 
 async function ensureSupabaseClient() {
@@ -840,20 +909,21 @@ async function ensureSupabaseClient() {
     return null;
   }
 
-  // Detect password recovery in URL parameters
-  if (typeof window !== "undefined") {
-    const hash = window.location.hash || "";
-    const search = window.location.search || "";
-    if (hash.includes("type=recovery") || search.includes("type=recovery")) {
-      state.isRecovering = true;
-    }
+  const authRedirect = typeof window !== "undefined"
+    ? parseAuthRedirectLocation(window.location)
+    : parseAuthRedirectLocation();
+  state.isRecovering = authRedirect.isRecovery;
 
-    // Supabase error redirect (e.g. expired/used recovery link):
-    // #error=access_denied&error_code=otp_expired&error_description=...
-    if (hash.includes("error=") && (hash.includes("otp_expired") || hash.includes("access_denied"))) {
-      state.pendingLinkError = true;
-      window.history.replaceState(null, document.title, window.location.pathname);
-    }
+  // Supabase error redirect (e.g. expired/used recovery link):
+  // #error=access_denied&error_code=otp_expired&error_description=...
+  if (authRedirect.error && (
+    authRedirect.isRecovery ||
+    authRedirect.error === "access_denied" ||
+    authRedirect.errorCode === "otp_expired"
+  )) {
+    state.isRecovering = false;
+    state.pendingLinkError = true;
+    clearAuthRedirectLocation();
   }
 
   let createClient;
@@ -868,13 +938,12 @@ async function ensureSupabaseClient() {
   // flowType:'implicit' tells detectSessionInUrl to parse the hash fragment;
   // without it the default PKCE client ignores hash tokens and getSession()
   // returns null, so the recovery modal never appears.
-  const hashHasToken = (window.location.hash || "").includes("access_token=");
   state.supabase = createClient(state.config.url, state.config.anonKey, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
-      ...(hashHasToken ? { flowType: "implicit" } : {}),
+      ...(authRedirect.hasImplicitSession ? { flowType: "implicit" } : {}),
     },
   });
 
@@ -882,35 +951,68 @@ async function ensureSupabaseClient() {
     state.authSubscription.unsubscribe();
   }
 
-  const { data: authListener } = state.supabase.auth.onAuthStateChange(async (event, session) => {
+  const { data: authListener } = state.supabase.auth.onAuthStateChange((event, session) => {
     state.session = session;
 
-    const isRecovery = event === "PASSWORD_RECOVERY" || state.isRecovering;
+    // INITIAL_SESSION can be emitted before the recovery token in the URL has
+    // been exchanged. Do not clear that URL until Supabase confirms a recovery
+    // session, or the one-time token would be lost before it can be used.
+    const isRecovery = isConfirmedRecoveryEvent(event, session, state.isRecovering);
     if (isRecovery) {
       state.isRecovering = false;
-      if (typeof window !== "undefined" && window.history && window.history.replaceState) {
-        // Strip all Supabase auth params from both hash and search string
-        const params = new URLSearchParams(window.location.search);
-        ["access_token", "refresh_token", "token_hash", "type", "error", "error_description"].forEach(k => params.delete(k));
-        const qs = params.toString();
-        const cleanUrl = window.location.pathname + (qs ? "?" + qs : "");
-        window.history.replaceState(null, document.title, cleanUrl);
+      clearAuthRedirectLocation();
+    }
+
+    // Startup loads progress once in hydrateApp; INITIAL_SESSION must remain a
+    // no-op here while any recovery URL is still being processed.
+    if (event === "INITIAL_SESSION") {
+      return;
+    }
+
+    // Supabase holds its auth lock while this callback runs. Queries made from an
+    // awaited callback can wait for that same lock forever after reload/token
+    // refresh, leaving the UI stuck at "Sincronizando" and auth unusable.
+    // Defer all work that may touch Supabase until the callback has returned.
+    setTimeout(async () => {
+      await loadRemoteProgress();
+      renderApp();
+
+      if (isRecovery) {
+        switchAuthMode("update");
+        openModal("#auth-modal");
       }
-    }
-
-    await loadRemoteProgress();
-    renderApp();
-
-    if (isRecovery) {
-      switchAuthMode("update");
-      openModal("#auth-modal");
-    }
+    }, 0);
   });
   state.authSubscription = authListener.subscription;
 
-  const {
-    data: { session },
-  } = await state.supabase.auth.getSession();
+  // Custom recovery templates use ?token_hash=...&type=recovery. Unlike hash
+  // token redirects, these must be exchanged explicitly to establish a session.
+  if (authRedirect.isRecovery && authRedirect.tokenHash && !state.pendingLinkError) {
+    const { error } = await state.supabase.auth.verifyOtp({
+      token_hash: authRedirect.tokenHash,
+      type: "recovery",
+    });
+    if (error) {
+      state.isRecovering = false;
+      state.pendingLinkError = true;
+      clearAuthRedirectLocation();
+    }
+  }
+
+  // Issue #3: getSession() can hang indefinitely if the Supabase project is
+  // paused or the token refresh network request stalls. Race it against a 10 s
+  // timeout so the UI is never blocked permanently.
+  let session = null;
+  try {
+    const result = await Promise.race([
+      state.supabase.auth.getSession(),
+      new Promise((_, rej) => setTimeout(() => rej(new Error("getSession timeout")), 10_000)),
+    ]);
+    session = result?.data?.session ?? null;
+  } catch (e) {
+    console.warn("ensureSupabaseClient: getSession failed or timed out:", e.message);
+    session = null;
+  }
   state.session = session;
 
   // Fallback: with Supabase PKCE flow, detectSessionInUrl may process the recovery
@@ -920,14 +1022,7 @@ async function ensureSupabaseClient() {
   // the "New password" modal directly.
   if (state.isRecovering && session) {
     state.isRecovering = false;
-    if (typeof window !== "undefined" && window.history?.replaceState) {
-      const params = new URLSearchParams(window.location.search);
-      ["access_token", "refresh_token", "token_hash", "type", "error", "error_description"]
-        .forEach(k => params.delete(k));
-      const qs = params.toString();
-      window.history.replaceState(null, document.title,
-        window.location.pathname + (qs ? "?" + qs : ""));
-    }
+    clearAuthRedirectLocation();
     // Defer until hydrateApp's final renderApp() has finished
     setTimeout(() => {
       switchAuthMode("update");
@@ -962,6 +1057,10 @@ function _handleSyncError(err) {
     console.warn("Session expired or invalid, signing out locally.");
     state.session = null;
     state.stickers = state.catalog;
+    // Issue #18: fire-and-forget signOut() is intentional here. We have already
+    // reset local state (session null, stickers = catalog) so the UI is instantly
+    // in a logged-out state. The async call is a best-effort server-side token
+    // invalidation. If it fails, no harm is done because local state is clean.
     try { state.supabase?.auth.signOut(); } catch (_) {}
   } else {
     setBannerMessage(t("toast.sync_error"), "warning");
@@ -976,13 +1075,19 @@ async function loadRemoteProgress() {
     return;
   }
 
+  // Issue #1 / #2: concurrency guard — bump the generation so any previously
+  // in-flight call will detect it is stale and skip writing state.
+  const myGeneration = ++_syncGeneration;
+
   state.isSyncing = true;
   renderStatus();
 
   // Watchdog: if Supabase doesn't respond in 12 s (e.g. paused project, token
   // refresh hanging), unstick the UI so the user isn't left in a frozen state.
+  // Issue #17: watchdog must also clear itself from any concurrent-call scenario —
+  // the flag is only cleared when THIS call's generation is still current.
   const watchdog = setTimeout(() => {
-    if (state.isSyncing) {
+    if (state.isSyncing && myGeneration === _syncGeneration) {
       console.warn("loadRemoteProgress: timed out after 12 s");
       state.isSyncing = false;
       state.stickers = state.catalog;
@@ -997,17 +1102,27 @@ async function loadRemoteProgress() {
       .select("sticker_id, obtained, duplicates")
       .eq("user_id", state.session.user.id);
 
+    // Issue #1: if a newer call started while we were awaiting, discard our result.
+    if (myGeneration !== _syncGeneration) return;
+
     if (error) {
       _handleSyncError(error);
     } else {
       state.stickers = mergeCatalogWithProgress(state.catalog, data || []);
+      // Issue #12: clear any previously-set sync-error banner on successful load
+      // so it doesn't remain stuck after a successful retry.
+      setBannerMessage("", "success");
     }
   } catch (e) {
+    if (myGeneration !== _syncGeneration) return;
     _handleSyncError(e);
   } finally {
     clearTimeout(watchdog);
-    state.isSyncing = false;
-    renderStatus();
+    // Issue #2: only reset isSyncing if we are still the active call.
+    if (myGeneration === _syncGeneration) {
+      state.isSyncing = false;
+      renderStatus();
+    }
   }
 }
 
@@ -1022,8 +1137,12 @@ async function persistSticker(sticker) {
     return false;
   }
 
+  // Issue #5: snapshot session and user_id now; if the session is invalidated
+  // mid-flight we detect it cleanly instead of crashing or using a stale user_id.
+  const snapshotUserId = state.session.user.id;
+
   const payload = {
-    user_id: state.session.user.id,
+    user_id: snapshotUserId,
     sticker_id: sticker.id,
     obtained: sticker.obtenido,
     duplicates: sticker.repetidos,
@@ -1034,12 +1153,18 @@ async function persistSticker(sticker) {
 
   let success = false;
   try {
+    // Issue #5: if the user signed out between the guard above and the await,
+    // abort silently — the caller's error path (loadRemoteProgress) handles recovery.
+    if (!state.session || state.session.user.id !== snapshotUserId) {
+      return false;
+    }
+
     let error = null;
     if (!sticker.obtenido && sticker.repetidos === 0) {
       ({ error } = await state.supabase
         .from("user_sticker_progress")
         .delete()
-        .eq("user_id", state.session.user.id)
+        .eq("user_id", snapshotUserId)
         .eq("sticker_id", sticker.id));
     } else {
       ({ error } = await state.supabase
@@ -1062,7 +1187,11 @@ async function persistSticker(sticker) {
 }
 
 function patchStickerCard(stickerId, sticker) {
-  const article = document.querySelector(`article[data-sticker-id="${escapeHtml(stickerId)}"]`);
+  // Issue #16 adjacent: for querySelector, CSS.escape() is correct (not escapeHtml
+  // which produces HTML entities that don't match DOM attribute values). In practice
+  // all sticker IDs are alphanumeric so both are no-ops, but use CSS.escape for
+  // correctness and forward-safety.
+  const article = document.querySelector(`article[data-sticker-id="${CSS.escape(stickerId)}"]`);
   if (!article) return;
 
   article.classList.toggle("is-owned", sticker.obtenido);
@@ -1149,9 +1278,10 @@ function renderSelectOptions() {
   const teamSelect = document.querySelector("#team-select");
   const pageSelect = document.querySelector("#page-select");
 
+  // Issue #16: escape group.letter inside HTML attributes and text nodes.
   groupSelect.innerHTML = `
     <option value="all">${t("all_groups")}</option>
-    ${GROUPS.map((group) => `<option value="${group.letter}">${t("group_letter")} ${group.letter}</option>`).join("")}
+    ${GROUPS.map((group) => `<option value="${escapeHtml(group.letter)}">${t("group_letter")} ${escapeHtml(group.letter)}</option>`).join("")}
   `;
   groupSelect.value = state.selectedGroup;
 
@@ -1303,22 +1433,30 @@ function renderStickerCard(sticker) {
     ? `<span class="type-pill">${escapeHtml(sticker.tipo)}</span>`
     : "";
 
+  // Issue #16: escape all data-attribute values and CSS custom properties to
+  // prevent attribute injection if catalog data ever contains unexpected chars.
+  const safeId    = escapeHtml(sticker.id);
+  const safeGrupo = escapeHtml(sticker.grupo);
+  // CSS custom property values: restrict to safe color strings (hex/rgb/named).
+  const safeAccent      = /^[#a-zA-Z0-9(),%. ]+$/.test(accent)             ? accent             : "#c2c6d3";
+  const safeGroupAccent = /^[#a-zA-Z0-9(),%. ]+$/.test(sticker.colorGrupo) ? sticker.colorGrupo : "#c2c6d3";
+
   // The badge and remove button are placed OUTSIDE the <article> (which has
   // overflow:hidden) but inside a position:relative wrapper, so they are never clipped.
   return `
     <div class="sticker-card-wrap">
       <article
         class="sticker-card ${statusClass}${specialClass}${cokeClass}${authClass}"
-        data-sticker-id="${sticker.id}"
-        data-group="${sticker.grupo}"
-        style="--team-accent:${accent};--group-accent:${sticker.colorGrupo}"
+        data-sticker-id="${safeId}"
+        data-group="${safeGrupo}"
+        style="--team-accent:${safeAccent};--group-accent:${safeGroupAccent}"
       >
-        <button type="button" class="sticker-card__surface" data-action="toggle-sticker" data-sticker-id="${sticker.id}">
+        <button type="button" class="sticker-card__surface" data-action="toggle-sticker" data-sticker-id="${safeId}">
           <div class="sticker-card__top">
             ${typePill}
             <span class="number-plate">${escapeHtml(sticker.numero)}</span>
             <span class="page-pill">P${escapeHtml(sticker.pagina)}</span>
-            ${isCocaColaSticker(sticker) ? `<span class="sticker-card__tag">Coca-Cola ${sticker.numero.replace("CC", "")}</span>` : ""}
+            ${isCocaColaSticker(sticker) ? `<span class="sticker-card__tag">Coca-Cola ${escapeHtml(sticker.numero.replace("CC", ""))}</span>` : ""}
           </div>
           <div class="sticker-card__bottom">
             <span class="sticker-card__id">${escapeHtml(sticker.id)}</span>
@@ -1327,7 +1465,7 @@ function renderStickerCard(sticker) {
         </button>
       </article>
       ${sticker.repetidos > 0 ? `<span class="sticker-card__badge">+${escapeHtml(sticker.repetidos)}</span>` : ""}
-      <button type="button" class="sticker-card__remove" data-action="correct-sticker" data-sticker-id="${sticker.id}" aria-label="Corregir sticker">
+      <button type="button" class="sticker-card__remove" data-action="correct-sticker" data-sticker-id="${safeId}" aria-label="Corregir sticker">
         <span class="sticker-card__remove-icon"></span>
       </button>
     </div>
@@ -1592,6 +1730,14 @@ function renderGroupedByGroupAndTeam(stickers) {
 // Token used to cancel in-flight progressive renders when a new render starts
 let _renderToken = 0;
 
+// ─── Concurrency guards ───────────────────────────────────────────────────────
+// Prevents overlapping calls to loadRemoteProgress() from corrupting state.
+// A new call bumps the generation; the previous call checks it before writing.
+let _syncGeneration = 0;
+
+// Prevents bindEvents() from adding duplicate listeners if called more than once.
+let _eventsBound = false;
+
 function renderCollectionView(stickers) {
   const content = document.querySelector("#collection-content");
   // Invalidate any previous in-flight render
@@ -1853,6 +1999,7 @@ export function mapAuthError(message) {
   if (m.includes("password") && (m.includes("least") || m.includes("short") || m.includes("weak"))) return t("auth.error.weak_password");
   if (m.includes("rate limit") || m.includes("rate_limit") || m.includes("too many") || m.includes("429") || m.includes("exceeded") || m.includes("over_email")) return t("auth.error.rate_limit");
   if (m.includes("invalid email") || m.includes("email format") || m.includes("valid email")) return t("auth.error.invalid_email");
+  if (m.includes("otp_expired") || m.includes("token has expired") || m.includes("expired or is invalid")) return t("auth.error.link_expired");
   if (m.includes("network_timeout") || m.includes("fetch") || m.includes("failed to fetch") || m.includes("networkerror")) return t("auth.error.network");
   return message;
 }
@@ -1898,9 +2045,14 @@ async function handleAuthSubmit(event) {
   try {
     // Update password mode
     if (state.authMode === "update") {
-      const password = document.querySelector("#auth-password").value.trim();
+      const password = document.querySelector("#auth-password").value;
+      const confirmPassword = document.querySelector("#auth-password-confirm").value;
       if (!password || password.length < 6) {
         showAuthError(t("auth.error.weak_password"));
+        return;
+      }
+      if (password !== confirmPassword) {
+        showAuthError(t("auth.error.password_mismatch"));
         return;
       }
       // Verify the recovery session is still valid before calling updateUser
@@ -1944,7 +2096,7 @@ async function handleAuthSubmit(event) {
       return;
     }
 
-    const password = document.querySelector("#auth-password").value.trim();
+    const password = document.querySelector("#auth-password").value;
 
     const action =
       state.authMode === "register"
@@ -2031,18 +2183,33 @@ function switchAuthMode(mode) {
   // Show/hide password field + forgot button (hidden in reset mode)
   const pwLabel = document.querySelector("#auth-password")?.closest("label");
   if (pwLabel) pwLabel.classList.toggle("hidden", isReset);
+  const confirmWrap = document.querySelector("#auth-password-confirm-wrap");
+  if (confirmWrap) confirmWrap.classList.toggle("hidden", !isUpdate);
   const forgotWrap = document.querySelector("#forgot-password")?.closest("div");
   if (forgotWrap) forgotWrap.classList.toggle("hidden", isReset || !isLogin);
 
   // Update password required and minlength attributes dynamically to prevent HTML5 validation errors on hidden fields
   const pwInput = document.querySelector("#auth-password");
   if (pwInput) {
+    pwInput.setAttribute("autocomplete", isUpdate ? "new-password" : "current-password");
     if (isReset) {
       pwInput.removeAttribute("required");
       pwInput.removeAttribute("minlength");
     } else {
       pwInput.setAttribute("required", "required");
       pwInput.setAttribute("minlength", "6");
+    }
+  }
+
+  const confirmInput = document.querySelector("#auth-password-confirm");
+  if (confirmInput) {
+    if (isUpdate) {
+      confirmInput.setAttribute("required", "required");
+      confirmInput.setAttribute("minlength", "6");
+    } else {
+      confirmInput.removeAttribute("required");
+      confirmInput.removeAttribute("minlength");
+      confirmInput.value = "";
     }
   }
 }
@@ -2063,9 +2230,18 @@ async function handleSignOut() {
       console.warn("Supabase signOut error, proceeding with local sign out:", err);
     }
   }
+
+  // Issue #6: fully reset all auth-related state after sign-out.
+  // Do NOT unsubscribe the auth listener here — it must remain active so that
+  // subsequent sign-in events are processed correctly. The listener is only
+  // torn down if the Supabase client itself is replaced.
   state.session = null;
   state.isSyncing = false;
+  // Bump generation so any in-flight loadRemoteProgress call is abandoned.
+  _syncGeneration++;
   state.stickers = state.catalog;
+  // Issue #6: clear the success/sync banner that would otherwise persist.
+  setBannerMessage(t("banner.not_signed_in"), "muted");
   renderApp();
 }
 
@@ -2079,10 +2255,17 @@ async function handleResetAlbum() {
     return;
   }
 
-  const { error } = await state.supabase
-    .from("user_sticker_progress")
-    .delete()
-    .eq("user_id", state.session.user.id);
+  // Missing error handling: the Supabase call can throw on network errors
+  // (not just return {error}). Wrap in try/catch to avoid unhandled rejections.
+  let error = null;
+  try {
+    ({ error } = await state.supabase
+      .from("user_sticker_progress")
+      .delete()
+      .eq("user_id", state.session.user.id));
+  } catch (e) {
+    error = e;
+  }
 
   if (error) {
     showToast(t("toast.reset_error"));
@@ -2149,9 +2332,8 @@ async function exportPdf(mode) {
     doc.text(wrapped, 14, y);
     y += wrapped.length * 6;
 
-    if (index === stickers.length - 1 && stickers.length === 0) {
-      doc.text(t("toast.no_stickers"), 14, y);
-    }
+    // (removed dead code: condition `index === stickers.length - 1 && stickers.length === 0`
+    //  is logically impossible — the forEach body never executes when length is 0)
   });
 
   if (stickers.length === 0) {
@@ -2162,6 +2344,11 @@ async function exportPdf(mode) {
 }
 
 function bindEvents() {
+  // Issue #7: guard against duplicate listener registration if bindEvents() is
+  // ever called more than once (e.g. during a hot-reload or re-init).
+  if (_eventsBound) return;
+  _eventsBound = true;
+
   document.addEventListener("click", async (event) => {
     const sectionButton = event.target.closest("[data-section]");
     if (sectionButton) {
@@ -2170,6 +2357,11 @@ function bindEvents() {
       // contaminated by a search or filter left over from another section.
       state.query = "";
       state.filter = "todos";
+      // Issue #10: close and reset the mobile search panel on section navigation.
+      const mobilePanel = document.querySelector("#mobile-search-panel");
+      if (mobilePanel) mobilePanel.classList.add("hidden");
+      const mobileQInput = document.querySelector("#mobile-query-input");
+      if (mobileQInput) mobileQInput.value = "";
       renderApp();
       const mainEl = document.querySelector("main");
       if (mainEl) mainEl.scrollTop = 0;
@@ -2196,7 +2388,8 @@ function bindEvents() {
 
     if (event.target.closest("#lang-toggle")) {
       state.lang = state.lang === "es" ? "en" : "es";
-      localStorage.setItem("panini-lang", state.lang);
+      // Issue #8: guard against localStorage being unavailable.
+      try { localStorage.setItem("panini-lang", state.lang); } catch (_) {}
       renderApp();
       return;
     }
@@ -2324,6 +2517,12 @@ function bindEvents() {
   document.querySelector("#auth-google")?.addEventListener("click", async () => {
     try {
       const supabase = await ensureSupabaseClient();
+      // Missing null check: ensureSupabaseClient() returns null on file:// or
+      // missing config. Guard before dereferencing to avoid TypeError.
+      if (!supabase) {
+        showToast(t("toast.login_server"));
+        return;
+      }
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -2343,6 +2542,8 @@ async function hydrateApp() {
   renderApp();       // instant first paint — home page, no flash of stale HTML
 
   try {
+    // INITIAL_SESSION is intentionally ignored by the auth listener so startup
+    // has one deterministic synchronization path, including authenticated reloads.
     await ensureSupabaseClient();
     await loadRemoteProgress();
   } catch (err) {

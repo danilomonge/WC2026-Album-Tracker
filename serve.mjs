@@ -37,8 +37,12 @@ http.createServer((req, res) => {
   const filePath = path.join(ROOT, targetFile);
   const safePath = path.resolve(filePath);
 
-  // 4. Defensa contra Path Traversal: verificar que la ruta final esté dentro de la raíz
-  if (!safePath.startsWith(ROOT)) {
+  // 4. Defensa contra Path Traversal: verificar que la ruta final esté dentro de la raíz.
+  // Issue #14: `startsWith(ROOT)` has a boundary bug — a sibling directory named
+  // ROOT + "extra" would pass the check. Use ROOT + path.sep as the prefix so the
+  // check requires an actual directory boundary after the root segment.
+  const safeRoot = ROOT.endsWith(path.sep) ? ROOT : ROOT + path.sep;
+  if (safePath !== ROOT && !safePath.startsWith(safeRoot)) {
     res.writeHead(403, { "Content-Type": "text/plain" });
     res.end("Forbidden");
     return;
