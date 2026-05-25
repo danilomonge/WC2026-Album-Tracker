@@ -988,7 +988,6 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-inline: -10px;
 }
 /* Anula el space-y-10 de Tailwind para las cards del home */
 #collection-content:has(.home-hero) > * + * {

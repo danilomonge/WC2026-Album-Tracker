@@ -1830,8 +1830,10 @@ function renderStatsView(stats) {
     .sort((left, right) => left.progress - right.progress || left.label.localeCompare(right.label))
     .slice(0, 3);
 
-  const teamTotal    = stats.total - stats.especiales.total - stats.cocaCola.total;
-  const teamObtained = stats.obtenidos - stats.especiales.obtenidos - stats.cocaCola.obtenidos;
+  // especiales already includes Coca-Cola stickers (isSpecialSticker covers tipo "Coca-Cola"),
+  // so only subtract especiales.total once — subtracting cocaCola.total again would double-count.
+  const teamTotal    = stats.total    - stats.especiales.total;
+  const teamObtained = stats.obtenidos - stats.especiales.obtenidos;
   const teamPct      = teamTotal ? (teamObtained / teamTotal * 100) : 0;
   const espPct       = stats.especiales.total ? (stats.especiales.obtenidos / stats.especiales.total * 100) : 0;
   const cokePct      = stats.cocaCola.total   ? (stats.cocaCola.obtenidos   / stats.cocaCola.total   * 100) : 0;
@@ -1997,9 +1999,7 @@ function renderApp() {
 
   if (showHeader) {
     document.querySelector("#section-title").textContent = t(state.section);
-    document.querySelector("#results-count").textContent = state.section === "coca-cola"
-      ? `12 stickers`
-      : `${filtered.length} ${t("stickers_visible")}`;
+    document.querySelector("#results-count").textContent = `${filtered.length} ${t("stickers_visible")}`;
     document.querySelector("#progress-detail").textContent =
       `${state.stickers.filter(s => s.obtenido).length} / ${state.stickers.length} stickers`;
   }
