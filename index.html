@@ -85,8 +85,8 @@
 
       <div class="flex items-center gap-1.5 sm:gap-3 min-w-0">
         <!-- Mobile search toggle -->
-        <button id="mobile-search-toggle" class="sm:hidden flex-shrink-0 text-on-surface-variant p-2 rounded-full hover:bg-surface-container transition-colors" title="Buscar">
-          <span class="material-symbols-outlined">search</span>
+        <button id="mobile-search-toggle" class="sm:hidden flex-shrink-0 inline-flex items-center justify-center text-on-surface-variant p-2 rounded-full hover:bg-surface-container transition-colors" title="Buscar">
+          <span class="material-symbols-outlined leading-none">search</span>
         </button>
 
         <div class="relative hidden sm:block">
@@ -96,7 +96,7 @@
             placeholder="Buscar país, jugador, número…"
             class="pl-10 pr-4 py-2 bg-surface-container rounded-full border-none focus:ring-2 focus:ring-primary text-sm w-56 md:w-72"
           />
-          <span class="material-symbols-outlined absolute left-3 top-2.5 text-outline text-[20px]">search</span>
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px] leading-none">search</span>
         </div>
 
         <span id="sync-status" class="hidden md:inline-flex items-center gap-1 text-xs font-label text-on-surface-variant px-2 py-1">
@@ -113,10 +113,10 @@
         </button>
         <button
           id="sign-out-button"
-          class="inline-flex flex-shrink-0 text-on-surface-variant p-2 rounded-full transition-colors opacity-30 cursor-not-allowed pointer-events-none"
+          class="inline-flex items-center justify-center flex-shrink-0 text-on-surface-variant p-2 rounded-full transition-colors opacity-30 cursor-not-allowed pointer-events-none"
           title="Cerrar sesión"
         >
-          <span class="material-symbols-outlined">logout</span>
+          <span class="material-symbols-outlined leading-none">logout</span>
         </button>
       </div>
     </nav>
