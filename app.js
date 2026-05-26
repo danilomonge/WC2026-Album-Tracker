@@ -949,7 +949,7 @@ async function ensureSupabaseClient() {
 
   let createClient;
   try {
-    ({ createClient } = await import("https://esm.sh/@supabase/supabase-js@2.49.8"));
+    ({ createClient } = await import("https://esm.sh/@supabase/supabase-js@2.50.0"));
   } catch {
     console.warn("Could not load Supabase SDK — running in offline mode.");
     return null;
@@ -2311,7 +2311,7 @@ async function exportPdf(mode) {
     return;
   }
 
-  const { jsPDF } = await import("https://esm.sh/jspdf@2.5.1");
+  const { jsPDF } = await import("https://esm.sh/jspdf@4.2.1");
   const stickers = sortStickers(
     filterStickers(state.stickers, {
       section: mode === "faltantes" ? "faltantes" : "repetidos",
