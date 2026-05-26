@@ -1,416 +1,204 @@
-# ⚽ WC2026 Collector — Germany Edition
+# WC2026 Collector - Germany Edition
 
-> Track your **Panini FIFA World Cup 2026™** sticker album — Germany exclusive edition — in the browser, with cloud sync and PDF export.
+Aplicacion web estatica para gestionar el album **Panini FIFA World Cup 2026 - Germany Edition**: coleccion, repetidos, faltantes, progreso y exportaciones PDF, con sincronizacion privada mediante Supabase.
 
-**WC2026 Collector** is a static web app that lets you mark the stickers you have, track duplicates, monitor your progress by group and team, and export missing/duplicate lists as PDFs. No installation needed — just open it in a browser or visit the GitHub Pages URL.
+[Aplicacion publicada](https://danilomonge.github.io/WC2026-Album-Tracker/) | [Reportar un error](https://github.com/danilomonge/WC2026-Album-Tracker/issues/new/choose) | [Contribuir](CONTRIBUTING.md) | [Seguridad](SECURITY.md)
 
-🌐 **Live app:** [danilomonge.github.io/WC2026-Album-Tracker](https://danilomonge.github.io/WC2026-Album-Tracker/)
+## Estado Del Proyecto
 
----
+- Catalogo implementado: **992 stickers** de la edicion alemana.
+- Frontend: SPA estatica en HTML, CSS y JavaScript ES modules.
+- Persistencia: Supabase Auth + Postgres con Row Level Security (RLS).
+- Proveedores activos en la instancia publicada al 26 de mayo de 2026: **email/password**. Google OAuth esta implementado como opcion y solo aparece si el proveedor se habilita en Supabase.
+- Publicacion: GitHub Pages desde `main` y `/ (root)`.
+- Licencia del codigo: [MIT](LICENSE).
 
-## Table of Contents
+Este proyecto no esta afiliado, patrocinado ni respaldado por Panini o FIFA. Los nombres y marcas pertenecen a sus respectivos titulares.
 
-1. [Which edition is this for?](#which-edition-is-this-for)
-2. [Features](#features)
-3. [Catalog structure](#catalog-structure)
-4. [Functionality in detail](#functionality-in-detail)
-5. [Without an account](#without-an-account)
-6. [With an account — marking and sync](#with-an-account--marking-and-sync)
-7. [Authentication](#authentication)
-8. [Running locally](#running-locally)
-9. [Deploying to GitHub Pages](#deploying-to-github-pages)
-10. [Supabase setup](#supabase-setup)
-11. [Project files](#project-files)
-12. [Tests](#tests)
+## Funcionalidad Implementada
 
----
+- Navegacion en modo lectura sin cuenta.
+- Registro, inicio de sesion y cierre de sesion con email/password.
+- Recuperacion de contrasena desde el correo de Supabase, incluyendo links `token_hash` y flujos implicitos.
+- Google OAuth condicional: el boton se oculta si Supabase informa que Google esta deshabilitado.
+- Marcado de stickers, repetidos y correccion con sincronizacion remota.
+- Busqueda, filtros por tipo, agrupacion por grupo/seleccion/pagina y vistas de faltantes, repetidos, especiales, Coca-Cola y estadisticas.
+- Interfaz completa en espanol e ingles.
+- Exportacion PDF de faltantes y repetidos con `jsPDF`.
+- Primer render inmediato y carga progresiva para mantener fluidez con el catalogo completo.
+- CSS de Tailwind precompilado; la aplicacion publicada no depende del runtime CDN de Tailwind.
 
-## Which edition is this for?
+## Catalogo
 
-This tracker is built specifically for the **German edition of the Panini FIFA World Cup 2026™ album**.
+| Categoria | IDs | Cantidad |
+| --- | --- | ---: |
+| Selecciones (48 x 20) | `MEX1`-`PAN20`, segun seleccion | 960 |
+| Especiales FWC | `FWC0`-`FWC19` | 20 |
+| Coca-Cola Germany | `CC1`-`CC12` | 12 |
+| **Total** |  | **992** |
 
-The German edition differs from the international standard in one way: it includes **12 exclusive Coca-Cola Germany stickers** not found in the regular album. The app's catalog reflects this exactly:
+- Los especiales FWC estan en las paginas 0-3 y 106-109.
+- Los stickers Coca-Cola Germany estan en las paginas 112-113.
+- Cada seleccion incluye escudo, foto de equipo y 18 jugadores.
 
-| Category | Count |
-|---|---|
-| Teams (48 × 20 stickers) | 960 |
-| FWC Specials | 20 |
-| Coca-Cola Germany | 12 |
-| **Total** | **992** |
+## Uso
 
-> If you have the international edition (without the 12 Coca-Cola Germany stickers), just ignore that section — the rest of the album is identical.
+### Sin cuenta
 
----
+Se puede navegar, buscar, filtrar y consultar el catalogo. No se puede guardar progreso ni generar PDFs personalizados.
 
-## Features
+### Con cuenta
 
-- **Complete catalog** of all 992 stickers from the Germany edition
-- **Interactive marking** — 1 click to collect, more clicks to add duplicates, `−` button to correct
-- **Cloud sync** via Supabase — progress is saved and available on any device
-- **Read-only mode** without an account — browse and search without signing up
-- **Global search** — by player name, country, or sticker number
-- **Type filters** — All, Collected, Duplicates, Missing, Specials, Coca-Cola, Shields, Team Photos, FWC
-- **Flexible grouping** — by Group, Team, Page, or ungrouped
-- **Secondary filters** — by group (A–L), team, and album page
-- **Home view** — album progress summary, all 12 groups, tournament format, album structure
-- **Detailed stats** — overview, progress by category, top teams, groups, priority missing, and more — responsive layout on mobile and desktop
-- **PDF export** — missing list and duplicates list with username and generation date
-- **Bilingual** — full UI in Spanish and English with a language toggle, including all error messages
-- **Dark theme** — dark navy design with steel-blue accents, fully responsive
-- **No custom backend** — 100% static SPA + Supabase as BaaS
-- **Instant first paint** — home screen appears immediately on load; Supabase sync runs in the background
-- **Progressive rendering** — large sections render section-by-section so the first content appears immediately and scrolling stays smooth even with hundreds of cards
-- **Google sign-in** — one-click OAuth login with Google in addition to email/password
-- **Password recovery** — full forgot-password and reset-password flow entirely in-app, including a "New password" modal triggered automatically when the user follows the recovery link
+1. Abra la aplicacion desde HTTPS o un servidor local HTTP. La autenticacion no esta disponible al abrir `index.html` por `file://`.
+2. Inicie sesion o registre una cuenta con email/password.
+3. Pulse un sticker: el primer click lo marca como obtenido; los siguientes agregan repetidos.
+4. Use el boton de correccion para restar repetidos o devolver el sticker a faltante.
+5. El progreso se sincroniza en Supabase y se restaura al recargar.
 
----
+### Recuperacion De Contrasena
 
-## Catalog structure
+1. En el modal de acceso, seleccione **Olvide mi contrasena**.
+2. Indique el email; Supabase envia el enlace de recuperacion.
+3. Abra el enlace en la aplicacion publicada o en una URL local autorizada en Supabase.
+4. La aplicacion detecta la sesion de recuperacion y solicita la nueva contrasena y su confirmacion.
 
-### Teams
+La interfaz actual valida un minimo de 6 caracteres. Para forks orientados a produccion se recomienda configurar una politica mas fuerte en Supabase y alinear el minimo mostrado en la interfaz.
 
-48 teams organized into 12 groups (A–L), 4 teams per group. Each team spans 2 album pages with 20 stickers:
+## Arquitectura
 
-- 1 shield
-- 1 team photo
-- 18 player stickers
+```text
+index.html
+  -> tailwind.css + styles.css
+  -> app.js
+       -> data.js (catalogo estatico)
+       -> @supabase/supabase-js@2.50.0 (esm.sh)
+       -> jspdf@4.2.1 (esm.sh, solo al exportar)
+       -> Supabase Auth + public.user_sticker_progress
+```
 
-### FWC Specials (pages 0–3 and 106–109)
+### Seguridad Aplicada
 
-20 tournament special stickers:
+- Content Security Policy en `index.html` restringe scripts, conexiones, imagenes, formularios y objetos.
+- Solo se incorpora una clave publica/publishable de Supabase en el frontend; no se usan claves `service_role`.
+- RLS aisla el progreso por `auth.uid()`.
+- La base de datos rechaza IDs no pertenecientes al catalogo.
+- La base de datos limita `duplicates` a `0..99` y exige `obtained = true` cuando hay repetidos.
+- Los textos procedentes del catalogo se escapan antes de insertarse en plantillas HTML.
+- Las Actions incluidas estan fijadas a revisiones SHA inmutables.
 
-| ID | Description |
-|---|---|
-| FWC0 | Panini Logo |
-| FWC1–FWC2 | Official Emblem |
-| FWC3 | Official Mascots |
-| FWC4 | Official Slogan |
-| FWC5 | Official Ball |
-| FWC6–FWC11 | Host nations (Canada, Mexico, USA ×3) |
-| FWC12–FWC19 | Additional specials (FIFA Museums, Legends…) |
+Nota de auditoria de la instancia hospedada, 26 de mayo de 2026: Supabase Security Advisor informa que **Leaked Password Protection** esta deshabilitada. Es una configuracion de Auth del propietario del despliegue; debe activarse cuando el plan lo permita. Consulte [SECURITY.md](SECURITY.md).
 
-### Coca-Cola Germany (pages 112–113)
+## Desarrollo Local
 
-12 stickers exclusive to the German edition, identified as CC1–CC12.
-
----
-
-## Functionality in detail
-
-### Marking stickers
-
-| Action | Result |
-|---|---|
-| 1st click | Sticker marked as **collected** |
-| 2nd click | +1 **duplicate** |
-| Further clicks | +1 duplicate each time |
-| Click `−` | −1 duplicate; returns to **missing** when it reaches 0 |
-
-### Search
-
-The top search bar filters in real time by player or sticker name, team code (e.g. `MEX`, `ARG`), and sticker number (e.g. `42`, `FWC3`, `CC7`). Typing automatically navigates to the Album view and applies the filter.
-
-### Type filters
-
-Available in the chip bar below the header:
-
-- **All** — every sticker visible in the current context
-- **Collected** — only stickers you already have
-- **Duplicates** — only stickers you have more than once
-- **Missing** — stickers you don't have yet
-- **Specials** — all special-type stickers (shields, team photos, FWC, Coca-Cola…)
-- **Coca-Cola** — the 12 Germany exclusives
-- **Shields** — team shields only
-- **Team Photos** — team photos only
-- **FWC** — all 20 tournament specials (FWC0–FWC19)
-
-> In the **Duplicates** and **Missing** sections, the Collected/Duplicates/Missing chips are automatically hidden as they would be redundant.
-
-### Grouping and secondary filters
-
-- **Group by**: Group · Team · Page · Ungrouped
-- **Group filter**: A through L, or all
-- **Team filter**: specific country, or all
-- **Page filter**: exact album page, or all
-
-Each team header shows its album pages (e.g. `· Pg. 8, 9`).
-
-### Main sections
-
-| Section | Description |
-|---|---|
-| **Home** | Dashboard with album progress, 12-group summary, tournament format (stages, venues) and album structure |
-| **Album** | All 992 stickers with full filters and grouping |
-| **Duplicates** | Only stickers with at least 1 duplicate |
-| **Missing** | Only stickers you don't have yet |
-| **Specials** | Filtered view of all special stickers |
-| **Coca-Cola** | The 12 Germany exclusive stickers |
-| **Stats** | Full album statistics |
-
-### Statistics
-
-The Stats tab shows:
-
-- **Overview** — % completed, collected / missing / duplicates / Coca-Cola counts, breakdown by category
-- **Top teams by progress** — ranked list of countries with progress bars and scroll
-- **Progress by group** — percentage progress for each group A–L
-- **Priority missing** — teams with fewest stickers left (closest to completing)
-- **Teams at 100%** — fully completed countries
-- **Groups at 100%** — fully completed groups
-- **Pending specials** — FWC stickers not yet collected
-- **Pending Coca-Cola** — German exclusives not yet collected
-- **Lagging teams** — countries with the least progress
-
-On mobile all stat panels stack vertically for readability; on desktop they arrange in a two-column grid.
-
-### PDF export
-
-From the sidebar (desktop):
-
-- **Missing PDF** — list of all stickers you don't have, with ID, name and page
-- **Duplicates PDF** — list of all stickers you have more than once, with count
-
-Both PDFs include your username and the generation date.
-
-### Language
-
-The language toggle (🇪🇸 / 🇬🇧) in the sidebar switches the entire interface between **Spanish** and **English**, including labels, filters, messages, auth errors and stats. The preference is saved between sessions.
-
----
-
-## Without an account
-
-Without signing up you can:
-
-- Browse all groups, teams, pages and specials
-- Use all filters and search
-- View the Home dashboard and explore the album structure
-
-You cannot: mark stickers, save progress, or export personalized PDFs.
-
----
-
-## With an account — marking and sync
-
-1. Click **Sign in / Register** in the sidebar.
-2. Create an account with email and password (or use **Continue with Google**), or sign in if you already have one.
-3. Click stickers to mark them.
-4. Progress is automatically saved to Supabase and synced across all your devices.
-5. To reset the album, use the **Reset progress** button (requires confirmation).
-
-> Login and sync require opening the app from `http://localhost` or an HTTPS URL (such as GitHub Pages). They do not work over `file://` due to browser security restrictions.
-
----
-
-## Authentication
-
-The app supports four auth flows, all handled inside the same modal:
-
-| Mode | Description |
-|---|---|
-| **Sign in** | Email + password login, or Google OAuth |
-| **Register** | Create a new account with email + password |
-| **Forgot password** | Sends a recovery link to the given email. The response is always the same regardless of whether the account exists (email enumeration protection). |
-| **New password** | Triggered automatically when the user clicks a recovery link. The modal opens pre-filled in password-update mode; on save, the new password is stored and the session is cleaned up. |
-
-### Password recovery flow
-
-1. Click **Forgot your password?** in the sign-in modal.
-2. Enter your email and click **Send link**.
-3. Open the link in the email — the app detects the `type=recovery` URL parameter, establishes the Supabase session, and immediately shows the **New password** modal.
-4. Enter your new password (minimum 6 characters) and click **Save password**.
-5. Done — you are logged in with the new password.
-
-Recovery links expire after a limited time. If the link has expired, the modal shows a clear error message instead of hanging.
-
-### Error messages
-
-All Supabase auth errors are mapped to user-friendly messages in both Spanish and English:
-
-- Email already registered
-- Incorrect credentials
-- Weak password (< 6 characters)
-- Invalid email format
-- Network or timeout errors
-
----
-
-## Running locally
-
-### Recommended — included Node server
+Requisitos: Node.js 20 o superior y npm.
 
 ```bash
+git clone https://github.com/danilomonge/WC2026-Album-Tracker.git
+cd WC2026-Album-Tracker
+npm ci
+npm run build:css
+npm test
 node serve.mjs
 ```
 
-Open `http://localhost:5500` in your browser.
+Abra [http://localhost:5500](http://localhost:5500).
 
-### Alternative — Python
+### Scripts
 
-```bash
-python3 -m http.server 8000
-```
+| Comando | Funcion |
+| --- | --- |
+| `npm run build:css` | Compila `tailwind.input.css` a `tailwind.css`. |
+| `npm test` | Ejecuta las 17 pruebas unitarias con `node:test`. |
+| `node serve.mjs` | Sirve la SPA localmente en el puerto 5500. |
 
-Open `http://localhost:8000`.
+Cuando se cambien clases Tailwind en `index.html` o `app.js`, incluya el `tailwind.css` regenerado en el commit.
 
-### Rebuilding styles after UI changes
+## Configurar Un Fork Con Supabase
 
-Tailwind utilities are compiled into `tailwind.css` so production pages do not load the Tailwind runtime CDN:
+La instancia publicada usa un proyecto Supabase existente. Para desplegar su propio fork:
 
-```bash
-npm install
-npm run build:css
-```
+1. Cree un proyecto Supabase.
+2. Ejecute [supabase/schema.sql](supabase/schema.sql) en SQL Editor.
+3. Active Email en **Authentication > Providers**.
+4. Configure las Redirect URLs:
 
-### Read-only — no server
-
-Open `index.html` directly in the browser. Works in read-only mode (no login or sync).
-
----
-
-## Deploying to GitHub Pages
-
-1. Create a GitHub repository and upload: `index.html`, `styles.css`, `app.js`, `data.js` (and optionally `README.md`, `package.json`, `tests/`).
-2. Go to **Settings → Pages**.
-3. Under *Build and deployment*, choose `Deploy from a branch`.
-4. Select `main` / `/ (root)` and save.
-5. Your app will be available at:
-   ```
-   https://YOUR-USERNAME.github.io/YOUR-REPO/
-   ```
-6. Add that URL to the redirect URLs in your Supabase project.
-
----
-
-## Supabase setup
-
-The app has no custom backend. Progress is stored in **Supabase** with Row Level Security (each user can only see and edit their own data).
-
-### 1. Create a Supabase project
-
-1. Go to [supabase.com](https://supabase.com) and create a project.
-2. Copy the **Project URL** and **anon/public key** from *Settings → API*.
-
-### 2. Configure authentication
-
-Under *Authentication → URL Configuration*, add your redirect URLs:
-
-```
+```text
 http://localhost:5500
-http://localhost:8000
 http://127.0.0.1:5500
-https://YOUR-USERNAME.github.io/YOUR-REPO/
+https://SU-USUARIO.github.io/SU-REPOSITORIO/
 ```
 
-Enable **Email + Password** under *Authentication → Providers*.
+5. Sustituya `DEFAULT_SUPABASE_CONFIG.url` y `DEFAULT_SUPABASE_CONFIG.anonKey` en `app.js` por su Project URL y su **publishable key**.
+6. Para Google OAuth, habilite Google en Supabase y configure su OAuth client. La UI muestra el boton automaticamente solo cuando el proveedor esta habilitado.
 
-To enable Google sign-in, enable **Google** under *Authentication → Providers* and configure your OAuth credentials from the [Google Cloud Console](https://console.cloud.google.com/).
+### Esquema Desplegado
 
-### 3. Create tables and RLS policies
+La aplicacion usa exactamente una tabla publica:
 
-Run this SQL in the Supabase *SQL Editor*:
+| Tabla | Uso | Proteccion |
+| --- | --- | --- |
+| `public.user_sticker_progress` | Estado por usuario y sticker | RLS; PK `(user_id, sticker_id)`; FK a `auth.users`; checks de IDs y repetidos |
 
-```sql
-create table if not exists public.profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
-  email text,
-  created_at timestamptz not null default now()
-);
+No utiliza una tabla `profiles`, triggers ni funciones RPC.
 
-create table if not exists public.user_sticker_progress (
-  id bigint generated always as identity primary key,
-  user_id uuid not null references auth.users(id) on delete cascade,
-  sticker_id text not null,
-  obtained boolean not null default false,
-  duplicates integer not null default 0,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  constraint user_sticker_progress_duplicates_non_negative check (duplicates >= 0),
-  constraint user_sticker_progress_valid_sticker_id check (
-    sticker_id ~ '^(FWC([0-9]|1[0-9])|CC([1-9]|1[0-2])|(MEX|RSA|KOR|CZE|CAN|BIH|QAT|SUI|BRA|MAR|HAI|SCO|USA|PAR|AUS|TUR|GER|CUW|CIV|ECU|NED|JPN|SWE|TUN|BEL|EGY|IRN|NZL|ESP|CPV|KSA|URU|FRA|SEN|IRQ|NOR|ARG|ALG|AUT|JOR|POR|COD|UZB|COL|ENG|CRO|GHA|PAN)([1-9]|1[0-9]|20))$'
-  ),
-  unique (user_id, sticker_id)
-);
+Las cuatro politicas permiten `SELECT`, `INSERT`, `UPDATE` y `DELETE` exclusivamente cuando `(select auth.uid()) = user_id`. El SQL reproducible se encuentra en [supabase/schema.sql](supabase/schema.sql).
 
--- Trigger: create profile on sign-up
-create or replace function public.handle_new_user()
-returns trigger language plpgsql security definer set search_path = public as $$
-begin
-  insert into public.profiles (id, email) values (new.id, new.email)
-  on conflict (id) do nothing;
-  return new;
-end;
-$$;
+### Recomendaciones De Produccion
 
-drop trigger if exists on_auth_user_created on auth.users;
-create trigger on_auth_user_created
-after insert on auth.users
-for each row execute procedure public.handle_new_user();
+- Active confirmacion de email.
+- Active proteccion contra contrasenas filtradas y refuerce requisitos de contrasena si su plan lo permite.
+- Considere CAPTCHA para registro, acceso y reset si el proyecto sera expuesto a trafico abierto.
+- Configure SMTP propio para entregabilidad y reputacion del correo.
+- Revise periodicamente Security Advisor y Performance Advisor.
 
--- Trigger: update updated_at
-create or replace function public.touch_updated_at()
-returns trigger language plpgsql as $$
-begin new.updated_at = now(); return new; end;
-$$;
+Referencias oficiales:
 
-drop trigger if exists touch_user_sticker_progress_updated_at on public.user_sticker_progress;
-create trigger touch_user_sticker_progress_updated_at
-before update on public.user_sticker_progress
-for each row execute procedure public.touch_updated_at();
+- [Supabase: Securing your API](https://supabase.com/docs/guides/api/securing-your-api)
+- [Supabase: Password security](https://supabase.com/docs/guides/auth/password-security)
+- [Supabase: CAPTCHA protection](https://supabase.com/docs/guides/auth/auth-captcha)
 
--- Row Level Security
-alter table public.profiles enable row level security;
-alter table public.user_sticker_progress enable row level security;
+## Despliegue
 
-create policy "profiles_select_own" on public.profiles for select using (auth.uid() = id);
-create policy "profiles_insert_own" on public.profiles for insert with check (auth.uid() = id);
-create policy "profiles_update_own" on public.profiles for update using (auth.uid() = id) with check (auth.uid() = id);
+La configuracion actual de GitHub Pages publica el contenido estatico de `main` desde `/ (root)`. Los archivos necesarios son:
 
-create policy "progress_select_own" on public.user_sticker_progress for select using (auth.uid() = user_id);
-create policy "progress_insert_own" on public.user_sticker_progress for insert with check (auth.uid() = user_id);
-create policy "progress_update_own" on public.user_sticker_progress for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "progress_delete_own" on public.user_sticker_progress for delete using (auth.uid() = user_id);
+```text
+index.html
+app.js
+data.js
+styles.css
+tailwind.css
+favicon.svg
+.nojekyll
 ```
 
-### 4. Connect the app
+Al fusionar un cambio en `main`, GitHub Pages reconstruye el sitio. El workflow de CI verifica tests y que el CSS generado este actualizado; no administra el despliegue.
 
-Supabase credentials are pre-configured in `app.js`. To use your own project, edit the `url` and `anonKey` constants in `DEFAULT_SUPABASE_CONFIG` at the top of `app.js`.
+## Estructura Del Repositorio
 
----
+| Ruta | Descripcion |
+| --- | --- |
+| `index.html` | Shell de la SPA, modal de autenticacion y CSP. |
+| `app.js` | Estado, UI, i18n, autenticacion, sincronizacion, estadisticas y exportacion PDF. |
+| `data.js` | Catalogo fijo de 992 stickers y metadatos del album. |
+| `tailwind.input.css`, `tailwind.config.cjs`, `tailwind.css` | Fuente y build CSS de Tailwind. |
+| `styles.css` | Componentes y estilos visuales propios. |
+| `serve.mjs` | Servidor local minimo con proteccion contra path traversal. |
+| `tests/app.test.js` | 17 pruebas unitarias de catalogo, seguridad y auth recovery. |
+| `supabase/schema.sql` | Esquema y RLS requeridos para nuevos despliegues. |
+| `.github/workflows/ci.yml` | Comprobaciones automatizadas para contribuciones. |
+| `CONTRIBUTING.md` | Flujo de contribucion y criterios de aceptacion. |
+| `SECURITY.md` | Reporte responsable y hardening recomendado. |
 
-## Project files
+## Contribuir
 
-| File | Description |
-|---|---|
-| `index.html` | SPA shell: HTML structure, nav, auth modal, toast |
-| `app.js` | All logic: UI, Supabase auth, sync, filters, search, stats, PDF export, i18n, progressive rendering |
-| `styles.css` | Full visual design: dark navy theme, gradients, components (chips, cards, headers, stats), responsive |
-| `tailwind.css` | Compiled utility CSS used in production; generated from `tailwind.input.css` |
-| `data.js` | Frozen catalog of all 992 Germany-edition stickers: stickers, groups, teams, team colors, flag emojis |
-| `serve.mjs` | Minimal Node.js dev server for `localhost:5500` |
-| `tests/app.test.js` | Unit test suite for catalog integrity and business logic |
-| `package.json` | Development scripts for CSS build and tests |
+Se aceptan reportes y pull requests. Antes de contribuir lea:
 
----
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- [SECURITY.md](SECURITY.md) para vulnerabilidades, que no deben abrirse como issues publicos.
 
-## Tests
+## Licencia Y Marcas
 
-```bash
-npm test
-```
+El codigo de este repositorio se publica bajo la [licencia MIT](LICENSE).
 
-The suite (14 tests) covers:
-
-- Catalog integrity (Germany edition, 992 total stickers, 12 Coca-Cola, 20 FWC)
-- Correct page mapping per team
-- Click logic: collect → duplicates → correction with `−`
-- Remote progress merge with local state
-- Sanitation of invalid duplicate values from the server
-- Filters: Coca-Cola, duplicates, missing, specials
-- Global and per-category stats computation
-- `sanitizeDuplicates` — rejects negatives and non-numeric values
-- `validateSupabaseConfig` — enforces HTTPS, valid host and anon key format
-- `escapeHtml` — neutralises dangerous characters
-- `validateStickerId` — accepts valid IDs and rejects arbitrary strings
-- Country search in Spanish and English
-- `mapAuthError` — maps all Supabase error strings to localised user-friendly messages
+Panini, FIFA, FIFA World Cup y Coca-Cola son marcas de sus respectivos propietarios. Este proyecto es una herramienta independiente para coleccionistas y no distribuye imagenes oficiales de stickers.

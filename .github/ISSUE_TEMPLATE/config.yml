@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Reportar una vulnerabilidad
+    url: https://github.com/danilomonge/WC2026-Album-Tracker/security
+    about: No publique detalles de seguridad en issues publicos; use un canal privado.

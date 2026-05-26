@@ -1,0 +1,49 @@
+name: Bug report
+description: Reportar un comportamiento incorrecto reproducible.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: "Gracias por reportar. No incluya contrasenas, tokens ni datos personales."
+  - type: textarea
+    id: summary
+    attributes:
+      label: Descripcion
+      description: Que ocurre y que esperaba que ocurriera.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducir
+      placeholder: "1. Abrir...\n2. Pulsar...\n3. Observar..."
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: URL o entorno
+      placeholder: "GitHub Pages o http://localhost:5500"
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Navegador y dispositivo
+      placeholder: "Safari 26 en iPhone / Chrome en macOS"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Mensajes de consola no sensibles
+      description: Pegue solo errores que no revelen credenciales o tokens.
+  - type: checkboxes
+    id: security
+    attributes:
+      label: Seguridad
+      options:
+        - label: Confirmo que este reporte no contiene una vulnerabilidad ni informacion sensible.
+          required: true
