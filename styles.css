@@ -2,6 +2,33 @@
    WC2026 Collector — visual effects layered on top of Tailwind
    ============================================================ */
 
+.logo-home__brand {
+  display: inline-flex;
+  align-items: center;
+}
+
+.logo-home__ball {
+  display: block;
+  flex: 0 0 auto;
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 0.2125em;
+}
+
+@media (min-width: 640px) {
+  .logo-home__ball {
+    width: 1.083333em;
+    height: 1.083333em;
+  }
+}
+
+@media (min-width: 768px) {
+  .logo-home__ball {
+    width: 1em;
+    height: 1em;
+  }
+}
+
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }
@@ -1960,4 +1987,3 @@ aside::-webkit-scrollbar-thumb {
   justify-content: center;
   height: 18px;
 }
-

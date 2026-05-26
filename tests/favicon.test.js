@@ -7,6 +7,7 @@ import { dirname, resolve } from "node:path";
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const html = readFileSync(resolve(ROOT, "index.html"), "utf8");
 const svg = readFileSync(resolve(ROOT, "favicon.svg"), "utf8");
+const styles = readFileSync(resolve(ROOT, "styles.css"), "utf8");
 
 test("GitHub Pages ofrece favicons compatibles y versionados para la pestana", () => {
   assert.match(
@@ -36,4 +37,15 @@ test("el icono de instalacion movil mantiene el mismo arte visual", () => {
 test("el SVG evita efectos que rasterizan el balon como un circulo negro", () => {
   assert.doesNotMatch(svg, /rgba\(/);
   assert.doesNotMatch(svg, /<radialGradient/);
+});
+
+test("el logotipo reutiliza el balon vectorial sin depender del emoji", () => {
+  assert.match(
+    html,
+    /<img class="logo-home__ball" src="\.\/favicon\.svg\?v=\d+" alt="" aria-hidden="true" \/>/,
+  );
+  assert.match(html, /<span class="logo-home__brand">/);
+  assert.doesNotMatch(html, />\s*⚽\s*WC2026/);
+  assert.match(styles, /\.logo-home__ball\s*\{[^}]*width:\s*1\.1em;[^}]*height:\s*1\.1em;/s);
+  assert.match(styles, /@media \(min-width: 768px\)\s*\{\s*\.logo-home__ball\s*\{[^}]*width:\s*1em;[^}]*height:\s*1em;/s);
 });
