@@ -6,14 +6,19 @@ import { dirname, resolve } from "node:path";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const html = readFileSync(resolve(ROOT, "index.html"), "utf8");
-const svg = readFileSync(resolve(ROOT, "favicon.svg"), "utf8");
 const styles = readFileSync(resolve(ROOT, "styles.css"), "utf8");
 
-test("GitHub Pages ofrece favicons compatibles y versionados para la pestana", () => {
-  assert.match(
-    html,
-    /<link rel="icon" type="image\/svg\+xml" href="\.\/favicon\.svg\?v=\d+" \/>/,
-  );
+function pngMetadata(filename) {
+  const bytes = readFileSync(resolve(ROOT, filename));
+  assert.deepEqual([...bytes.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+  return {
+    width: bytes.readUInt32BE(16),
+    height: bytes.readUInt32BE(20),
+    colorType: bytes[25],
+  };
+}
+
+test("GitHub Pages ofrece el favicon fotografico y fallbacks versionados", () => {
   assert.match(
     html,
     /<link rel="icon" type="image\/png" sizes="32x32" href="\.\/favicon-32x32\.png\?v=\d+" \/>/,
@@ -22,8 +27,10 @@ test("GitHub Pages ofrece favicons compatibles y versionados para la pestana", (
     html,
     /<link rel="shortcut icon" href="\.\/favicon\.ico\?v=\d+" \/>/,
   );
+  assert.doesNotMatch(html, /<link rel="icon" type="image\/svg\+xml"/);
   assert.equal(existsSync(resolve(ROOT, "favicon-32x32.png")), true);
   assert.equal(existsSync(resolve(ROOT, "favicon.ico")), true);
+  assert.equal(existsSync(resolve(ROOT, "soccer-ball-logo.png")), true);
 });
 
 test("el icono de instalacion movil mantiene el mismo arte visual", () => {
@@ -34,15 +41,28 @@ test("el icono de instalacion movil mantiene el mismo arte visual", () => {
   assert.equal(existsSync(resolve(ROOT, "apple-touch-icon.png")), true);
 });
 
-test("el SVG evita efectos que rasterizan el balon como un circulo negro", () => {
-  assert.doesNotMatch(svg, /rgba\(/);
-  assert.doesNotMatch(svg, /<radialGradient/);
+test("los PNG del balon conservan dimensiones y canal alfa esperados", () => {
+  assert.deepEqual(pngMetadata("soccer-ball-logo.png"), {
+    width: 128,
+    height: 128,
+    colorType: 6,
+  });
+  assert.deepEqual(pngMetadata("favicon-32x32.png"), {
+    width: 32,
+    height: 32,
+    colorType: 6,
+  });
+  assert.deepEqual(pngMetadata("apple-touch-icon.png"), {
+    width: 180,
+    height: 180,
+    colorType: 6,
+  });
 });
 
-test("el logotipo reutiliza el balon vectorial sin depender del emoji", () => {
+test("el logotipo reutiliza el balon fotografico sin depender del emoji", () => {
   assert.match(
     html,
-    /<img class="logo-home__ball" src="\.\/favicon\.svg\?v=\d+" alt="" aria-hidden="true" \/>/,
+    /<img class="logo-home__ball" src="\.\/soccer-ball-logo\.png\?v=\d+" alt="" aria-hidden="true" \/>/,
   );
   assert.match(html, /<span class="logo-home__brand">/);
   assert.doesNotMatch(html, />\s*⚽\s*WC2026/);

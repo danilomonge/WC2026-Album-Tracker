@@ -167,7 +167,10 @@ app.js
 data.js
 styles.css
 tailwind.css
-favicon.svg
+soccer-ball-logo.png
+favicon-32x32.png
+favicon.ico
+apple-touch-icon.png
 .nojekyll
 ```
 
