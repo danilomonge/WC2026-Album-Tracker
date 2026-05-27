@@ -46,8 +46,8 @@ test("el icono de instalacion movil mantiene el mismo arte visual", () => {
 
 test("los assets raster del emblema conservan dimensiones de publicacion", () => {
   assert.deepEqual(pngMetadata("wc26-ball-premium.png"), {
-    width: 256,
-    height: 256,
+    width: 512,
+    height: 512,
     colorType: 6,
   });
   assert.deepEqual(pngMetadata("favicon-32x32.png"), {

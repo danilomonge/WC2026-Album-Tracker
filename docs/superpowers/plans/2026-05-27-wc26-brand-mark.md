@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the rejected flat emblem with a realistic, symmetrical futuristic WC26 match ball shared by the favicon and application header.
+**Goal:** Use the approved front-facing pearl-white and navy WC26 match ball shared by the favicon and application header.
 
 **Architecture:** A transparent `wc26-ball-premium.png` is the visual source of truth, generated as a clean premium match-ball render with a central `26`. HTML references it in the header, while compatible PNG and ICO favicon assets are derived from the same master; existing CSS preserves layout measurements.
 
@@ -39,8 +39,8 @@ not expose `wc26-ball-premium.png`.
 
 - [x] **Step 1: Create the premium PNG source of truth**
 
-Produce a symmetric pearl-white and deep-blue tournament football with
-realistic stitching, minimal cyan panel accents and a large centered `26`.
+Produce a symmetric pearl-white and navy tournament football with realistic
+stitching, restrained curved navy strokes and a large centered `26`.
 
 - [x] **Step 2: Integrate the premium PNG**
 

@@ -11,16 +11,16 @@ realista, simetrico y premium, manteniendo la legibilidad en tamanos de
 
 La marca sera un balon de partido premium con tres elementos:
 
-- Paneles simetricos blanco perla y azul profundo con costuras realistas.
-- Acentos cian geometricos que introducen tecnologia sin romper el equilibrio.
-- Un `26` frontal grande, limpio y legible como impresion oficial del balon.
+- Paneles simetricos blanco perla y azul marino con costuras realistas.
+- Trazos curvos azul marino, sobrios y simetricos, sobre los paneles blancos.
+- Un `26` frontal muy grande, limpio y legible como impresion oficial del balon.
 
 El resultado evita orbitas externas y composiciones asimetricas. La reduccion
 conserva una silueta de balon clara y la presencia visual del `26`.
 
 ## Implementacion
 
-`wc26-ball-premium.png` sera el activo maestro transparente. Se usara en el
+`wc26-ball-premium.png` sera el activo maestro transparente de `512x512`. Se usara en el
 header, mientras que `favicon-32x32.png`, `favicon.ico` y
 `apple-touch-icon.png` se derivaran del mismo raster de alta calidad.
 
