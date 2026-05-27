@@ -1,5 +1,9 @@
 # WC2026 Collector - Germany Edition
 
+<p align="center">
+  <img src="./wc26-mark.svg" width="112" alt="Emblema WC26 Collector" />
+</p>
+
 Aplicacion web estatica para gestionar el album **Panini FIFA World Cup 2026 - Germany Edition**: coleccion, repetidos, faltantes, progreso y exportaciones PDF, con sincronizacion privada mediante Supabase.
 
 [Aplicacion publicada](https://danilomonge.github.io/WC2026-Album-Tracker/) | [Reportar un error](https://github.com/danilomonge/WC2026-Album-Tracker/issues/new/choose) | [Contribuir](CONTRIBUTING.md) | [Seguridad](SECURITY.md)
@@ -167,14 +171,20 @@ app.js
 data.js
 styles.css
 tailwind.css
-soccer-ball-logo.png
+wc26-mark.svg
 favicon-32x32.png
 favicon.ico
 apple-touch-icon.png
+github-social-preview.png
 .nojekyll
 ```
 
 Al fusionar un cambio en `main`, GitHub Pages reconstruye el sitio. El workflow de CI verifica tests y que el CSS generado este actualizado; no administra el despliegue.
+
+La identidad visual del repositorio usa `wc26-mark.svg`. GitHub no tiene una
+foto de perfil independiente para cada repositorio; para la tarjeta visual al
+compartir el enlace, suba `github-social-preview.png` desde **Settings >
+General > Social preview**.
 
 ## Estructura Del Repositorio
 

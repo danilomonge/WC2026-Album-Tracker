@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Balon WC2026 futurista">
+  <defs>
+    <radialGradient id="ball-surface" cx="34%" cy="26%" r="76%">
+      <stop stop-color="#FFFFFF" />
+      <stop offset=".38" stop-color="#F5FAFF" />
+      <stop offset=".72" stop-color="#DCE7F4" />
+      <stop offset="1" stop-color="#AFC4DD" />
+    </radialGradient>
+    <linearGradient id="panel-dark" x1="32" y1="28" x2="92" y2="100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#172B4D" />
+      <stop offset=".5" stop-color="#071B39" />
+      <stop offset="1" stop-color="#020C22" />
+    </linearGradient>
+    <linearGradient id="seam-light" x1="28" y1="20" x2="100" y2="108" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8EA5C2" />
+      <stop offset=".5" stop-color="#637C9E" />
+      <stop offset="1" stop-color="#304C73" />
+    </linearGradient>
+    <linearGradient id="orbit-gradient" x1="6" y1="35" x2="122" y2="100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#68F4FF" />
+      <stop offset=".48" stop-color="#12C9F4" />
+      <stop offset="1" stop-color="#0669D9" />
+    </linearGradient>
+    <filter id="soft-shadow" x="-25%" y="-25%" width="150%" height="165%">
+      <feGaussianBlur stdDeviation="2.5" />
+    </filter>
+    <clipPath id="ball-clip">
+      <circle cx="64" cy="62" r="49" />
+    </clipPath>
+  </defs>
+  <ellipse cx="64" cy="116" rx="40" ry="5" fill="#062653" opacity=".17" filter="url(#soft-shadow)" />
+  <circle cx="64" cy="62" r="52.5" fill="#082653" />
+  <circle cx="64" cy="62" r="49" fill="url(#ball-surface)" />
+  <g clip-path="url(#ball-clip)">
+    <path d="M18 35L39 26L48 5L14 9Z" fill="url(#panel-dark)" />
+    <path d="M85 8L92 27L112 35L121 7Z" fill="url(#panel-dark)" />
+    <path d="M18 86L36 83L48 102L36 119L7 104Z" fill="url(#panel-dark)" />
+    <path d="M92 83L112 87L122 107L92 117L80 102Z" fill="url(#panel-dark)" />
+    <path id="center-panel" d="M64 36L83 50L76 73L52 73L45 50Z" fill="url(#panel-dark)" />
+    <g id="panel-seams" fill="none" stroke="url(#seam-light)" stroke-width="2" stroke-linejoin="round">
+      <path d="M39 26L45 50M92 27L83 50M36 83L52 73M92 83L76 73" />
+      <path d="M39 26L61 17L85 27M18 86L13 63L18 35M112 35L116 61L112 87" />
+      <path d="M36 83L34 101L48 112M80 102L92 117M52 73L43 88M76 73L84 88" />
+    </g>
+    <path d="M28 31C42 19 65 15 82 20" fill="none" stroke="#FFFFFF" stroke-opacity=".9" stroke-width="4" stroke-linecap="round" />
+    <path d="M26 39C32 32 40 27 48 24" fill="none" stroke="#FFFFFF" stroke-opacity=".48" stroke-width="2.5" stroke-linecap="round" />
+    <path d="M87 96C95 91 101 83 105 73" fill="none" stroke="#7188A8" stroke-opacity=".48" stroke-width="4" stroke-linecap="round" />
+  </g>
+  <path
+    d="M9 77C20 101 45 114 71 112C91 110 109 99 119 82"
+    fill="none"
+    stroke="url(#orbit-gradient)"
+    stroke-width="3.8"
+    stroke-linecap="round"
+  />
+  <circle cx="119" cy="82" r="3.6" fill="#42EAFF" />
+  <path d="M26 21C39 10 56 5 73 7" fill="none" stroke="#55EFFF" stroke-width="2.2" stroke-linecap="round" opacity=".9" />
+</svg>
