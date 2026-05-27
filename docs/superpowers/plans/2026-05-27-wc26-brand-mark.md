@@ -40,7 +40,8 @@ not expose `wc26-ball-premium.png`.
 - [x] **Step 1: Create the premium PNG source of truth**
 
 Produce a symmetric pearl-white and navy tournament football with realistic
-stitching, restrained curved navy strokes and a large centered `26`.
+stitching, restrained curved navy strokes and a large `26` optically centered
+inside the front white panel.
 
 - [x] **Step 2: Integrate the premium PNG**
 

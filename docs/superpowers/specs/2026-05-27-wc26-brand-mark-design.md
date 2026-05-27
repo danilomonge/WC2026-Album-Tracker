@@ -13,10 +13,11 @@ La marca sera un balon de partido premium con tres elementos:
 
 - Paneles simetricos blanco perla y azul marino con costuras realistas.
 - Trazos curvos azul marino, sobrios y simetricos, sobre los paneles blancos.
-- Un `26` frontal muy grande, limpio y legible como impresion oficial del balon.
+- Un `26` frontal muy grande, limpio y centrado opticamente dentro del panel
+  blanco principal, como impresion oficial del balon.
 
 El resultado evita orbitas externas y composiciones asimetricas. La reduccion
-conserva una silueta de balon clara y la presencia visual del `26`.
+conserva una silueta de balon clara y el centrado visual del `26`.
 
 ## Implementacion
 
