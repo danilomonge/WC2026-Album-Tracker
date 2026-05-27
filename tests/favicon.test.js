@@ -7,9 +7,7 @@ import { dirname, resolve } from "node:path";
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const html = readFileSync(resolve(ROOT, "index.html"), "utf8");
 const styles = readFileSync(resolve(ROOT, "styles.css"), "utf8");
-const mark = existsSync(resolve(ROOT, "wc26-mark.svg"))
-  ? readFileSync(resolve(ROOT, "wc26-mark.svg"), "utf8")
-  : "";
+const readme = readFileSync(resolve(ROOT, "README.md"), "utf8");
 
 function pngMetadata(filename) {
   const bytes = readFileSync(resolve(ROOT, filename));
@@ -21,11 +19,7 @@ function pngMetadata(filename) {
   };
 }
 
-test("GitHub Pages ofrece el emblema WC26 vectorial y fallbacks versionados", () => {
-  assert.match(
-    html,
-    /<link rel="icon" type="image\/svg\+xml" href="\.\/wc26-mark\.svg\?v=\d+" \/>/,
-  );
+test("GitHub Pages ofrece el balon WC26 premium y fallbacks versionados", () => {
   assert.match(
     html,
     /<link rel="icon" type="image\/png" sizes="32x32" href="\.\/favicon-32x32\.png\?v=\d+" \/>/,
@@ -34,7 +28,9 @@ test("GitHub Pages ofrece el emblema WC26 vectorial y fallbacks versionados", ()
     html,
     /<link rel="shortcut icon" href="\.\/favicon\.ico\?v=\d+" \/>/,
   );
-  assert.equal(existsSync(resolve(ROOT, "wc26-mark.svg")), true);
+  assert.doesNotMatch(html, /<link rel="icon" type="image\/svg\+xml"/);
+  assert.equal(existsSync(resolve(ROOT, "wc26-mark.svg")), false);
+  assert.equal(existsSync(resolve(ROOT, "wc26-ball-premium.png")), true);
   assert.equal(existsSync(resolve(ROOT, "favicon-32x32.png")), true);
   assert.equal(existsSync(resolve(ROOT, "favicon.ico")), true);
   assert.equal(existsSync(resolve(ROOT, "soccer-ball-logo.png")), false);
@@ -49,6 +45,11 @@ test("el icono de instalacion movil mantiene el mismo arte visual", () => {
 });
 
 test("los assets raster del emblema conservan dimensiones de publicacion", () => {
+  assert.deepEqual(pngMetadata("wc26-ball-premium.png"), {
+    width: 256,
+    height: 256,
+    colorType: 6,
+  });
   assert.deepEqual(pngMetadata("favicon-32x32.png"), {
     width: 32,
     height: 32,
@@ -62,14 +63,14 @@ test("los assets raster del emblema conservan dimensiones de publicacion", () =>
   assert.deepEqual(pngMetadata("github-social-preview.png"), {
     width: 1280,
     height: 640,
-    colorType: 6,
+    colorType: 2,
   });
 });
 
-test("el logotipo reutiliza el mismo emblema WC26 sin depender del emoji", () => {
+test("el logotipo reutiliza el balon WC26 premium sin depender del emoji", () => {
   assert.match(
     html,
-    /<img class="logo-home__ball" src="\.\/wc26-mark\.svg\?v=\d+" alt="" aria-hidden="true" \/>/,
+    /<img class="logo-home__ball" src="\.\/wc26-ball-premium\.png\?v=\d+" alt="" aria-hidden="true" \/>/,
   );
   assert.match(html, /<span class="logo-home__brand">/);
   assert.doesNotMatch(html, />\s*⚽\s*WC2026/);
@@ -77,11 +78,7 @@ test("el logotipo reutiliza el mismo emblema WC26 sin depender del emoji", () =>
   assert.match(styles, /@media \(min-width: 768px\)\s*\{\s*\.logo-home__ball\s*\{[^}]*width:\s*1em;[^}]*height:\s*1em;/s);
 });
 
-test("el emblema conserva paneles de balon y acento futurista sin tipografias externas", () => {
-  assert.match(mark, /viewBox="0 0 128 128"/);
-  assert.match(mark, /id="orbit-gradient"/);
-  assert.match(mark, /aria-label="Balon WC2026 futurista"/);
-  assert.match(mark, /id="center-panel"/);
-  assert.match(mark, /id="panel-seams"/);
-  assert.doesNotMatch(mark, /<text\b/);
+test("el repositorio publica el logotipo premium y su vista previa social", () => {
+  assert.match(readme, /<img src="\.\/wc26-ball-premium\.png"/);
+  assert.match(readme, /github-social-preview\.png/);
 });

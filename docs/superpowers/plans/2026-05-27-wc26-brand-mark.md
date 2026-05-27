@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the photographic soccer-ball asset with a clean futuristic match-ball emblem shared by the favicon and the application header.
+**Goal:** Replace the rejected flat emblem with a realistic, symmetrical futuristic WC26 match ball shared by the favicon and application header.
 
-**Architecture:** A single scalable `wc26-mark.svg` is the visual source of truth. HTML serves it directly to modern browsers and references it in the header; ImageMagick renders compatible PNG and ICO fallbacks from that same SVG while existing CSS preserves layout measurements.
+**Architecture:** A transparent `wc26-ball-premium.png` is the visual source of truth, generated as a clean premium match-ball render with a central `26`. HTML references it in the header, while compatible PNG and ICO favicon assets are derived from the same master; existing CSS preserves layout measurements.
 
-**Tech Stack:** Static HTML/CSS, SVG, ImageMagick, Node.js built-in test runner, Playwright CLI.
+**Tech Stack:** Static HTML/CSS, PNG/ICO assets, ImageMagick, Node.js built-in test runner, Playwright CLI.
 
 ---
 
@@ -17,47 +17,43 @@
 
 - [x] **Step 1: Write failing tests for the new source asset**
 
-Update assertions to require a versioned `wc26-mark.svg` favicon link, the
-same SVG in `.logo-home__ball`, and the removal of `soccer-ball-logo.png`.
+Update assertions to require a versioned PNG favicon, the premium ball in
+`.logo-home__ball`, and the removal of the rejected `wc26-mark.svg`.
 
 - [x] **Step 2: Run the focused test to verify failure**
 
 Run: `node --test tests/favicon.test.js`
 
-Expected: FAIL because `index.html` still references `soccer-ball-logo.png`
-and does not expose `wc26-mark.svg`.
+Expected: FAIL because `index.html` still references `wc26-mark.svg` and does
+not expose `wc26-ball-premium.png`.
 
 ### Task 2: Implement The Futuristic Mark
 
 **Files:**
-- Create: `wc26-mark.svg`
+- Create: `wc26-ball-premium.png`
 - Modify: `index.html`
-- Delete: `soccer-ball-logo.png`
+- Delete: `wc26-mark.svg`
 - Modify: `favicon-32x32.png`
 - Modify: `favicon.ico`
 - Modify: `apple-touch-icon.png`
 
-- [x] **Step 1: Create the SVG source of truth**
+- [x] **Step 1: Create the premium PNG source of truth**
 
-Draw a polished white-and-graphite football with readable panel geometry,
-controlled cool shadows and a cyan orbital accent, limiting the design to
-high-contrast shapes that remain distinguishable at `16px`.
+Produce a symmetric pearl-white and deep-blue tournament football with
+realistic stitching, minimal cyan panel accents and a large centered `26`.
 
-- [x] **Step 2: Integrate the SVG**
+- [x] **Step 2: Integrate the premium PNG**
 
-Add a versioned SVG favicon link, change the header image source to
-`./wc26-mark.svg`, and increment fallback asset cache versions.
+Change the header image source to `./wc26-ball-premium.png`, remove the
+rejected SVG favicon link and increment fallback asset cache versions.
 
 - [x] **Step 3: Render fallback images**
 
 Run:
 
 ```bash
-Render `wc26-mark.svg` in Chromium on a transparent surface and derive:
-
-```bash
-magick /tmp/wc26-transparent-1024.png -resize 32x32 -strip favicon-32x32.png
-magick /tmp/wc26-transparent-1024.png -resize 180x180 -strip apple-touch-icon.png
+magick wc26-ball-premium.png -resize 32x32 -strip favicon-32x32.png
+magick wc26-ball-premium.png -resize 180x180 -strip apple-touch-icon.png
 magick /tmp/wc26-icon-16.png /tmp/wc26-icon-32.png /tmp/wc26-icon-48.png favicon.ico
 ```
 
@@ -74,10 +70,10 @@ Expected: PASS.
 
 - [x] **Step 1: Align published asset documentation**
 
-Replace the photographic PNG source entry with `wc26-mark.svg`, retaining the
-fallback file list.
+Replace the rejected SVG entry with `wc26-ball-premium.png`, retaining the
+fallback file list and documenting `github-social-preview.png`.
 
-- [ ] **Step 2: Run full verification**
+- [x] **Step 2: Run full verification**
 
 Run:
 
@@ -90,7 +86,8 @@ git diff --check
 Expected: build succeeds, all tests pass, and whitespace validation reports no
 issues.
 
-- [ ] **Step 3: Perform visual checks and publish**
+- [x] **Step 3: Perform pre-publication visual checks**
 
-Render the public page at mobile and desktop sizes using Playwright after
-deployment, confirming icon dimensions remain `22x22` and `30x30`.
+Render the page at mobile and desktop sizes using Playwright before
+publication, confirming icon dimensions remain `22x22` and `30x30`. Repeat
+the same validation against GitHub Pages after deployment.
