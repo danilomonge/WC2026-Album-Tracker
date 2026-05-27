@@ -1,185 +1,112 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="WC2026 Collector">
   <defs>
 
-    <!-- ── Sphere base ── -->
-    <radialGradient id="base" cx="40%" cy="34%" r="68%">
-      <stop offset="0%"   stop-color="#0d2547"/>
-      <stop offset="48%"  stop-color="#060f24"/>
-      <stop offset="100%" stop-color="#020710"/>
-    </radialGradient>
-
-    <!-- Atmospheric inner bloom (top-left blue) -->
-    <radialGradient id="atm" cx="38%" cy="30%" r="60%">
-      <stop offset="0%"   stop-color="#1a6bcc" stop-opacity=".42"/>
-      <stop offset="100%" stop-color="#001055" stop-opacity="0"/>
-    </radialGradient>
-
-    <!-- Bottom-right deep shadow on ball -->
-    <radialGradient id="shadow-inner" cx="68%" cy="72%" r="55%">
-      <stop offset="0%"   stop-color="#000510" stop-opacity=".55"/>
-      <stop offset="100%" stop-color="#000510" stop-opacity="0"/>
-    </radialGradient>
-
-    <!-- Outer ring: cyan → royal blue -->
-    <linearGradient id="ring-grad" x1="14%" y1="0%" x2="86%" y2="100%">
-      <stop offset="0%"   stop-color="#33e8ff"/>
-      <stop offset="50%"  stop-color="#0099ee"/>
-      <stop offset="100%" stop-color="#0052cc"/>
-    </linearGradient>
-
-    <!-- Orbital arc: fades in and out -->
-    <linearGradient id="orbit-grad" x1="0%" y1="50%" x2="100%" y2="50%">
-      <stop offset="0%"   stop-color="#00eeff" stop-opacity="0"/>
-      <stop offset="18%"  stop-color="#00ccff"/>
-      <stop offset="78%"  stop-color="#0077ff"/>
-      <stop offset="100%" stop-color="#0044cc" stop-opacity="0"/>
-    </linearGradient>
-
-    <!-- "26" text: pure white → ice blue -->
-    <linearGradient id="txt-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+    <!-- ── Sphere surface: top-left bright white → bottom-right blue-gray ── -->
+    <radialGradient id="sph" cx="34%" cy="27%" r="76%">
       <stop offset="0%"   stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#b0dcff"/>
-    </linearGradient>
+      <stop offset="38%"  stop-color="#f1f6fc"/>
+      <stop offset="78%"  stop-color="#c4d4e8"/>
+      <stop offset="100%" stop-color="#9fb2c8"/>
+    </radialGradient>
 
-    <!-- ── Filters ── -->
+    <!-- Pentagon patch: deep navy, same light direction as sphere -->
+    <radialGradient id="ptch" cx="34%" cy="27%" r="76%">
+      <stop offset="0%"   stop-color="#1f3468"/>
+      <stop offset="52%"  stop-color="#0e1e40"/>
+      <stop offset="100%" stop-color="#060c1c"/>
+    </radialGradient>
 
-    <!-- Subtle neon glow on wireframe -->
-    <filter id="line-glow" x="-35%" y="-35%" width="170%" height="170%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="1.6" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    <!-- Rim vignette: dark shadow at edges gives the spherical curve impression -->
+    <radialGradient id="vign" cx="50%" cy="50%" r="50%">
+      <stop offset="66%"  stop-color="#000000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000010" stop-opacity="0.48"/>
+    </radialGradient>
+
+    <!-- Soft blur for specular highlight and text glow -->
+    <filter id="blur-soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="2.8"/>
     </filter>
 
-    <!-- Strong text glow -->
-    <filter id="txt-glow" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-
-    <!-- Orbital dot halo -->
-    <filter id="dot-glow" x="-120%" y="-120%" width="340%" height="340%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="3.2" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-
-    <!-- Highlight arc soft -->
-    <filter id="shine-glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-
-    <!-- Clip to sphere -->
+    <!-- Clip to sphere circle -->
     <clipPath id="bc"><circle cx="64" cy="62" r="47"/></clipPath>
 
   </defs>
 
   <!-- ══ GROUND SHADOW ══ -->
-  <ellipse cx="65" cy="121" rx="37" ry="5.5" fill="#000510" opacity=".45"/>
+  <ellipse cx="65" cy="120" rx="36" ry="4.8" fill="#00001a" opacity="0.22"/>
 
-  <!-- ══ OUTER DECORATIVE HALO (barely visible) ══ -->
-  <circle cx="64" cy="62" r="61" fill="none" stroke="#0055aa" stroke-width=".6" opacity=".35"/>
+  <!-- ══ SPHERE ══ -->
+  <!-- Thin ring: gives clean edge on white backgrounds -->
+  <circle cx="64" cy="62" r="47.8" fill="none"
+          stroke="#7288a2" stroke-width="0.7" opacity="0.55"/>
+  <!-- Surface -->
+  <circle cx="64" cy="62" r="47" fill="url(#sph)"/>
 
-  <!-- ══ THIN NEON OUTER RING ══ -->
-  <circle cx="64" cy="62" r="57.5" fill="none"
-          stroke="url(#ring-grad)" stroke-width="1.8" opacity=".8"/>
-
-  <!-- ══ SPHERE BASE ══ -->
-  <!-- Rim dark edge for depth -->
-  <circle cx="64" cy="62" r="50" fill="#010918"/>
-  <!-- Actual surface gradient -->
-  <circle cx="64" cy="62" r="48" fill="url(#base)"/>
-  <!-- Atmosphere bloom -->
-  <circle cx="64" cy="62" r="48" fill="url(#atm)"/>
-  <!-- Bottom-right depth shadow -->
-  <circle cx="64" cy="62" r="48" fill="url(#shadow-inner)"/>
-
-  <!-- ══ SOCCER BALL WIREFRAME (clipped to sphere) ══ -->
+  <!-- ══ PENTAGON PATCHES ══ -->
   <!--
-    Exact Telstar geometry: circumradius 20, ball center (64,62).
-    Central pentagon + 5 outer pentagons; all drawn as outlines only.
-    Faint base pass + bright central-pentagon pass for hierarchy.
+    Telstar geometry: circumradius 20, ball center (64,62), top vertex pointing up.
+    6 pentagons: 1 central facing viewer + 5 surrounding (partially clipped).
   -->
-
-  <!-- Base pass: all 6 pentagons, faint -->
-  <g clip-path="url(#bc)" fill="none" stroke="#1ea8dd" stroke-width=".9" stroke-opacity=".45">
-    <!-- Central (point up) -->
-    <polygon points="64,42 83,55.8 75.8,78.2 52.2,78.2 45,55.8"/>
-    <!-- Top (point down) -->
-    <polygon points="64,42 83,28.2 75.8,5.8 52.2,5.8 45,28.2"/>
+  <g clip-path="url(#bc)">
+    <!-- Central (front-facing) -->
+    <polygon points="64,42 83,55.8 75.8,78.2 52.2,78.2 45,55.8"        fill="url(#ptch)"/>
+    <!-- Top -->
+    <polygon points="64,42 83,28.2 75.8,5.8 52.2,5.8 45,28.2"          fill="url(#ptch)"/>
     <!-- Upper-right -->
-    <polygon points="83,55.8 90.3,33.4 113.8,33.4 121,55.8 102,69.6"/>
+    <polygon points="83,55.8 90.3,33.4 113.8,33.4 121,55.8 102,69.6"   fill="url(#ptch)"/>
     <!-- Lower-right -->
-    <polygon points="75.8,78.2 99.3,78.2 106.6,100.6 87.6,114.4 68.5,100.6"/>
+    <polygon points="75.8,78.2 99.3,78.2 106.6,100.6 87.6,114.4 68.5,100.6" fill="url(#ptch)"/>
     <!-- Lower-left -->
-    <polygon points="52.2,78.2 59.5,100.6 40.4,114.4 21.4,100.6 28.7,78.2"/>
+    <polygon points="52.2,78.2 59.5,100.6 40.4,114.4 21.4,100.6 28.7,78.2"  fill="url(#ptch)"/>
     <!-- Upper-left -->
+    <polygon points="45,55.8 26,69.6 7,55.8 14.2,33.4 37.7,33.4"       fill="url(#ptch)"/>
+  </g>
+
+  <!-- ══ SEAM LINES ══ -->
+  <!-- White outlines on each pentagon edge — creates the stitching/panel pattern -->
+  <g clip-path="url(#bc)" fill="none"
+     stroke="white" stroke-width="1.4"
+     stroke-linejoin="round" stroke-linecap="round" opacity="0.82">
+    <polygon points="64,42 83,55.8 75.8,78.2 52.2,78.2 45,55.8"/>
+    <polygon points="64,42 83,28.2 75.8,5.8 52.2,5.8 45,28.2"/>
+    <polygon points="83,55.8 90.3,33.4 113.8,33.4 121,55.8 102,69.6"/>
+    <polygon points="75.8,78.2 99.3,78.2 106.6,100.6 87.6,114.4 68.5,100.6"/>
+    <polygon points="52.2,78.2 59.5,100.6 40.4,114.4 21.4,100.6 28.7,78.2"/>
     <polygon points="45,55.8 26,69.6 7,55.8 14.2,33.4 37.7,33.4"/>
   </g>
 
-  <!-- Bright pass: only the central pentagon, with neon glow -->
-  <g clip-path="url(#bc)" fill="none" stroke="#00ddff" stroke-width="1.3"
-     stroke-opacity=".92" filter="url(#line-glow)">
-    <polygon points="64,42 83,55.8 75.8,78.2 52.2,78.2 45,55.8"/>
-  </g>
+  <!-- ══ RIM VIGNETTE ══ -->
+  <!-- Overlaid on top of patches to unify the sphere shading -->
+  <circle cx="64" cy="62" r="47" fill="url(#vign)"/>
 
-  <!-- Edge seam highlights between patches (accent lines) -->
-  <g clip-path="url(#bc)" fill="none" stroke="#55eeff" stroke-width=".7"
-     stroke-opacity=".35" stroke-linecap="round">
-    <!-- Central → Top -->
-    <line x1="64" y1="42" x2="64" y2="28"/>
-    <!-- Central → Upper-right -->
-    <line x1="83" y1="55.8" x2="97" y2="51"/>
-    <!-- Central → Lower-right -->
-    <line x1="75.8" y1="78.2" x2="87.7" y2="87"/>
-    <!-- Central → Lower-left -->
-    <line x1="52.2" y1="78.2" x2="40.4" y2="87"/>
-    <!-- Central → Upper-left -->
-    <line x1="45" y1="55.8" x2="31" y2="51"/>
-  </g>
+  <!-- ══ SPECULAR HIGHLIGHT ══ -->
+  <!-- Broad primary glow (blurred white blob, top-left) -->
+  <ellipse cx="46" cy="41" rx="17" ry="12"
+           fill="white" opacity="0.46"
+           transform="rotate(-26 46 41)"
+           filter="url(#blur-soft)"/>
+  <!-- Sharp hot-spot centre -->
+  <ellipse cx="40" cy="36" rx="6.5" ry="4.5"
+           fill="white" opacity="0.84"
+           transform="rotate(-26 40 36)"/>
+  <!-- Tiny bright pinpoint -->
+  <ellipse cx="37" cy="33" rx="2.2" ry="1.6"
+           fill="white" opacity="0.95"
+           transform="rotate(-26 37 33)"/>
 
-  <!-- ══ "26" NUMBER — THE HERO ══ -->
-  <!-- Cyan glow under (blurry, wide) -->
-  <text x="64" y="76"
+  <!-- ══ "26" TEXT ══ -->
+  <!-- Soft glow layer under text for legibility -->
+  <text x="64" y="70"
         text-anchor="middle"
         font-family="'Arial Black','Impact','Helvetica Neue',sans-serif"
-        font-weight="900"
-        font-size="40"
-        letter-spacing="-2"
-        fill="#33bbff"
-        opacity=".5"
-        filter="url(#txt-glow)">26</text>
-
-  <!-- Crisp white text on top -->
-  <text x="64" y="76"
+        font-weight="900" font-size="22" letter-spacing="-1"
+        fill="white" opacity="0.5"
+        filter="url(#blur-soft)">26</text>
+  <!-- Crisp white text -->
+  <text x="64" y="70"
         text-anchor="middle"
         font-family="'Arial Black','Impact','Helvetica Neue',sans-serif"
-        font-weight="900"
-        font-size="40"
-        letter-spacing="-2"
-        fill="url(#txt-grad)">26</text>
-
-  <!-- ══ ORBITAL ARC (outside clip, bottom sweep) ══ -->
-  <path d="M 10 84 C 22 114 52 128 82 123 C 104 119 121 104 127 84"
-        fill="none" stroke="url(#orbit-grad)" stroke-width="2.6"
-        stroke-linecap="round" filter="url(#line-glow)" opacity=".9"/>
-
-  <!-- Orbital endpoint: glowing cyan dot -->
-  <circle cx="127" cy="84" r="3" fill="#00ffee" filter="url(#dot-glow)"/>
-  <circle cx="127" cy="84" r="5.5" fill="none" stroke="#00ffee"
-          stroke-width=".7" opacity=".45"/>
-
-  <!-- ══ SPHERE HIGHLIGHT / SHINE ══ -->
-  <!-- Primary specular (top-left, broad) -->
-  <path d="M 27 26 C 40 15 59 10 79 17"
-        fill="none" stroke="white" stroke-opacity=".75" stroke-width="4"
-        stroke-linecap="round" filter="url(#shine-glow)"/>
-  <!-- Secondary specular (smaller) -->
-  <path d="M 25 37 C 33 28 44 23 56 21"
-        fill="none" stroke="white" stroke-opacity=".38" stroke-width="2.2"
-        stroke-linecap="round"/>
-
-  <!-- Neon accent arc above ball (top, outside) -->
-  <path d="M 31 17 C 45 6 64 2 82 8"
-        fill="none" stroke="#44f0ff" stroke-width="2" stroke-linecap="round"
-        opacity=".8" filter="url(#shine-glow)"/>
+        font-weight="900" font-size="22" letter-spacing="-1"
+        fill="white">26</text>
 
 </svg>
