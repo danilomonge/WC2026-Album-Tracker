@@ -1,4 +1,4 @@
-// Minimal static file server — used by .claude/launch.json for the preview panel.
+// Minimal static file server for local development and manual browser checks.
 import http from "http";
 import fs from "fs";
 import path from "path";
