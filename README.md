@@ -1,100 +1,100 @@
 # WC2026 Collector - Germany Edition
 
 <p align="center">
-  <img src="./wc26-ball-premium.png" width="112" alt="Balon premium WC26 Collector" />
+  <img src="./wc26-ball-premium.png" width="112" alt="WC26 Collector premium football" />
 </p>
 
-Aplicacion web estatica para gestionar el album **Panini FIFA World Cup 2026 - Germany Edition**: coleccion, repetidos, faltantes, progreso y exportaciones PDF, con sincronizacion privada mediante Supabase.
+A static web application for managing the **Panini FIFA World Cup 2026 - Germany Edition** album: collected stickers, duplicates, missing stickers, completion progress, and PDF exports, with private Supabase synchronization.
 
-[Aplicacion publicada](https://danilomonge.github.io/WC2026-Album-Tracker/) | [Reportar un error](https://github.com/danilomonge/WC2026-Album-Tracker/issues/new/choose) | [Contribuir](CONTRIBUTING.md) | [Seguridad](SECURITY.md)
+[Live application](https://danilomonge.github.io/WC2026-Album-Tracker/) | [Report a bug](https://github.com/danilomonge/WC2026-Album-Tracker/issues/new/choose) | [Contribute](CONTRIBUTING.md) | [Security](SECURITY.md)
 
-## Estado Del Proyecto
+## Project Status
 
-- Catalogo implementado: **992 stickers** de la edicion alemana.
-- Frontend: SPA estatica en HTML, CSS y JavaScript ES modules.
-- Persistencia: Supabase Auth + Postgres con Row Level Security (RLS).
-- Proveedores activos en la instancia publicada al 26 de mayo de 2026: **email/password**. Google OAuth esta implementado como opcion y solo aparece si el proveedor se habilita en Supabase.
-- Publicacion: GitHub Pages desde `main` y `/ (root)`.
-- Licencia del codigo: [MIT](LICENSE).
+- Implemented catalog: **992 stickers** from the Germany edition.
+- Frontend: static SPA using HTML, CSS, and JavaScript ES modules.
+- Persistence: Supabase Auth and Postgres with Row Level Security (RLS).
+- Providers enabled in the hosted instance as verified on May 28, 2026: **email/password**. Google OAuth is implemented as an optional provider and is only shown if enabled in Supabase.
+- Deployment: GitHub Pages from `main` and `/ (root)`.
+- Code license: [MIT](LICENSE).
 
-Este proyecto no esta afiliado, patrocinado ni respaldado por Panini o FIFA. Los nombres y marcas pertenecen a sus respectivos titulares.
+This project is not affiliated with, sponsored by, or endorsed by Panini or FIFA. All names and trademarks belong to their respective owners.
 
-## Funcionalidad Implementada
+## Implemented Features
 
-- Navegacion en modo lectura sin cuenta.
-- Registro, inicio de sesion y cierre de sesion con email/password.
-- Recuperacion de contrasena desde el correo de Supabase, incluyendo links `token_hash` y flujos implicitos.
-- Google OAuth condicional: el boton se oculta si Supabase informa que Google esta deshabilitado.
-- Marcado de stickers, repetidos y correccion con sincronizacion remota.
-- Busqueda, filtros por tipo, agrupacion por grupo/seleccion/pagina y vistas de faltantes, repetidos, especiales, Coca-Cola y estadisticas.
-- Interfaz completa en espanol e ingles.
-- Exportacion PDF de faltantes y repetidos con `jsPDF`.
-- Primer render inmediato y carga progresiva para mantener fluidez con el catalogo completo.
-- CSS de Tailwind precompilado; la aplicacion publicada no depende del runtime CDN de Tailwind.
+- Read-only browsing without an account.
+- Email/password sign-up, sign-in, and sign-out.
+- Password recovery from Supabase emails, including `token_hash` links and implicit-flow links.
+- Conditional Google OAuth: the button remains hidden when Supabase reports that Google is disabled.
+- Marking stickers, recording duplicates, and correcting entries with remote synchronization.
+- Search, type filters, grouping by group/team/page, and missing, duplicate, special, Coca-Cola, and statistics views.
+- Full Spanish and English application interface.
+- PDF export for missing and duplicate lists using `jsPDF`.
+- Immediate first render and progressive collection rendering for the complete catalog.
+- Precompiled Tailwind CSS; the published application does not depend on the Tailwind CDN runtime.
 
-## Catalogo
+## Catalog
 
-| Categoria | IDs | Cantidad |
+| Category | IDs | Count |
 | --- | --- | ---: |
-| Selecciones (48 x 20) | `MEX1`-`PAN20`, segun seleccion | 960 |
-| Especiales FWC | `FWC0`-`FWC19` | 20 |
+| National teams (48 x 20) | `MEX1`-`PAN20`, depending on team | 960 |
+| FWC specials | `FWC0`-`FWC19` | 20 |
 | Coca-Cola Germany | `CC1`-`CC12` | 12 |
 | **Total** |  | **992** |
 
-- Los especiales FWC estan en las paginas 0-3 y 106-109.
-- Los stickers Coca-Cola Germany estan en las paginas 112-113.
-- Cada seleccion incluye escudo, foto de equipo y 18 jugadores.
+- FWC specials are placed on pages 0-3 and 106-109.
+- Coca-Cola Germany stickers are placed on pages 112-113.
+- Each national team includes a badge, a team photo, and 18 players.
 
-## Uso
+## Usage
 
-### Sin cuenta
+### Without An Account
 
-Se puede navegar, buscar, filtrar y consultar el catalogo. No se puede guardar progreso ni generar PDFs personalizados.
+You can browse, search, filter, and inspect the catalog. Progress saving and personalized PDF exports require authentication.
 
-### Con cuenta
+### With An Account
 
-1. Abra la aplicacion desde HTTPS o un servidor local HTTP. La autenticacion no esta disponible al abrir `index.html` por `file://`.
-2. Inicie sesion o registre una cuenta con email/password.
-3. Pulse un sticker: el primer click lo marca como obtenido; los siguientes agregan repetidos.
-4. Use el boton de correccion para restar repetidos o devolver el sticker a faltante.
-5. El progreso se sincroniza en Supabase y se restaura al recargar.
+1. Open the application through HTTPS or a local HTTP server. Authentication is unavailable when opening `index.html` through `file://`.
+2. Sign in or create an account with email/password.
+3. Select a sticker: the first click marks it as collected; subsequent clicks add duplicates.
+4. Use the correction button to remove duplicates or return a sticker to the missing state.
+5. Progress is synchronized through Supabase and restored after reload.
 
-### Recuperacion De Contrasena
+### Password Recovery
 
-1. En el modal de acceso, seleccione **Olvide mi contrasena**.
-2. Indique el email; Supabase envia el enlace de recuperacion.
-3. Abra el enlace en la aplicacion publicada o en una URL local autorizada en Supabase.
-4. La aplicacion detecta la sesion de recuperacion y solicita la nueva contrasena y su confirmacion.
+1. In the account modal, select **Forgot your password?**
+2. Enter the email address; Supabase sends a recovery link.
+3. Open the link in the published application or in a local URL authorized in Supabase.
+4. The application detects the recovery session and requests the new password and its confirmation.
 
-La interfaz actual valida un minimo de 6 caracteres. Para forks orientados a produccion se recomienda configurar una politica mas fuerte en Supabase y alinear el minimo mostrado en la interfaz.
+The current interface validates a minimum of 6 characters. Production-oriented forks should configure a stronger Supabase password policy and align the UI minimum accordingly.
 
-## Arquitectura
+## Architecture
 
 ```text
 index.html
   -> tailwind.css + styles.css
   -> app.js
-       -> data.js (catalogo estatico)
+       -> data.js (static catalog)
        -> @supabase/supabase-js@2.50.0 (esm.sh)
-       -> jspdf@4.2.1 (esm.sh, solo al exportar)
+       -> jspdf@4.2.1 (esm.sh, loaded only for export)
        -> Supabase Auth + public.user_sticker_progress
 ```
 
-### Seguridad Aplicada
+### Applied Security Controls
 
-- Content Security Policy en `index.html` restringe scripts, conexiones, imagenes, formularios y objetos.
-- Solo se incorpora una clave publica/publishable de Supabase en el frontend; no se usan claves `service_role`.
-- RLS aisla el progreso por `auth.uid()`.
-- La base de datos rechaza IDs no pertenecientes al catalogo.
-- La base de datos limita `duplicates` a `0..99` y exige `obtained = true` cuando hay repetidos.
-- Los textos procedentes del catalogo se escapan antes de insertarse en plantillas HTML.
-- Las Actions incluidas estan fijadas a revisiones SHA inmutables.
+- A Content Security Policy in `index.html` limits scripts, connections, images, forms, and objects.
+- The frontend embeds only a public Supabase publishable key; no `service_role` or secret key is used.
+- RLS isolates each user's progress through `auth.uid()`.
+- The database rejects sticker IDs outside the catalog.
+- The database restricts `duplicates` to `0..99` and requires `obtained = true` when duplicates exist.
+- Catalog-derived values are escaped before insertion into HTML templates.
+- GitHub Actions dependencies are pinned to immutable revisions.
 
-Nota de auditoria de la instancia hospedada, 26 de mayo de 2026: Supabase Security Advisor informa que **Leaked Password Protection** esta deshabilitada. Es una configuracion de Auth del propietario del despliegue; debe activarse cuando el plan lo permita. Consulte [SECURITY.md](SECURITY.md).
+Hosted-instance audit note, May 28, 2026: Supabase Security Advisor reports that **Leaked Password Protection** is disabled. This is an Auth setting controlled by the deployment owner and should be enabled when the selected plan supports it. See [SECURITY.md](SECURITY.md).
 
-## Desarrollo Local
+## Local Development
 
-Requisitos: Node.js 20 o superior y npm.
+Requirements: Node.js 20 or later and npm.
 
 ```bash
 git clone https://github.com/danilomonge/WC2026-Album-Tracker.git
@@ -105,65 +105,65 @@ npm test
 node serve.mjs
 ```
 
-Abra [http://localhost:5500](http://localhost:5500).
+Open [http://localhost:5500](http://localhost:5500).
 
 ### Scripts
 
-| Comando | Funcion |
+| Command | Purpose |
 | --- | --- |
-| `npm run build:css` | Compila `tailwind.input.css` a `tailwind.css`. |
-| `npm test` | Ejecuta las 17 pruebas unitarias con `node:test`. |
-| `node serve.mjs` | Sirve la SPA localmente en el puerto 5500. |
+| `npm run build:css` | Compiles `tailwind.input.css` into `tailwind.css`. |
+| `npm test` | Runs the 22 unit and asset-contract tests with `node:test`. |
+| `node serve.mjs` | Serves the SPA locally on port 5500. |
 
-Cuando se cambien clases Tailwind en `index.html` o `app.js`, incluya el `tailwind.css` regenerado en el commit.
+When Tailwind classes in `index.html` or `app.js` change, include the regenerated `tailwind.css` in the commit.
 
-## Configurar Un Fork Con Supabase
+## Configuring A Fork With Supabase
 
-La instancia publicada usa un proyecto Supabase existente. Para desplegar su propio fork:
+The published instance uses an existing Supabase project. To deploy your own fork:
 
-1. Cree un proyecto Supabase.
-2. Ejecute [supabase/schema.sql](supabase/schema.sql) en SQL Editor.
-3. Active Email en **Authentication > Providers**.
-4. Configure las Redirect URLs:
+1. Create a Supabase project.
+2. Run [supabase/schema.sql](supabase/schema.sql) in the SQL Editor.
+3. Enable Email under **Authentication > Providers**.
+4. Configure redirect URLs:
 
 ```text
 http://localhost:5500
 http://127.0.0.1:5500
-https://SU-USUARIO.github.io/SU-REPOSITORIO/
+https://YOUR-USERNAME.github.io/YOUR-REPOSITORY/
 ```
 
-5. Sustituya `DEFAULT_SUPABASE_CONFIG.url` y `DEFAULT_SUPABASE_CONFIG.anonKey` en `app.js` por su Project URL y su **publishable key**.
-6. Para Google OAuth, habilite Google en Supabase y configure su OAuth client. La UI muestra el boton automaticamente solo cuando el proveedor esta habilitado.
+5. Replace `DEFAULT_SUPABASE_CONFIG.url` and `DEFAULT_SUPABASE_CONFIG.anonKey` in `app.js` with your Project URL and **publishable key**.
+6. To use Google OAuth, enable Google in Supabase and configure its OAuth client. The UI displays the button automatically only when the provider is enabled.
 
-### Esquema Desplegado
+### Deployed Schema
 
-La aplicacion usa exactamente una tabla publica:
+The application uses exactly one public table:
 
-| Tabla | Uso | Proteccion |
+| Table | Purpose | Protection |
 | --- | --- | --- |
-| `public.user_sticker_progress` | Estado por usuario y sticker | RLS; PK `(user_id, sticker_id)`; FK a `auth.users`; checks de IDs y repetidos |
+| `public.user_sticker_progress` | Per-user sticker state | RLS; PK `(user_id, sticker_id)`; FK to `auth.users`; sticker-ID and duplicate constraints |
 
-No utiliza una tabla `profiles`, triggers ni funciones RPC.
+It does not use a `profiles` table, triggers, or RPC functions.
 
-Las cuatro politicas permiten `SELECT`, `INSERT`, `UPDATE` y `DELETE` exclusivamente cuando `(select auth.uid()) = user_id`. El SQL reproducible se encuentra en [supabase/schema.sql](supabase/schema.sql).
+The four policies allow `SELECT`, `INSERT`, `UPDATE`, and `DELETE` exclusively when `(select auth.uid()) = user_id`. The reproducible SQL is in [supabase/schema.sql](supabase/schema.sql).
 
-### Recomendaciones De Produccion
+### Production Recommendations
 
-- Active confirmacion de email.
-- Active proteccion contra contrasenas filtradas y refuerce requisitos de contrasena si su plan lo permite.
-- Considere CAPTCHA para registro, acceso y reset si el proyecto sera expuesto a trafico abierto.
-- Configure SMTP propio para entregabilidad y reputacion del correo.
-- Revise periodicamente Security Advisor y Performance Advisor.
+- Enable email confirmation.
+- Enable leaked-password protection and strengthen password requirements if the selected plan supports it.
+- Consider CAPTCHA for registration, sign-in, and password reset when exposing the project to open traffic.
+- Configure custom SMTP for delivery reliability and email reputation.
+- Review Security Advisor and Performance Advisor regularly.
 
-Referencias oficiales:
+Official references:
 
 - [Supabase: Securing your API](https://supabase.com/docs/guides/api/securing-your-api)
 - [Supabase: Password security](https://supabase.com/docs/guides/auth/password-security)
 - [Supabase: CAPTCHA protection](https://supabase.com/docs/guides/auth/auth-captcha)
 
-## Despliegue
+## Deployment
 
-La configuracion actual de GitHub Pages publica el contenido estatico de `main` desde `/ (root)`. Los archivos necesarios son:
+GitHub Pages publishes the static contents of `main` from `/ (root)`. The required files are:
 
 ```text
 index.html
@@ -179,39 +179,36 @@ github-social-preview.png
 .nojekyll
 ```
 
-Al fusionar un cambio en `main`, GitHub Pages reconstruye el sitio. El workflow de CI verifica tests y que el CSS generado este actualizado; no administra el despliegue.
+When a change reaches `main`, GitHub Pages rebuilds the site. The CI workflow verifies tests and confirms that generated CSS is committed; it does not manage deployment.
 
-La identidad visual del repositorio usa `wc26-ball-premium.png`. GitHub no tiene una
-foto de perfil independiente para cada repositorio; para la tarjeta visual al
-compartir el enlace, suba `github-social-preview.png` desde **Settings >
-General > Social preview**.
+The repository brand uses `wc26-ball-premium.png`. GitHub does not provide a separate profile avatar for individual repositories. `github-social-preview.png` is the prepared repository social-preview card and can be set from **Settings > General > Social preview**.
 
-## Estructura Del Repositorio
+## Repository Structure
 
-| Ruta | Descripcion |
+| Path | Description |
 | --- | --- |
-| `index.html` | Shell de la SPA, modal de autenticacion y CSP. |
-| `app.js` | Estado, UI, i18n, autenticacion, sincronizacion, estadisticas y exportacion PDF. |
-| `data.js` | Catalogo fijo de 992 stickers y metadatos del album. |
-| `tailwind.input.css`, `tailwind.config.cjs`, `tailwind.css` | Fuente y build CSS de Tailwind. |
-| `styles.css` | Componentes y estilos visuales propios. |
-| `serve.mjs` | Servidor local minimo con proteccion contra path traversal. |
-| `tests/app.test.js` | 17 pruebas unitarias de catalogo, seguridad y auth recovery. |
-| `supabase/schema.sql` | Esquema y RLS requeridos para nuevos despliegues. |
-| `.github/workflows/ci.yml` | Comprobaciones automatizadas para contribuciones. |
-| `CONTRIBUTING.md` | Flujo de contribucion y criterios de aceptacion. |
-| `SECURITY.md` | Reporte responsable y hardening recomendado. |
+| `index.html` | SPA shell, authentication modal, and CSP. |
+| `app.js` | State, UI, i18n, authentication, synchronization, statistics, and PDF export. |
+| `data.js` | Fixed catalog of 992 stickers and album metadata. |
+| `tailwind.input.css`, `tailwind.config.cjs`, `tailwind.css` | Tailwind source and compiled output. |
+| `styles.css` | Custom component and visual styles. |
+| `serve.mjs` | Minimal local server with path-traversal protection. |
+| `tests/app.test.js`, `tests/favicon.test.js` | 22 tests covering catalog behavior, security/auth recovery helpers, and branding assets. |
+| `supabase/schema.sql` | Required schema and RLS for new deployments. |
+| `.github/workflows/ci.yml` | Automated checks for contributions. |
+| `CONTRIBUTING.md` | Contribution workflow and acceptance criteria. |
+| `SECURITY.md` | Responsible disclosure and recommended hardening. |
 
-## Contribuir
+## Contributing
 
-Se aceptan reportes y pull requests. Antes de contribuir lea:
+Bug reports and pull requests are welcome. Before contributing, read:
 
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 - [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-- [SECURITY.md](SECURITY.md) para vulnerabilidades, que no deben abrirse como issues publicos.
+- [SECURITY.md](SECURITY.md) for vulnerabilities, which must not be filed as public issues.
 
-## Licencia Y Marcas
+## License And Trademarks
 
-El codigo de este repositorio se publica bajo la [licencia MIT](LICENSE).
+The code in this repository is released under the [MIT License](LICENSE).
 
-Panini, FIFA, FIFA World Cup y Coca-Cola son marcas de sus respectivos propietarios. Este proyecto es una herramienta independiente para coleccionistas y no distribuye imagenes oficiales de stickers.
+Panini, FIFA, FIFA World Cup, and Coca-Cola are trademarks of their respective owners. This project is an independent collector tool and does not distribute official sticker images.

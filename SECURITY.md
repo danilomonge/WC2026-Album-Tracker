@@ -1,45 +1,53 @@
 # Security Policy
 
-## Version Soportada
+## Supported Version
 
-La rama `main` y la aplicacion desplegada desde ella reciben correcciones de seguridad.
+The `main` branch and the application deployed from it receive security fixes.
 
-## Reportar Una Vulnerabilidad
+## Reporting A Vulnerability
 
-No publique vulnerabilidades en GitHub Issues.
+Do not publish vulnerabilities in GitHub Issues.
 
-Utilice el reporte privado de vulnerabilidades de GitHub, si esta disponible en la pestana **Security** del repositorio. Si no esta habilitado, contacte al mantenedor por un canal privado asociado a su perfil de GitHub e incluya:
+Use GitHub private vulnerability reporting from the repository **Security** tab when available. If it is unavailable, contact the maintainer through a private channel associated with their GitHub profile and include:
 
-- Descripcion del riesgo e impacto.
-- Pasos minimos para reproducirlo.
-- Navegador/entorno afectado.
-- Prueba de concepto que no exponga datos de usuarios.
-- Propuesta de correccion, si existe.
+- A description of the risk and impact.
+- Minimal reproduction steps.
+- Affected browser or environment.
+- A proof of concept that does not disclose user data.
+- A proposed fix, if available.
 
-Se intentara confirmar la recepcion y coordinar una publicacion responsable antes de divulgar detalles.
+The maintainer will attempt to acknowledge receipt and coordinate responsible disclosure before public details are released.
 
-## Modelo De Seguridad
+## Security Model
 
-- Esta es una SPA publica; todo JavaScript, catalogo y publishable key de Supabase son visibles para los visitantes.
-- La proteccion de datos depende de RLS en `public.user_sticker_progress`, no de ocultar la clave publica.
-- No deben almacenarse claves `service_role`, JWT secrets, SMTP credentials ni OAuth client secrets en este repositorio.
-- La aplicacion solo necesita acceso autenticado al progreso del usuario actual.
+- This is a public SPA; all JavaScript, catalog data, and the Supabase publishable key are visible to visitors.
+- Data protection depends on RLS for `public.user_sticker_progress`, not on hiding the public key.
+- `service_role` keys, JWT secrets, SMTP credentials, and OAuth client secrets must never be stored in this repository.
+- The application only needs authenticated access to the current user's sticker progress.
 
-## Controles Implementados
+## Implemented Controls
 
-- RLS por `auth.uid()` para leer y modificar exclusivamente filas propias.
-- Restriccion de IDs del catalogo y limites de repetidos en Postgres.
-- CSP para reducir superficies XSS y conexiones no previstas.
-- Escapado de valores en plantillas HTML.
-- SDK Supabase y generador PDF fijados a versiones auditadas.
-- CI y GitHub Actions fijadas mediante SHA.
+- RLS based on `auth.uid()` permits reading and modifying only the current user's rows.
+- Postgres validates catalog IDs and duplicate ranges.
+- A CSP reduces XSS and unexpected-connection surfaces.
+- Template values are escaped before HTML insertion.
+- Supabase SDK and PDF-generation imports are version-pinned.
+- CI dependencies are pinned to immutable GitHub Actions SHAs.
 
-## Hardening Recomendado Para Despliegues
+## Recommended Deployment Hardening
 
-- Active proteccion contra contrasenas filtradas en Supabase Auth cuando el plan lo permita.
-- Establezca un minimo de contrasena de 8 o mas caracteres y alinee la validacion UI.
-- Active confirmacion de email, CAPTCHA y SMTP propio para instalaciones abiertas.
-- Restrinja redirect URLs a sus dominios reales.
-- Revise Supabase Security Advisor y Performance Advisor despues de cambios de esquema.
+- Enable leaked-password protection in Supabase Auth when the selected plan supports it.
+- Set a minimum password length of 8 or more characters and align UI validation.
+- Enable email confirmation, CAPTCHA, and custom SMTP for public installations.
+- Limit redirect URLs to actual deployment origins.
+- Review Supabase Security Advisor and Performance Advisor after schema changes.
 
-La instancia hospedada fue auditada el 26 de mayo de 2026: RLS y las restricciones de integridad estan habilitadas; Supabase aun informa que la proteccion contra contrasenas filtradas esta desactivada.
+## Hosted Instance Audit
+
+Verified on May 28, 2026:
+
+- `public.user_sticker_progress` is the only public application table and has RLS enabled.
+- Its `SELECT`, `INSERT`, `UPDATE`, and `DELETE` policies restrict rows to `(select auth.uid()) = user_id`.
+- An anonymous REST insert was rejected by RLS with HTTP `401`.
+- Supabase Performance Advisor returned no notices.
+- Supabase Security Advisor reports one remaining warning: **Leaked Password Protection Disabled**.

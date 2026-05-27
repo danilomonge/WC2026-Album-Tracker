@@ -1,23 +1,23 @@
-## Resumen
+## Summary
 
-Describe brevemente el problema y la solucion.
+Briefly describe the problem and the solution.
 
-## Tipo De Cambio
+## Type Of Change
 
-- [ ] Correccion de error
-- [ ] Funcionalidad
-- [ ] Documentacion
-- [ ] Seguridad
-- [ ] Rendimiento o accesibilidad
+- [ ] Bug fix
+- [ ] Feature
+- [ ] Documentation
+- [ ] Security
+- [ ] Performance or accessibility
 
-## Verificacion
+## Verification
 
-- [ ] Ejecute `npm test`.
-- [ ] Ejecute `npm run build:css` si cambie estilos o clases Tailwind.
-- [ ] Verifique el flujo afectado en navegador.
-- [ ] No inclui secretos ni datos personales.
-- [ ] Actualice documentacion/esquema si cambia comportamiento o datos.
+- [ ] I ran `npm test`.
+- [ ] I ran `npm run build:css` when changing styles or Tailwind classes.
+- [ ] I verified the affected flow in a browser.
+- [ ] I did not include secrets or personal data.
+- [ ] I updated documentation or schema when behavior or data changed.
 
-## Capturas O Notas
+## Screenshots Or Notes
 
-Incluya evidencia visual o contexto cuando ayude a revisar el cambio.
+Include visual evidence or context when it helps reviewers evaluate the change.

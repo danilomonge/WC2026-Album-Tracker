@@ -1,17 +1,18 @@
 # Changelog
 
-Todos los cambios relevantes del proyecto se documentaran aqui.
+All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-- Espacio reservado para futuras contribuciones.
+- Translated repository documentation and contribution templates into English.
+- Refreshed hosted-instance security audit notes and test-count documentation.
 
 ## [1.0.0] - 2026-05-26
 
-- Publicacion inicial preparada para codigo abierto bajo licencia MIT.
-- Catalogo Alemania completo de 992 stickers.
-- Autenticacion por email/password, recuperacion de contrasena y OAuth Google condicional.
-- Sincronizacion Supabase protegida por RLS y validaciones de integridad.
-- Exportacion PDF y experiencia bilingue responsive.
-- Endurecimiento de CSP y actualizacion de dependencias runtime auditadas.
-- Documentacion reproducible, politica de seguridad, guias comunitarias y CI.
+- Prepared the initial open-source release under the MIT License.
+- Shipped the complete 992-sticker Germany edition catalog.
+- Added email/password authentication, password recovery, and conditional Google OAuth.
+- Protected Supabase synchronization with RLS and integrity constraints.
+- Added PDF export and a responsive bilingual experience.
+- Hardened CSP and updated audited runtime dependencies.
+- Added reproducible documentation, a security policy, community guides, and CI.

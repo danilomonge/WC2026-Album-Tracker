@@ -1,15 +1,15 @@
 # Contributing
 
-Gracias por ayudar a mejorar WC2026 Collector.
+Thank you for helping improve WC2026 Collector.
 
-## Antes De Empezar
+## Before You Start
 
-- Para errores reproducibles, abra un bug report con navegador, pasos y resultado esperado.
-- Para mejoras grandes, abra primero una propuesta para acordar alcance y experiencia de usuario.
-- Para vulnerabilidades, no cree issues publicos: siga [SECURITY.md](SECURITY.md).
-- Sea respetuoso y siga [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+- For reproducible bugs, open a bug report including browser, steps, and expected result.
+- For substantial enhancements, open a proposal first so scope and user experience can be discussed.
+- For vulnerabilities, do not create public issues: follow [SECURITY.md](SECURITY.md).
+- Be respectful and follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
-## Preparar El Entorno
+## Set Up The Environment
 
 ```bash
 git clone https://github.com/danilomonge/WC2026-Album-Tracker.git
@@ -19,15 +19,15 @@ npm test
 node serve.mjs
 ```
 
-La aplicacion local se abre en `http://localhost:5500`. Para probar autenticacion con un fork, configure su propio proyecto Supabase mediante [supabase/schema.sql](supabase/schema.sql) y actualice la clave publica en `app.js`.
+The local application is available at `http://localhost:5500`. To test authentication in a fork, configure your own Supabase project using [supabase/schema.sql](supabase/schema.sql) and update the public key in `app.js`.
 
-## Flujo De Trabajo
+## Workflow
 
-1. Cree una rama desde `main`: `feature/descripcion`, `fix/descripcion` o `docs/descripcion`.
-2. Mantenga el cambio pequeno y enfocado.
-3. Modifique tests cuando cambie la logica.
-4. Si cambia utilidades Tailwind, ejecute `npm run build:css` y versionee `tailwind.css`.
-5. Ejecute todas las verificaciones:
+1. Create a branch from `main`: `feature/description`, `fix/description`, or `docs/description`.
+2. Keep the change small and focused.
+3. Modify tests when logic changes.
+4. If Tailwind utility use changes, run `npm run build:css` and commit `tailwind.css`.
+5. Run every verification:
 
 ```bash
 npm run build:css
@@ -35,41 +35,41 @@ npm test
 git diff --check
 ```
 
-6. Abra un pull request describiendo problema, solucion y pruebas.
+6. Open a pull request describing the problem, solution, and verification.
 
-## Areas De Contribucion
+## Contribution Areas
 
-- Correcciones de comportamiento o accesibilidad.
-- Nuevas pruebas para auth, sincronizacion y catalogo.
-- Traducciones y claridad de textos.
-- Rendimiento de renderizado en mobile.
-- Documentacion y facilidad de despliegue.
-- Actualizaciones de seguridad de dependencias cargadas mediante ESM.
+- Behavior or accessibility fixes.
+- New tests for authentication, synchronization, and catalog behavior.
+- Translations and copy clarity.
+- Mobile rendering performance.
+- Documentation and deployment usability.
+- Security updates for dependencies loaded through ESM.
 
-## Reglas Tecnicas
+## Technical Rules
 
-- Mantenga la aplicacion estatica y sin secretos de servidor en el frontend.
-- La publishable key de Supabase puede estar en el cliente; nunca agregue `service_role`, JWT secrets, SMTP secrets ni credenciales OAuth.
-- Preserve RLS y las restricciones de integridad del esquema.
-- No acepte IDs de stickers fuera del catalogo de `data.js`.
-- Use `textContent` o `escapeHtml()` al mostrar datos en plantillas.
-- No relaje la CSP sin justificar la nueva fuente o conexion.
-- Para nuevas dependencias runtime, fije versiones y compruebe advisories conocidos.
+- Keep the application static and do not introduce server-side secrets in the frontend.
+- A Supabase publishable key may be present in the client; never add `service_role`, JWT secrets, SMTP secrets, or OAuth credentials.
+- Preserve RLS and the schema's integrity constraints.
+- Do not accept sticker IDs outside the catalog in `data.js`.
+- Use `textContent` or `escapeHtml()` when displaying data in templates.
+- Do not weaken the CSP without justifying each new source or connection.
+- Pin new runtime dependencies to versions and check known advisories.
 
-## Cambios En El Catalogo
+## Catalog Changes
 
-`data.js` representa la edicion Alemania: 992 stickers, incluidos `FWC0`-`FWC19` y `CC1`-`CC12`. Un cambio de catalogo debe:
+`data.js` represents the Germany edition: 992 stickers, including `FWC0`-`FWC19` and `CC1`-`CC12`. Any catalog change must:
 
-- Citar la fuente del cambio en el pull request.
-- Actualizar restricciones en `supabase/schema.sql` si cambian IDs aceptados.
-- Actualizar pruebas y documentacion.
+- Cite the source for the change in the pull request.
+- Update constraints in `supabase/schema.sql` if accepted IDs change.
+- Update tests and documentation.
 
-## Criterios De Revision
+## Review Criteria
 
-Un pull request debe mantener:
+A pull request must preserve:
 
-- Inicio de sesion, recuperacion de contrasena y recarga sin bloqueos.
-- Sincronizacion aislada por usuario.
-- Modo lectura sin cuenta.
-- Generacion PDF funcional.
-- `npm test` aprobado y consola del navegador sin errores nuevos.
+- Sign-in, password recovery, and reload without blocking.
+- User-isolated synchronization.
+- Read-only mode without an account.
+- Functional PDF generation.
+- A passing `npm test` run and a browser console without new errors.

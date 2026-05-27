@@ -1,17 +1,17 @@
 # Support
 
-## Preguntas Y Uso
+## Questions And Usage
 
-Para preguntas de instalacion, configuracion de forks o propuestas de producto, utilice GitHub Discussions cuando este habilitado o abra un issue de tipo **Feature request**.
+For installation questions, fork configuration, or product proposals, use GitHub Discussions when enabled or open a **Feature request** issue.
 
-## Errores
+## Bugs
 
-Abra un **Bug report** e incluya URL, navegador, pasos para reproducir y mensajes de consola no sensibles.
+Open a **Bug report** including URL, browser, reproduction steps, and non-sensitive console messages.
 
-## Seguridad
+## Security
 
-No publique vulnerabilidades, tokens de recuperacion ni datos de cuentas en issues. Siga [SECURITY.md](SECURITY.md).
+Do not publish vulnerabilities, recovery tokens, or account data in issues. Follow [SECURITY.md](SECURITY.md).
 
-## Limites Del Proyecto
+## Project Limits
 
-Este repositorio mantiene el codigo de la aplicacion. La disponibilidad de Supabase, GitHub Pages, correo transaccional y proveedores OAuth depende de sus servicios respectivos y de la configuracion del despliegue.
+This repository maintains the application code. Availability of Supabase, GitHub Pages, transactional email, and OAuth providers depends on their respective services and deployment configuration.

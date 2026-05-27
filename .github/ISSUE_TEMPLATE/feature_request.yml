@@ -1,5 +1,5 @@
 name: Feature request
-description: Proponer una mejora para la aplicacion o el proyecto.
+description: Propose an improvement to the application or project.
 title: "[Feature]: "
 labels:
   - enhancement
@@ -7,24 +7,24 @@ body:
   - type: textarea
     id: problem
     attributes:
-      label: Problema u oportunidad
-      description: Que necesidad resolveria la mejora.
+      label: Problem or opportunity
+      description: What need would this improvement address?
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
-      label: Propuesta
-      description: Como deberia funcionar.
+      label: Proposal
+      description: How should it work?
     validations:
       required: true
   - type: textarea
     id: alternatives
     attributes:
-      label: Alternativas consideradas
+      label: Alternatives considered
   - type: checkboxes
     id: scope
     attributes:
-      label: Alcance
+      label: Scope
       options:
-        - label: Entiendo que cambios de catalogo requieren fuente, tests y ajuste del esquema Supabase.
+        - label: I understand that catalog changes require a source, tests, and a matching Supabase schema adjustment.

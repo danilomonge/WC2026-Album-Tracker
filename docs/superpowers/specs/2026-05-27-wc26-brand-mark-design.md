@@ -1,41 +1,42 @@
 # WC26 Brand Mark Design
 
-## Objetivo
+## Objective
 
-Sustituir el arte previo por un balon propio de WC2026 que funcione como
-favicon y como icono del encabezado. La marca debe ser un balon inconfundible,
-realista, simetrico y premium, manteniendo la legibilidad en tamanos de
-`16px`, `22px` y `30px`.
+Replace the previous artwork with a WC2026-specific football that works as
+both the favicon and the header icon. The mark must be unmistakably a football,
+realistic, symmetric, and premium, while remaining legible at `16px`, `22px`,
+and `30px`.
 
-## Direccion Visual
+## Visual Direction
 
-La marca sera un balon de partido premium con tres elementos:
+The mark is a premium match ball with three defining elements:
 
-- Paneles simetricos blanco perla y azul marino con costuras realistas.
-- Trazos curvos azul marino, sobrios y simetricos, sobre los paneles blancos.
-- Un `26` frontal muy grande, limpio y centrado opticamente dentro del panel
-  blanco principal, como impresion oficial del balon.
+- Symmetric pearl-white and navy panels with realistic seams.
+- Restrained, symmetric navy curves on the white panels.
+- A large, clean `26` optically centered inside the front white panel, as
+  though printed on an official tournament ball.
 
-El resultado evita orbitas externas y composiciones asimetricas. La reduccion
-conserva una silueta de balon clara y el centrado visual del `26`.
+The result avoids external orbits and asymmetric compositions. At reduced
+sizes it preserves a clear football silhouette and the visual centering of the
+`26`.
 
-## Implementacion
+## Implementation
 
-`wc26-ball-premium.png` sera el activo maestro transparente de `512x512`. Se usara en el
-header, mientras que `favicon-32x32.png`, `favicon.ico` y
-`apple-touch-icon.png` se derivaran del mismo raster de alta calidad.
+`wc26-ball-premium.png` is the transparent `512x512` master asset. It is used
+in the header, while `favicon-32x32.png`, `favicon.ico`, and
+`apple-touch-icon.png` are derived from the same high-quality raster.
 
-El header conservara sus dimensiones actuales: el icono seguira ocupando
-`22px` en celular y `30px` en escritorio. Solamente cambia el arte interno.
+The header keeps its existing dimensions: the icon remains `22px` on mobile
+and `30px` on desktop. Only its internal artwork changes.
 
-## Compatibilidad Y Pruebas
+## Compatibility And Tests
 
-Las pruebas comprobaran que:
+Tests confirm that:
 
-- El documento ofrece el favicon PNG versionado y mantiene fallback ICO.
-- El header reutiliza el mismo arte premium del favicon.
-- Los PNG conservan dimensiones, transparencia y derivacion coherente.
-- El favicon no vuelve a depender del emoji ni del emblema SVG rechazado.
+- The document serves the versioned PNG favicon and retains the ICO fallback.
+- The header reuses the same premium artwork as the favicon.
+- PNG assets retain their dimensions, transparency, and coherent derivation.
+- The favicon no longer depends on an emoji or the rejected SVG emblem.
 
-La validacion final incluira render visual en GitHub Pages a escala movil y
-escritorio, ademas de una previsualizacion de la pestana sobre fondo oscuro.
+Final validation includes a visual render of GitHub Pages at mobile and
+desktop sizes, together with a tab preview on a dark background.
