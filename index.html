@@ -66,6 +66,9 @@
         >
           Iniciar sesión
         </button>
+        <!-- Mobile-only DB connection dot (hidden on sm+, updated by renderStatus) -->
+        <span id="mobile-sync-dot" class="sm:hidden flex-shrink-0 mobile-sync-dot" data-state="offline" aria-hidden="true"></span>
+
         <button
           id="sign-out-button"
           class="inline-flex items-center justify-center flex-shrink-0 text-on-surface-variant p-2 rounded-full transition-colors opacity-30 cursor-not-allowed pointer-events-none"

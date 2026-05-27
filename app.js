@@ -1349,6 +1349,7 @@ function renderStatus() {
   const authButton = document.querySelector("#auth-trigger");
   const signOutButton = document.querySelector("#sign-out-button");
   const syncStatus = document.querySelector("#sync-status");
+  const mobileDot = document.querySelector("#mobile-sync-dot");
   const pdfMissingBtn = document.querySelector("#download-missing-pdf");
   const pdfDuplicatesBtn = document.querySelector("#download-repeated-pdf");
   const resetBtn = document.querySelector("#reset-album");
@@ -1409,6 +1410,23 @@ function renderStatus() {
   syncStatus.innerHTML = state.isSyncing
     ? `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> ${t("syncing")}`
     : `<span class="w-2 h-2 rounded-full bg-secondary"></span> ${t("synced")}`;
+
+  // Mobile connection dot — state: "synced" | "syncing" | "offline" | "error"
+  if (mobileDot) {
+    if (!isAuthRuntimeAvailable()) {
+      mobileDot.dataset.state = "offline";
+      mobileDot.title = "";
+    } else if (state.isSyncing) {
+      mobileDot.dataset.state = "syncing";
+      mobileDot.title = t("syncing");
+    } else if (state.session) {
+      mobileDot.dataset.state = "synced";
+      mobileDot.title = t("synced");
+    } else {
+      mobileDot.dataset.state = "offline";
+      mobileDot.title = "";
+    }
+  }
 }
 
 function renderOverview(stats) {

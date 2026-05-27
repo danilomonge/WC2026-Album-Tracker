@@ -35,6 +35,37 @@
 
 .is-hidden { display: none !important; }
 
+/* ── Mobile DB-connection status dot ─────────────────────────────────────── */
+/* Only visible on mobile (sm:hidden applied in HTML).
+   State is driven by data-state attribute updated in renderStatus(). */
+.mobile-sync-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #9ca3af;          /* gray — offline / not logged in */
+  flex-shrink: 0;
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+  /* subtle glow ring */
+  box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.18);
+}
+.mobile-sync-dot[data-state="synced"] {
+  background: #16a34a;          /* green */
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.18);
+}
+.mobile-sync-dot[data-state="syncing"] {
+  background: #f59e0b;          /* amber */
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.22);
+  animation: mobile-dot-pulse 1.4s ease-in-out infinite;
+}
+.mobile-sync-dot[data-state="error"] {
+  background: #ef4444;          /* red */
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.20);
+}
+@keyframes mobile-dot-pulse {
+  0%, 100% { opacity: 1;   transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.85); }
+}
+
 /* Prevent margin-top on collection-content when preceding header card is hidden */
 #album-header.is-hidden ~ #collection-content,
 #album-header[hidden] ~ #collection-content {
